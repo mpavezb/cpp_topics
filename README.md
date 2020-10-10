@@ -67,7 +67,7 @@ Modern C++ knowledge base
   * conditions
   * enum classes
   * references
-  * nullptr
+  * [nullptr](#t-nullptr)
 * Objects:
   * [struct and class](#t-struct-and-class)
   * object life cycle
@@ -81,6 +81,7 @@ Modern C++ knowledge base
   * std::array
 * Error Handling:
   * [static_assert](#t-static-assert-c11)
+  * [assert](#t-assert)
 
 #### Intermediate
 * const-correctness
@@ -174,9 +175,21 @@ OOP and OOD in C++:
 
 ## Topics
 
+### T: value categories
+
+LV, RV, PV, XV, ..
+TODO.
+
+See [cppreference.com](https://en.cppreference.com/w/cpp/language/value_category).
+
+
 ### T: nullptr
 
-[cppreference.com](https://en.cppreference.com/w/cpp/language/nullptr)
+`nullptr` is a pointer literal and a `prvalue` of type `std::nullptr_t`. [cppreference.com](https://en.cppreference.com/w/cpp/language/nullptr).
+
+Never use the `NULL` macro or `0` as replacements for null:
+* `nullptr` is always a pointer type.
+* `NULL` and `0` may cause ambiguity in overloaded function resolution.
 
 ### Object Oriented Programming 
 
@@ -637,8 +650,6 @@ struct Derived3 : Base {
 assert(sizeof(Derived2) == 3*sizeof(int));
 ```
 
-### VALUE CATEGORIES: LV, RV, PV, XV, ..
-TODO
 
 ### REFERENCE COLLAPSING RULES
 https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
