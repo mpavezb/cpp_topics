@@ -62,21 +62,25 @@ Modern C++ knowledge base
 
 #### Beginner
 * C programming language
-* loops
-* conditions
-* classes
-* object life cycle
-* std::string
-* std::vector
-* std::array
-* references
-* dynamic polymorphism
-* function overloading
-* nullptr
-* public inheritance
-* operator overloading
-* enum classes
-* static_assert
+* Basics:
+  * loops
+  * conditions
+  * enum classes
+  * references
+  * nullptr
+* Objects:
+  * [struct and class](#t-struct-and-class)
+  * object life cycle
+  * public inheritance
+  * dynamic polymorphism
+  * function overloading
+  * operator overloading
+* STL:
+  * std::string
+  * std::vector
+  * std::array
+* Error Handling:
+  * [static_assert](#t-static-assert-c11)
 
 #### Intermediate
 * const-correctness
@@ -170,9 +174,61 @@ OOP and OOD in C++:
 
 ## Topics
 
-### T: Static Assert (C++11)
-- https://en.cppreference.com/w/cpp/language/static_assert
-- https://stackoverflow.com/questions/1647895/what-does-static-assert-do-and-what-would-you-use-it-for
+### T: nullptr
+
+[cppreference.com](https://en.cppreference.com/w/cpp/language/nullptr)
+
+### Object Oriented Programming 
+
+#### T: Struct and Class
+
+They are the exactly the same, but `struct` has default `public` members and bases, while `class` has default `private` members and bases. Both `class` and `struct` can have a mixture of `public`, `protected` and `private` members, can use inheritance and can have member functions.
+
+The recommendation is to use `struct` for plain-old-data (POD) structures, and `class` for aggregate data structures with `private` data and member functions.
+
+#### T: POD Type
+
+A Plain Old Data Structure in C++ is either a scalar type, or an aggregate class type that.
+
+* contains only PODS as members
+* has no user-defined destructor
+* has no user-defined copy assignment operator
+* has no nonstatic members of pointer-to-member type.
+
+See:
+* [cppreference.com](https://en.cppreference.com/w/cpp/named_req/PODType)
+* `is_pod()`: https://en.cppreference.com/w/cpp/types/is_pod
+
+### Error Handling
+
+#### T: Static Assert (C++11)
+
+Performs compile time assertion checking. [cppreference.com](https://en.cppreference.com/w/cpp/language/static_assert).
+
+```c++
+static_assert ( bool_constexpr , message );
+static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
+```
+
+- The call is only evaluated once, at compile time, and only in one context (templates are different contexts).
+- For dynamic time assertion checking see: [assert](#t-assert).
+
+#### T: Assert
+
+Performs dynamic assertion checking in debug build modes. [cppreference.com](https://en.cppreference.com/w/cpp/error/assert)
+
+```c++
+#ifdef NDEBUG
+#define assert(condition) ((void)0)
+#else
+#define assert(condition) /*implementation defined*/
+#endif
+```
+
+- The `assert()` macro depends on debug flags, and calls `std::abort` on error.
+- If `assert()` is called in a constexpr context, then it will work as expected at compile time!.
+
+## TODO
 
 ### T: Functors
 https://en.cppreference.com/w/cpp/utility/functional
@@ -604,16 +660,6 @@ https://en.cppreference.com/w/cpp/language/reference
 
 
 # Classes
-### Class vs. Struct
-https://stackoverflow.com/questions/146452/what-are-pod-types-in-c
-https://stackoverflow.com/questions/54585/when-should-you-use-a-class-vs-a-struct-in-c
-
-A class is the same as an struct. The only difference is:
-structs have default public members and inheritance.
-classes have default private members and inheritance.
-
-Recommendation: Use structs to store POD (Plain Old Data)
-A Plain Old Data Structure in C++ is an aggregate class that contains only PODS as members, has no user-defined destructor, no user-defined copy assignment operator, and no nonstatic members of pointer-to-member type.
 
 ### Ctor()=default; Ctor()=delete; (since C++11)
 https://en.cppreference.com/w/cpp/language/default_constructor
