@@ -2,15 +2,20 @@
 
 Modern C++ knowledge base
 
+This document serves as a knowledge base of important topics to know as a C++ Developer.
+* All concepts are linked to the official documentation (https://en.cppreference.com/) when possible. These links can be identified by the `cpp:` prefix, as in [cpp:string](https://en.cppreference.com/w/cpp/string).
+* To avoid redundant information, only small descriptions of each concept are provided, and further clarification when the official documentation might be hard to read.
+* There is also an index of topics by level of experience, which can be used as a guideline to study the language.
+
 ## Contents
 
-- [References](#references)
+- [Resources](#resources)
 - [Topics by Level](#topics-by-level)
 - [Language Agnostic Topics](#language-agnostic-topics)
 
-## References
+## Resources
 
-#### Official Resources:
+**Official Resources:**
 - cppreference.com: https://en.cppreference.com/w/
 - ISO C++ (FAQ, Core Guidelines, Standard): https://isocpp.org/faq
 - New Language Features:
@@ -20,13 +25,13 @@ Modern C++ knowledge base
   - C++20: https://en.cppreference.com/w/cpp/20
 - Standard Library: https://en.cppreference.com/w/cpp/header
 
-#### Important Third-Party Libraries:
+**Important Third-Party Libraries:**
 - GTest: https://github.com/google/googletest
 - Boost: https://www.boost.org/
 - Sanitizers: https://github.com/google/sanitizers
 - List of Important Libraries:: https://stackoverflow.com/a/782146
 
-#### Resources:
+**Media, Blogs, Conferences:**
 - Cpp Podcasts: https://cppcast.com/
 - CppCon: https://www.youtube.com/channel/UCMlGfpWw-RUdWX_JbLCukXg
   - [CppCon 2015: Bjarne Stroustrup “Writing Good C++14”](https://www.youtube.com/watch?v=1OEu9C51K2A)
@@ -35,32 +40,31 @@ Modern C++ knowledge base
 - Christopher Di Bella Blog: https://www.cjdb.com.au/sg20-and-videos
 - Bartosz Milewski Blog: https://bartoszmilewski.com/
 
-#### Coding Interview:
+**Coding Interview:**
 - Cracking The Coding Interview Solutions: https://github.com/dassencio/cracking-the-coding-interview
 - https://leetcode.com/
 
-#### Books:
+**Books:**
 - Effective Modern C++. Scott Meyers.
 - More Effective C++. Scott Meyers.
 - Modern C++ Design, Generic Programming and Design Patterns Applied. Andrei Alexandrescu.
 - The C++ Programming Language. Bjarne Stroustrup.
 - Real-Time C++: Efficient Object-Oriented and Template Microcontroller Programming. Christopher Kormanyos.
 
-#### Courses:
+**Courses:**
 - Udemy, Complete Modern C++ (C++11/14/17), Umar Lone: https://www.udemy.com/course/beg-modern-cpp/
 - Udemy, Design Patterns in Modern C++, Dmitri Nesteruk: https://www.udemy.com/course/patterns-cplusplus/
 - Uni Bonn, Modern C++: http://www.ipb.uni-bonn.de/teaching/modern-cpp/
 
-#### Paid Training:
+**Paid Training:**
 - Jon Kalb, http://exceptionsafecode.com/
 - Herb Sutter, https://herbsutter.com/about/training-and-consulting/
 - Gregory Consulting, http://gregcons.com/
 - Andrei Alexandrescu, https://www.qa-systems.com/qa-academy/dr-andrei-alexandrescu/
 
-
 ## Topics by Level
 
-#### Beginner
+**Beginner**
 * C programming language
 * Basics:
   * loops
@@ -70,20 +74,21 @@ Modern C++ knowledge base
   * [nullptr](#t-nullptr)
 * Objects:
   * [struct and class](#t-struct-and-class)
-  * object life cycle
+  * [POD Type](#t-pod-type)
+  * [object lifetime](#t-object-lifetime)
   * public inheritance
   * dynamic polymorphism
   * function overloading
   * operator overloading
 * STL:
-  * std::string
-  * std::vector
-  * std::array
+  * std::string: https://en.cppreference.com/w/cpp/string
+  * std::vector: https://en.cppreference.com/w/cpp/container/vector
+  * std::array: https://en.cppreference.com/w/cpp/container/array
 * Error Handling:
   * [static_assert](#t-static-assert-c11)
   * [assert](#t-assert)
 
-#### Intermediate
+**Intermediate**
 * const-correctness
 * smart pointers
 * PIMPL: https://en.cppreference.com/w/cpp/language/pimpl
@@ -112,7 +117,7 @@ Modern C++ knowledge base
 * small string optimization
 * return value optimization
 
-#### Experienced:
+**Experienced:**
 * static polymorphism
 * casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.
 * Static Polimorphism
@@ -138,7 +143,7 @@ Modern C++ knowledge base
   * operator new and why
 * Empty base class optimization.
   
-#### Expert:
+**Expert:**
 * Auto Type Deduction
 * Template Type Deduction
 * Variadic Templates
@@ -152,10 +157,10 @@ Modern C++ knowledge base
 * Application Binary Interface
 * Universal References.
 
-#### New in C++20
+**New in C++20**
 -  https://en.cppreference.com/w/cpp/language/constraints
 
-#### Unassigned:
+**Unassigned:**
 * Cyclic dependencies
 * Weak Ptr
 * Associative Containers
@@ -164,7 +169,6 @@ Modern C++ knowledge base
 
 ## Language Agnostic Topics
 
-OOP and OOD in C++:
 * GRASP (OOD).
 * SOLID: theory and code reviews.
 * Design Patterns: Creational, Structural, Behavioralm and **Concurrency**.
@@ -175,7 +179,11 @@ OOP and OOD in C++:
 
 ## Topics
 
-### T: value categories
+### C Programming Language
+
+### Basics
+
+#### T: value categories
 
 LV, RV, PV, XV, ..
 TODO.
@@ -183,7 +191,7 @@ TODO.
 See [cppreference.com](https://en.cppreference.com/w/cpp/language/value_category).
 
 
-### T: nullptr
+#### T: nullptr
 
 `nullptr` is a pointer literal and a `prvalue` of type `std::nullptr_t`. [cppreference.com](https://en.cppreference.com/w/cpp/language/nullptr).
 
@@ -211,6 +219,17 @@ A Plain Old Data Structure in C++ is either a scalar type, or an aggregate class
 See:
 * [cppreference.com](https://en.cppreference.com/w/cpp/named_req/PODType)
 * `is_pod()`: https://en.cppreference.com/w/cpp/types/is_pod
+
+
+#### T: Object Lifetime
+
+[cpp:lifetime](https://en.cppreference.com/w/cpp/language/lifetime)
+
+### Lambda Functions
+
+### Templates
+
+### Standard Library
 
 ### Error Handling
 
@@ -240,6 +259,12 @@ Performs dynamic assertion checking in debug build modes. [cppreference.com](htt
 
 - The `assert()` macro depends on debug flags, and calls `std::abort` on error.
 - If `assert()` is called in a constexpr context, then it will work as expected at compile time!.
+
+
+### Multi-Threading
+
+### Concepts
+
 
 ## TODO
 
