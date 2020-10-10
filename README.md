@@ -11,6 +11,7 @@ This document serves as a knowledge base of important topics to know as a C++ De
 
 - [Resources](#resources)
 - [Topics by Level](#topics-by-level)
+- [Topics](#topics)
 - [Language Agnostic Topics](#language-agnostic-topics)
 
 ## Resources
@@ -188,12 +189,12 @@ This document serves as a knowledge base of important topics to know as a C++ De
 LV, RV, PV, XV, ..
 TODO.
 
-See [cppreference.com](https://en.cppreference.com/w/cpp/language/value_category).
+See [cpp:value_category](https://en.cppreference.com/w/cpp/language/value_category).
 
 
 #### T: nullptr
 
-`nullptr` is a pointer literal and a `prvalue` of type `std::nullptr_t`. [cppreference.com](https://en.cppreference.com/w/cpp/language/nullptr).
+`nullptr` is a pointer literal and a `prvalue` of type `std::nullptr_t`. [cpp:nullptr](https://en.cppreference.com/w/cpp/language/nullptr).
 
 Never use the `NULL` macro or `0` as replacements for null:
 * `nullptr` is always a pointer type.
@@ -217,8 +218,8 @@ A Plain Old Data Structure in C++ is either a scalar type, or an aggregate class
 * has no nonstatic members of pointer-to-member type.
 
 See:
-* [cppreference.com](https://en.cppreference.com/w/cpp/named_req/PODType)
-* `is_pod()`: https://en.cppreference.com/w/cpp/types/is_pod
+* [cpp:PODType](https://en.cppreference.com/w/cpp/named_req/PODType)
+* [cpp:is_pod](https://en.cppreference.com/w/cpp/types/is_pod)
 
 
 #### T: Object Lifetime
@@ -235,7 +236,7 @@ See:
 
 #### T: Static Assert (C++11)
 
-Performs compile time assertion checking. [cppreference.com](https://en.cppreference.com/w/cpp/language/static_assert).
+Performs compile time assertion checking. [cpp:static_assert](https://en.cppreference.com/w/cpp/language/static_assert).
 
 ```c++
 static_assert ( bool_constexpr , message );
@@ -247,7 +248,7 @@ static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
 
 #### T: Assert
 
-Performs dynamic assertion checking in debug build modes. [cppreference.com](https://en.cppreference.com/w/cpp/error/assert)
+Performs dynamic assertion checking in debug build modes. [cpp:assert](https://en.cppreference.com/w/cpp/error/assert)
 
 ```c++
 #ifdef NDEBUG
