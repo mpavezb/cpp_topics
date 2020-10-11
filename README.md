@@ -99,8 +99,8 @@ This document serves as a knowledge base of important topics to know as a C++ De
 **Intermediate**
 * [const-correctness](#t-const-correctness)
 * [smart pointers](#t-smart-pointers)
+* [RAII](#t-raii)
 * PIMPL: https://en.cppreference.com/w/cpp/language/pimpl
-* RAII: https://en.cppreference.com/w/cpp/language/raii
 * dynamic memory management with new and delete
 * deleted and defaulted functions
 * constructor delegation
@@ -331,6 +331,42 @@ foo(std::shared_ptr<Lhs>(new Lhs()),
 
 See also:
 * Advantages of using std::make_unique over new operator: https://stackoverflow.com/a/37514601
+
+#### T: RAII
+
+RAII (Resource Acquisition is Initialization) [cpp:raii](https://en.cppreference.com/w/cpp/language/raii) is a programming idiom for Scope-Bounded Resource Management. A resource may be any thing with a finite supply for which we need to control their usage: memory, file handles, sockets, etc. In RAII, the lifetime of an object is bound to the scope of a variable, so that when the variable goes out of scope, then the destructor will release the resource.
+
+Benefits of RAII are:
+* Helps avoiding resource leaks (memory, handles, ...).
+* Greater exception safety.
+
+In good C++ code, most objects won't be constructed with `new`, and will be declared on the stack instead. Those constructed using `new` should be scoped (smart pointer).
+
+This is implemented by encapsulating the resource handler in a class, which deals with the initialization and destruction: The contructor acquires the resource and the destructor releases it:
+```cpp
+// Without RAII
+RawResource* handle = createNewResource();
+handle->performInvalidOperation();          // throw!
+deleteResource(handle);                     // not called -> leak 
+
+// With RAII
+class RAIIResource {
+public:
+   RAIIResource(RawResource* raw_) : raw(raw_) {};
+   ~RAIIResource() { delete raw; }
+private:
+   RawResource* raw;
+};
+
+RAIIResource handle(createNewResource());
+handle->performInvalidOperation();         // Resource is destroyed when stack is unwound
+```
+
+The RAII design is often used for controlling resources like mutex, pointers (smart pointers!), and files.
+
+Resources:
+* https://stackoverflow.com/questions/2321511/what-is-meant-by-resource-acquisition-is-initialization-raii
+* https://stackoverflow.com/questions/76796/general-guidelines-to-avoid-memory-leaks-in-c
 
 ### Classes
 
@@ -1218,47 +1254,4 @@ Sum s = std::for_each(nums.begin(), nums.end(), Sum());
 // std::accumulate
 int sum = std::accumulate(v.begin(), v.end(), 0);
 int product = std::accumulate(v.begin(), v.end(), 1, std::multiplies<int>());
-```
-
-# Rules/ Principles
-### RAII: Resource Acquisition Is Initialization 
-https://stackoverflow.com/questions/76796/general-guidelines-to-avoid-memory-leaks-in-c
-https://stackoverflow.com/questions/2321511/what-is-meant-by-resource-acquisition-is-initialization-raii
-
-Scope-Bound Resource Management!
-Helps avoiding Memory Leaks.
-Resource: Memory, files, sockets, … 
-Object lifetime is bound to its scope.
-HOW?:
-Encapsulate the resource into a class
-Ctor: usually acquires the resource.
-Dtor: ALWAYS releases it.
-Use it via a local instance of the class.
-The resource is automatically freed when the object gets out of scope.
-
-```cpp
-// NO RAII
-RawResourceHandle* handle=createNewResource();
-handle->performInvalidOperation();  // Oops, throws!
-
-// oh dear, never gets called so the resource leaks
-deleteResource(handle); 
-
-// Using RAII
-// Resource-Handler
-class ManagedResourceHandle {
-public:
-   ManagedResourceHandle(RawResourceHandle* rawHandle_)
-: rawHandle(rawHandle_) {};
-
-   ~ManagedResourceHandle() { delete rawHandle; }
-private:
-   RawResourceHandle* rawHandle;
-};
-
-// Resource Usage (SAFE!)
-ManagedResourceHandle handle(createNewResource());
-handle->performInvalidOperation();
-
-/* When the exception is thrown and the stack is unwound, the local variables are destroyed which ensures that our resource is cleaned up and doesn't leak */
 ```
