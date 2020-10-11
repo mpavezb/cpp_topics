@@ -18,6 +18,7 @@ This document serves as a knowledge base of important topics to know as a C++ De
 
 **Official Resources:**
 - cppreference.com: https://en.cppreference.com/w/
+- C++ Language: https://en.cppreference.com/w/cpp/language
 - ISO C++ (FAQ, Core Guidelines, Standard): https://isocpp.org/faq
 - New Language Features:
   - C++11: https://en.cppreference.com/w/cpp/11
@@ -67,17 +68,21 @@ This document serves as a knowledge base of important topics to know as a C++ De
 
 **Beginner**
 * C programming language
-* Basics:
+* Basic Concepts:
   * loops
   * conditions
   * enum classes
   * references
   * [nullptr](#t-nullptr)
-* Objects:
+* Classes:
   * [struct and class](#t-struct-and-class)
   * [POD Type](#t-pod-type)
+  * [class size](#t-class-size)
   * [object lifetime](#t-object-lifetime)
-  * public inheritance
+  * [class initialization order](#t-class-initialization-order)
+  * [derived classes](#t-derived-classes)
+  * [public inheritance](#t-public-inheritance)
+  * [abstract class](#t-abstract-class)
   * dynamic polymorphism
   * function overloading
   * operator overloading
@@ -96,13 +101,13 @@ This document serves as a knowledge base of important topics to know as a C++ De
 * RAII: https://en.cppreference.com/w/cpp/language/raii
 * dynamic memory management with new and delete
 * exception handling (basics)
-* private inheritance
+* [private inheritance](#t-private-inheritance)
 * lambda expressions
 * functors
 * std::function
 * std::string_view
 * std::optional
-* multiple inheritance
+* [multiple inheritance](#t-multiple-inheritance)
 * diamond problem.
 * uniform initialization
 * [user-defined literals](#t-user-defined-literals)
@@ -135,14 +140,14 @@ This document serves as a knowledge base of important topics to know as a C++ De
   * condition variables
   * futures
 * Argument-Dependent Lookup
-* Virtual Inheritance
+* [virtual inheritance](#t-virtual-inheritance)
 * Regular Expressions
 * I/O with streams
 * Iterator Categories
 * Custom memory Management
   * std::allocator
   * operator new and why
-* Empty base class optimization.
+* [Empty base optimization](#t-empty-base-optimization)
   
 **Expert:**
 * Auto Type Deduction
@@ -182,7 +187,12 @@ This document serves as a knowledge base of important topics to know as a C++ De
 
 ### C Programming Language
 
-### Basics
+### Basic Concepts
+
+TODO
+* Name Lookup:
+  - Qualified Name Lookup: https://en.cppreference.com/w/cpp/language/qualified_lookup
+  - Unqualified Name Lookup: https://en.cppreference.com/w/cpp/language/unqualified_lookup
 
 #### T: value categories
 
@@ -200,7 +210,7 @@ Never use the `NULL` macro or `0` as replacements for null:
 * `nullptr` is always a pointer type.
 * `NULL` and `0` may cause ambiguity in overloaded function resolution.
 
-### Object Oriented Programming 
+### Classes
 
 #### T: Struct and Class
 
@@ -222,9 +232,160 @@ See:
 * [cpp:is_pod](https://en.cppreference.com/w/cpp/types/is_pod)
 
 
+#### T: Class Size
+
+See [cpp:sizeof](https://en.cppreference.com/w/cpp/language/sizeof).
+
+Considerations:
+* Classes have a size of at least 1 byte (for the address).
+* Non-virtual functions have no impact in size, as the address is known at compile time.
+* Virtual functions add at least a `sizeof(void*)` size, to hold the address of the *virtual function table*.
+* Alignment.
+
+```cpp
+// 1 byte
+class C1 {};
+
+// 1 byte
+class C2 {
+    int f();
+};
+
+// sizeof(void*)
+class C3 {
+    virtual int vf1();
+    virtual int vf2();
+};
+
+// sizeof(int)
+class C4 {
+    int data;
+};
+
+// sizeof(void*)
+class C5 : public C3 { };
+```
+
+#### T: Empty Base Optimization
+
+EBO allows the size of an empty base (no non-static data members) subobject to be zero. [cpp:empty-base-optimization](https://en.cppreference.com/w/cpp/language/ebo).
+
+The size of any object is required to be at least 1 byte, even if the type is an empty class, in order to guarantee that the addresses of objects are always distinct. However, empty base classes can be completely optimized out from the object layout.
+
+This optimization is forbidden when the type of the first non-static data member (of the derived class) is the same type of one of the empty classes or derived from it, since the two subobjects (base class and member) are required to have different addresses.
+
+This optimization relevant in policy based design, where classes can inherit privately from multiple policies, some of which can be optimized.
+
+
 #### T: Object Lifetime
 
-[cpp:lifetime](https://en.cppreference.com/w/cpp/language/lifetime)
+The lifetime of an object or a reference is a runtime property: There is a begin and an end. [cpp:lifetime](https://en.cppreference.com/w/cpp/language/lifetime).
+
+The lifetime of an object begins when:
+* Its storage, with proper size and alignment, is obtained (or allocated). And,
+* Its initialization is complete (constructor).
+
+The lifetime of an object ends when:
+* if it is of non-class type, the object is destroyed, or
+* if it is of class type, the destructor call starts, or
+* the storage is released or is reused by another object.
+
+The lifetime of an object is less or equal than the lifetime of its storage. Lifetimes of non-static data members and base subobjects begin and end following class initialization order.
+
+The lifetime of a reference begins when its initialization is complete and ends as if it were a scalar object. The lifetime of the referred object may end before the end of the lifetime of the reference, which makes dangling references possible.
+
+#### T: Class Initialization Order
+
+Initialization order depends on base classes and order of declarations. [cpp:initialization_order](https://en.cppreference.com/w/cpp/language/constructor#Initialization_order).
+
+In short, the order is as follows:
+1. Virtual bases: depth-first left-to-right order.
+2. Direct bases: left-to-right order.
+3. Non-static data members: order of declaration.
+4. Body of the constructor is executed.
+
+Destruction happends in reverse order.
+
+#### T: Derived Classes
+
+Any `class` or `struct` may be declared as *derived* from one or more *base classes*. [cpp:derived_class](https://en.cppreference.com/w/cpp/language/derived_class).
+
+The base classes are listed as a comma-separated list of base-specifiers:
+* attr: Sequence of attributes (e.g., ``[[deprecated]]``).
+* access-specifier: `private`, `public`, or `protected`.
+* virtual-specifier: `virtual` keyword.
+
+```cpp
+struct Derived : [attr] [access-specifier] [virtual-specifier] class-or-decltype {}
+```
+
+The listed classes are *direct base classes*, while their bases are *indirect base classes*. A class can be both, direct and indirect base class.
+
+Each direct and indirect base class is present, as a *base class subobject*, within the object representation of the derived class. Empty bases usually do not increase the size of the derived object due to empty base optimization.
+
+#### T: Public Inheritance
+
+Implements subtyping relationship in OOP. The *derived* object IS-A *base* class object. References and pointers to the derived objects are expected to be usable by any code expecting any of its public bases (see Liskov-Substitution-Principle) [cpp:public-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Public_inheritance).
+
+When a class is derived using the `public` specifier:
+* All `public` members of the base class are accessible as `public` members of the derived class.
+* All `protected` members of the base class are accessible as `protected` members of the derived class.
+* Private members are never accessible unless friended.
+
+#### T: Protected Inheritance
+
+Protected Inheritance can be used for *controlled polymorphism*, where the IS-A relationship is only kept within the members of the derived class, as well as within the members of all further-derived classes. [cpp:protected-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Protected_inheritance).
+
+When a class is derived using the `protected` specifier:
+* All `public` and `protected` members of the base class are accessible as `protected` members of the derived class.
+* Private members are never accessible unless friended.
+
+To make a `public` member of the base class `public` in the derived class, `using B::foo;` can be used.
+
+#### T: Private Inheritance
+
+Private Inheritance can be used for *controlled polymorphism*, where the IS-A relationship is only kept within the members of the derived class, but not within further-derived classes. [cpp:private-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Private_inheritance).
+
+When a class is derived using the `private` specifier:
+* All `public` and `protected` members of the base class are accessible as `private` members of the derived class.
+* Private members are never accessible unless friended.
+
+To make a `public` member of the base class `public` in the derived class, `using B::foo;` can be used.
+
+Private inheritance is commonly used in policy-based design, leveraging empty-base-optimization.
+
+See also [faq:private-inheritance](https://isocpp.org/wiki/faq/private-inheritance).
+
+#### T: Multiple Inheritance
+
+#### T: Virtual Inheritance
+
+For each `virtual` base class, the derived object contains only one base class subobject of that type. [cpp:virtual-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Virtual_base_classes).
+
+In this example, every object of type `AA` has one `X`, one `Y`, one `Z`, and two `B`'s: one that is the base of `Z` and one that is **shared by X and Y**.
+```cpp
+struct B { int n; };
+class X : public virtual B {};
+class Y : virtual public B {};
+class Z : public B {};
+struct AA : X, Y, Z {};
+```
+
+All virtual base subobjects are initialized before any non-virtual base subobject, so only the most derived class calls the constructors of the virtual bases in its member initializer list.
+
+Considerations:
+* Derived classes classes must initialize all the virtual bases in the hierarchy. This can be a problem, as the derived contructor might need to provide arguments to the virtual base constructors.
+* `dynamic_cast` must be used instead of `static_cast`.
+* Virtual base classes are most suitable when the classes that derive from the virtual base, and especially the virtual base itself, are pure abstract classes.
+
+It is commonly used to solve the diamond problem in multiple inheritance. See [faq:virtual-inheritance-where](https://isocpp.org/wiki/faq/multiple-inheritance#virtual-inheritance-where).
+
+
+#### T: Abstract Class
+
+Defines an abstract type which cannot be instantiated, but can be used as a base class. [cpp:abstract-class](https://en.cppreference.com/w/cpp/language/abstract_class).
+* Abstract class: Defines or inherits at least one pure virtual function.
+* Pure abstract class: Only pure virtual functions.
 
 ### Lambda Functions
 
@@ -238,7 +399,7 @@ See:
 
 Performs compile time assertion checking. [cpp:static_assert](https://en.cppreference.com/w/cpp/language/static_assert).
 
-```c++
+```cpp
 static_assert ( bool_constexpr , message );
 static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
 ```
@@ -250,7 +411,7 @@ static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
 
 Performs dynamic assertion checking in debug build modes. [cpp:assert](https://en.cppreference.com/w/cpp/error/assert)
 
-```c++
+```cpp
 #ifdef NDEBUG
 #define assert(condition) ((void)0)
 #else
@@ -544,11 +705,6 @@ void maybe_take_an_int(optional<int> potential_value = nullopt);
 optional<int> maybe_return_an_int();
 ```
 
-### VIRTUAL INHERITANCE
-https://stackoverflow.com/questions/419943/virtual-inheritance
-https://stackoverflow.com/questions/4543537/in-c-should-i-almost-always-use-virtual-inheritance
-
-It is commonly used to solve the diamond problem in multiple inheritance.
 
 ### DRY PRINCIPLE - DONT REPEAT YOURSELF
 https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
@@ -592,34 +748,10 @@ decltype(auto) look_up_a_string_1() { return lookup1(); }
 decltype(auto) look_up_a_string_2() { return lookup2(); }
 ```
 
-### CLASS SIZES
-https://stackoverflow.com/questions/17281932/size-of-c-classes
-https://en.cppreference.com/w/cpp/language/sizeof
-
-```cpp
-// size 1 byte (at least)
-class cls1 { };
-
-// size 1 byte (at least)
-class cls2 {
-    // no hit to the instance size, the function address is used directly by calling code.
-    int instanceFunc();
-};
-
-// sizeof(void*) (at least, for the v-table)
-class cls3 {
-    // These functions are indirectly called via the v-table, a pointer to which must be stored in each instance.
-    virtual int vFunc1();
-    virtual int vFunc99();
-};
-// sizeof(int) (minimum, but typical)
-class cls4 {     int data; };
-
-// sizeof(void*) for the v-table (typical) since the base class has virtual members.
-class cls5 : public cls3 { };
-```
-
 ### VIRTUAL FUNCTIONS AND V-TABLE
+
+The vtable is not in the standard, but is the common way on how compilers implement dynamic dispatch (virtual methods).
+
 https://stackoverflow.com/questions/99297/how-are-virtual-functions-and-vtable-implemented
 
     • C++ specification does not define that vtables are required, but most compilers use them to store knowledge about virtual functions.
@@ -628,53 +760,6 @@ https://stackoverflow.com/questions/99297/how-are-virtual-functions-and-vtable-i
     • 
 
 
-### EMPTY BASE CLASS OPTIMIZATION (EBO)
-https://en.cppreference.com/w/cpp/language/ebo
-https://stackoverflow.com/questions/4325144/when-do-programmers-use-empty-base-optimization-ebo
-https://stackoverflow.com/questions/8058213/do-class-methods-increase-the-size-of-the-class-instances
-
-    • The size of an object is required to be at least 1, in order to guarantee that addresses of distinct objects are different.
-    • This optimization (done by the compiler) is applied to derived objects, which can remove this size overload of the class, when the base is empty. 
-    • Empty base class: class that does not contains neither instance data (non static data members) nor virtual functions (in the class or inherited).
-    • This optimization relevant in policy based design,  where classes can inherit privately from multiple policies, some of which can be optimized.
-    • The optimization is prohibited if one of the empty classes is also the type (or base of the type) of the first non-static data member, since the 2 objects of the same type are required o have different addresses.
-
-```cpp
-// Base Class 
-struct Base {}; // empty class
-assert(sizeof(Base) >= 1);
-
-// Optimized!. 
-// Does not include the >=1 size.
-// Only counts the size of the data member.
-struct Derived1 : Base {  
-int i;  
-};
-assert(sizeof(Derived1) == sizeof(int));
-
-// not optimized!
-// Base and first member are of the same type!
-// 1 byte: base class
-// 1 byte: Base c;
-// 2 bytes: padding
-// 4 bytes: int.
-struct Derived2 : Base {
-    Base c;
-    int i;
-};
-assert(sizeof(Derived2) == 2*sizeof(int));
-
-// not optimized
-// Base is the same type as the base of the first member.
-// 4 bytes: Base class (1) + padding. This padding is required to satisfy with the requirements of the first member.
-// 4 bytes: member of derived1
-// 4 bytes: member of class.
-struct Derived3 : Base {
-    Derived1 c; // derived from Base, occupies sizeof(int) bytes
-    int i;
-};
-assert(sizeof(Derived2) == 3*sizeof(int));
-```
 
 
 ### REFERENCE COLLAPSING RULES
