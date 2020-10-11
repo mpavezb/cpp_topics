@@ -73,6 +73,7 @@ This document serves as a knowledge base of important topics to know as a C++ De
   * conditions
   * enum classes
   * references
+  * [semantics and syntax](#t-semantics-and-syntax)
   * [nullptr](#t-nullptr)
 * Classes:
   * [struct and class](#t-struct-and-class)
@@ -83,7 +84,7 @@ This document serves as a knowledge base of important topics to know as a C++ De
   * [derived classes](#t-derived-classes)
   * [public inheritance](#t-public-inheritance)
   * [abstract class](#t-abstract-class)
-  * dynamic polymorphism
+  * [dynamic polymorphism](#t-dynamic-polymorphism)
   * function overloading
   * operator overloading
 * STL:
@@ -124,6 +125,8 @@ This document serves as a knowledge base of important topics to know as a C++ De
 * return value optimization
 
 **Experienced:**
+* [dynamic polymorphism drawbacks](#t-dynamic-polymorphism-drawbacks)
+* [runtime concept idiom](#t-dynamic-polymorphism-drawbacks)
 * static polymorphism
 * casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.
 * Static Polimorphism
@@ -193,6 +196,11 @@ TODO
 * Name Lookup:
   - Qualified Name Lookup: https://en.cppreference.com/w/cpp/language/qualified_lookup
   - Unqualified Name Lookup: https://en.cppreference.com/w/cpp/language/unqualified_lookup
+
+#### T: Semantics and Syntax
+
+* Regular types where the regular operations are implemented with the standard names are said to have *value semantics*.
+* When objects are referred to indirectly, through a shared reference or pointer, the objects are said to have reference semantics.
 
 #### T: value categories
 
@@ -386,6 +394,131 @@ It is commonly used to solve the diamond problem in multiple inheritance. See [f
 Defines an abstract type which cannot be instantiated, but can be used as a base class. [cpp:abstract-class](https://en.cppreference.com/w/cpp/language/abstract_class).
 * Abstract class: Defines or inherits at least one pure virtual function.
 * Pure abstract class: Only pure virtual functions.
+
+#### T: Dynamic Polymorphism
+
+Runtime polymorphism is best suited to manipulate an open set of related types with different representations. This is implemented through inheritance, where derived classes implement a common interface. 
+
+```cpp
+struct Vehicle {
+	virtual void accelerate() = 0;
+	virtual ~Vehicle() { }
+};
+struct Car   : Vehicle { void accelerate() override; };
+struct Truck : Vehicle { void accelerate() override; };
+```
+
+Compilers usually implement dynamic polymorphism through a *virtual table* `vtable`. The derived class holds a pointer to a table containing function pointers to the most derived implementations for the base class interface. Using the example above:
+```cpp
+struct Car : Vehicle {
+	__vtable* _vptr;
+	...
+};
+
+// Car's vtable:
+{
+	void (*accelerate)(Vehicle* __this);
+	void (*__dtor)(Vehicle* __this);
+}
+```
+
+The use cases are generally two, and as objects will usually have different sizes, we are forced to use reference semantics (pointers) for containers and signaturesm instead of value semantics:
+* Return related types from a function.
+* Store related types in a container.
+```cpp
+std::unique_ptr<Vehicle> selectVehicle(std::string choice) {
+	if (choice == "car") return std::make_unique<Car>{...};
+	else if (choice == "truck") return std::make_unique<Truck>{...};
+	else die();
+}
+
+{
+	std::vector<std::unique_ptr<Vehicle>> vehicles;
+	vehicles.push_back(std::make_unique<Car>{...});
+	vehicles.push_back(std::make_unique<Truck>{...});
+
+	for (auto& vehicle: vehicles) {
+		vehicle.accelerate();
+	}
+}
+```
+
+`std::variant` sometimes can be used instead of dynamic polymorphism, but:
+* Only works if the number of types is limited and known.
+* And the the visitation approach may not be convenient.
+TODO: Add variant example.
+
+#### T: Dynamic Polymorphism Drawbacks
+
+**Runtime polymorphism has some important drawbacks:**
+* Forces usage of reference semantics.
+* Makes harder to reason about the code.
+* Inefficient: vtable, heap, synchronization, lifetime management (garbage collection, reference counting).
+* Encourages shared ownership and proliferation of incidental data-structures.
+* Intrusive on external libraries.
+
+Reference semantics makes harder to reason about the code:
+* Changes the semantics of copy, assignment, and equality operators, as you cannot operate T through one pointer, without considering the effect on the other.
+* Usage of pointers makes the code complex to write, read, and reason about.
+* Usage of pointers introduces nullable semantics!: Code will need to handle null cases.
+* The pointers break our ability to reason *locally* about code. **A shared pointer is as good as a global variable**.
+* Does not play well with STL algorithms. For instance, when sorting the container, the pointers will be sorted by address!.
+
+Dynamic Polymorphism is inefficient:
+* Calls to virtual functions (including dtor) are indirected through the vtable.
+* Forces to do heap allocations (expensive!).
+  - What it there is no enough memory?
+  - Leakages may happen.
+  - Resources must be managed, e.g., using smart pointers. Moreover, when lazy shared_ptr may be used, which is even more costly.
+* The access to the class must be synchronized.
+* In C++ the compiler cannot optimize out heap allocations, but it could devirtualize the calls.
+
+Dynamic Polymorphism is intrusive:
+* When using an external library we are forced to wrap or the external type make it satisfy our interface, or reopen it to add a base class to it!.
+* This problem is even worse in large systems, where objects start inheriting from multiple things.
+
+```cpp
+// Runtime Polymorphism is intrusive:
+namespace lib {
+	struct Motorcycle { void accelerate(); };
+}
+
+vehicles.push_back(std::make_unique<lib::Motorcycle>{...}); // can't work!
+```
+
+The root issue with polymorphic types, by definition, comes from it's use, and not from the type itself:
+* We would like to deal with a set of types, that share a particular attribute, as if they were the same type.
+* When using inheritance to represent that relationship, the use of the object is being encoded in the object itself! **(tight coupling).**
+  - There are no polymorphic types, only a polymorphic use of similar types.
+  - We would like to disclose the object from its use.
+
+Polymorphism without inheritance can be achieved through the Runtime Concept Idiom.
+
+References:
+* CppCon 2017: Louis Dionne “Runtime Polymorphism: Back to the Basics”: https://www.youtube.com/watch?v=gVGtNFg4ay0
+* Better Code: Runtime Polymorphism - Sean Parent: https://www.youtube.com/watch?v=QGcVXgEVMJg
+
+#### T: Runtime Concept Idiom
+
+Allows polymorphism when needed without inheritance. The only requirement is to provide external functions to satisfy the desired interface.
+
+Pros:
+* All drawbacks from dynamic polymorphism are avoided!.
+* The client is not burdened with inheritance, factories, class registration, and memory management.
+* Penalty of runtime polymorphism is only payed when needed.
+* Polymorphic types are used like any other types, including built-in types.
+* Greater reuse and fewer dependencies.
+* There is no performance penalty to using value semantics, and often times there are benefits from not using the heap.
+
+Cons:
+* Relationship is not self-documenting, as it is not clear which objects are to be used for polymorphism, and why some functions exist.
+* Not good when multiple-inheritance is required.
+* Is more difficult to implement, as it requires good understanding of move-semantics.
+
+For an example on how to implement this, see:
+* Better Code: Runtime Polymorphism - Sean Parent: https://www.youtube.com/watch?v=QGcVXgEVMJg
+
+#### T: Static Polymorphism
 
 ### Lambda Functions
 
