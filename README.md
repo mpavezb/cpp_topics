@@ -73,6 +73,7 @@ This document serves as a knowledge base of important topics to know as a C++ De
   * conditions
   * enum classes
   * references
+  * [reading type declarations](#t-reading-type-declarations)
   * [semantics and syntax](#t-semantics-and-syntax)
   * [nullptr](#t-nullptr)
 * Classes:
@@ -196,6 +197,28 @@ TODO
 * Name Lookup:
   - Qualified Name Lookup: https://en.cppreference.com/w/cpp/language/qualified_lookup
   - Unqualified Name Lookup: https://en.cppreference.com/w/cpp/language/unqualified_lookup
+
+#### T: Reading Type Declarations
+
+Reading composed types with pointers, qualifiers, and other symbols may get difficult. The easy way is to follow the [clockwise/spiral rule](http://c-faq.com/decl/spiral.anderson.html).
+
+Usually, the rule can be simplified as read from **right-to-left**.
+
+```cpp
+int*              // pointer to int
+int const *       // pointer to const int
+int * const       // const pointer to int
+int const * const // const pointer to const int
+...
+int ** const      // const pointer to a pointer to int
+
+// functions require the spiral rule
+char *(*fp)(int, float *);  // fp is a pointer to a function passing (int, float*), returning a pointer to a char.
+```
+
+References:
+* http://c-faq.com/decl/spiral.anderson.html
+* https://stackoverflow.com/questions/1143262/what-is-the-difference-between-const-int-const-int-const-and-int-const
 
 #### T: Semantics and Syntax
 
