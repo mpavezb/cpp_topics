@@ -98,7 +98,7 @@ This document serves as a knowledge base of important topics to know as a C++ De
 
 **Intermediate**
 * [const-correctness](#t-const-correctness)
-* smart pointers
+* [smart pointers](#t-smart-pointers)
 * PIMPL: https://en.cppreference.com/w/cpp/language/pimpl
 * RAII: https://en.cppreference.com/w/cpp/language/raii
 * dynamic memory management with new and delete
@@ -286,6 +286,51 @@ In short, const-correctness:
 1. Protects from accidentally changing variables that aren't intended to be changed.
 2. Protects from accidental variable assignments.
 3. Allows compiler optimizations.
+
+#### T: Smart Pointers
+
+A smart pointer is a class that wraps a 'raw' (or 'bare') C++ pointer, to manage the lifetime of the object being pointed to. With raw pointers, the programmer has to explicitly destroy the object when it is no longer useful. If there is any exception or interruption, the resources could not be freed, leading to a memory leak!.
+
+A smart pointer by comparison defines a policy as to when the object is destroyed. You still have to create the object, but you no longer have to worry about destroying it.
+
+`unique_ptr` [cpp:unique-ptr](https://en.cppreference.com/w/cpp/memory/unique_ptr):
+* Move enabled and copy disabled: Prevents multiple deletion and enforces unique ownership.
+* References to the pointer can be passed around instead.
+* Destructor is called when the pointer goes out of scope.
+
+`shared_ptr` [cpp:shared-ptr](https://en.cppreference.com/w/cpp/memory/shared_ptr).
+* Allows the pointer to be copied.
+* Destructor is called when the reference count goes to zero.
+
+`weak_ptr` [cpp:weak-ptr](https://en.cppreference.com/w/cpp/memory/weak_ptr):
+* Holds a non-owning reference to an object that is managed by a `shared_ptr`.
+* It must be converted to `shared_ptr` in order to access the referenced object.
+* The object may be deleted at any time by someone else.
+* An important use case is to break reference cycles formed by objects managed by `shared_ptr`. If there were cycles, then the reference count would never get to zero, and the memory would leak.
+* Another good use case for `weak_ptr` is a cache, as it allows you to locate an object if it's still around, but it doesn't keep it around if nothing else needs it.
+
+The library functions `make_unique` and `make_shared` should be used instead of the constructor:
+* Avoids using the `new` operator explicitly!.
+* A `shared_ptr` manages 2 entities (control block + object), and `make_shared` ensures there will only be 1 heap-allocation instead of 2. This avoid having sparse memory allocations!.
+* Exception Safety (not a problem since C++17): `make_` functions prevent *unspecified-evaluation-order leak* triggered by expressions. Since C++17, each argument to a function is required to fully execute before evaluation of other arguments.
+
+```cpp
+auto ptr = std::unique_ptr<T>(new T()); // uses new!
+auto ptr = std::make_unique<T>();       // good
+
+// C++ allows arbitrary order of evaluation of subexpressions, so one possible ordering is:
+//  new Lhs();
+//  new Rhs();           // <--- If exception is thrown here, memory for Lhs will leak!.
+//  std::shared_ptr<Lhs>
+//  std::shared_ptr<Rhs>
+//
+void foo(const std::shared_ptr<Lhs> &lhs, const std::shared_ptr<Rhs> &rhs) {};
+foo(std::shared_ptr<Lhs>(new Lhs()),
+    std::shared_ptr<Rhs>(new Rhs()));
+```
+
+See also:
+* Advantages of using std::make_unique over new operator: https://stackoverflow.com/a/37514601
 
 ### Classes
 
