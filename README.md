@@ -64,6 +64,13 @@ This document serves as a knowledge base of important topics to know as a C++ De
 - Gregory Consulting, http://gregcons.com/
 - Andrei Alexandrescu, https://www.qa-systems.com/qa-academy/dr-andrei-alexandrescu/
 
+## Examples
+
+```cpp
+mkdir -p build && cd build
+cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
+```
+
 ## Topics by Level
 
 **Beginner**
@@ -383,6 +390,7 @@ Cons:
   - Space overhead: A pointer is required for pimpl, and another may be required for the implementation to access the interface members.
   - Lifetime Management overhead: The implementation lives in the heap, causing overhead on construction and destruction.
 
+Example implementation in [pimpl.h](src/idioms/pimpl.h) and [pimpl.cpp](src/idioms/pimpl.cpp).
 
 Resources:
 * https://arne-mertz.de/2019/01/the-pimpl-idiom/
