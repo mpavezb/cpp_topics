@@ -99,8 +99,8 @@ This document serves as a knowledge base of important topics to know as a C++ De
 **Intermediate**
 * [const-correctness](#t-const-correctness)
 * [smart pointers](#t-smart-pointers)
-* [RAII](#t-raii)
-* PIMPL: https://en.cppreference.com/w/cpp/language/pimpl
+* [raii](#t-raii)
+* [pimpl](#t-pimpl)
 * dynamic memory management with new and delete
 * deleted and defaulted functions
 * constructor delegation
@@ -367,6 +367,26 @@ The RAII design is often used for controlling resources like mutex, pointers (sm
 Resources:
 * https://stackoverflow.com/questions/2321511/what-is-meant-by-resource-acquisition-is-initialization-raii
 * https://stackoverflow.com/questions/76796/general-guidelines-to-avoid-memory-leaks-in-c
+
+#### T: PIMPL
+
+The Pointer to Implementation [cpp:pimpl](https://en.cppreference.com/w/cpp/language/pimpl) idiom helps us hidding implementation details we do not want to expose. The details are put in a separate class, accessed through an opaque pointer. As a side feature, it introduces a compilation firewall and ABU stability.
+
+Pros:
+* Compilation Firewall: Pimpl allows us to change the internal implementation without touching the consumer headers. This way, we do not introduce binary incompatibility and compilation times are faster.
+* ABI (Application Binary Interface) stability: Newer versions of the library may change the implementation details while remaining ABI compatible with older versions.
+
+Cons:
+* Maintenance overhead: Dedicated translation unit (.cpp file), additional class, forwarding functions, allocators are exposed.
+* Runtime overhead:
+  - Access overhead: Double indirection on calls (from interface to impl, and vice versa), each crossing translation unit boundaries. This can only be optimized out link-time opimization.
+  - Space overhead: A pointer is required for pimpl, and another may be required for the implementation to access the interface members.
+  - Lifetime Management overhead: The implementation lives in the heap, causing overhead on construction and destruction.
+
+
+Resources:
+* https://arne-mertz.de/2019/01/the-pimpl-idiom/
+* https://stackoverflow.com/questions/60570/why-should-the-pimpl-idiom-be-used
 
 ### Classes
 
