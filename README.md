@@ -72,7 +72,7 @@ This document serves as a knowledge base of important topics to know as a C++ De
   * loops
   * conditions
   * enum classes
-  * references
+  * [pointers and references](#t-pointers-and-references)
   * [reading type declarations](#t-reading-type-declarations)
   * [semantics and syntax](#t-semantics-and-syntax)
   * [nullptr](#t-nullptr)
@@ -219,6 +219,27 @@ char *(*fp)(int, float *);  // fp is a pointer to a function passing (int, float
 References:
 * http://c-faq.com/decl/spiral.anderson.html
 * https://stackoverflow.com/questions/1143262/what-is-the-difference-between-const-int-const-int-const-and-int-const
+
+#### T: Pointers and References
+
+In short, a reference is an alternative name for a variable, while a pointer is a variable that holds the address of another.
+
+A pointer `*`:
+* Holds the object's assigned memory address,
+* Can be reassigned any number of times, to different objects.
+* Takes storage equal to the address size.
+* Can point to other pointer, having multiple levels of indirection.
+
+A reference `&`:
+* Must be initialized when declared, or during construction when used as a class member.
+* Cannot point to something else.
+* Manipulate the object itself.
+* Is stored as an address to the object, in most implementations.
+* Cannot be assigned `nullptr`.
+
+Dangling:
+* Dangling Pointer: When the lifetime of the pointed object ends before the end of the lifetime of the pointer, leading to a deallocated memory space.
+* Dangling Reference: When the lifetime of the referred object ends before the end of the lifetime of the reference (undefined behavior).
 
 #### T: Semantics and Syntax
 
