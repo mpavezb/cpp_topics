@@ -97,11 +97,13 @@ This document serves as a knowledge base of important topics to know as a C++ De
   * [assert](#t-assert)
 
 **Intermediate**
-* const-correctness
+* [const-correctness](#t-const-correctness)
 * smart pointers
 * PIMPL: https://en.cppreference.com/w/cpp/language/pimpl
 * RAII: https://en.cppreference.com/w/cpp/language/raii
 * dynamic memory management with new and delete
+* deleted and defaulted functions
+* constructor delegation
 * exception handling (basics)
 * [private inheritance](#t-private-inheritance)
 * lambda expressions
@@ -276,6 +278,14 @@ Enum class and struct:
 * Type is `int` unless specified.
 * No implicit conversion to number!. `static_cast` must be used.
 
+#### T: Const Correctness
+
+It is a good practice. It means using the keyword `const` to prevent objects from being modified. Const-Correctness can also be enforced through member functions using the `const` qualifier. [faq:const-correctness](https://isocpp.org/wiki/faq/const-correctness).
+
+In short, const-correctness:
+1. Protects from accidentally changing variables that aren't intended to be changed.
+2. Protects from accidental variable assignments.
+3. Allows compiler optimizations.
 
 ### Classes
 
