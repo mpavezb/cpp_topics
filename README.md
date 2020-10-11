@@ -71,11 +71,11 @@ This document serves as a knowledge base of important topics to know as a C++ De
 * Basic Concepts:
   * loops
   * conditions
-  * enum classes
   * [pointers and references](#t-pointers-and-references)
   * [reading type declarations](#t-reading-type-declarations)
   * [semantics and syntax](#t-semantics-and-syntax)
   * [nullptr](#t-nullptr)
+  * [enum class](#t-enum-class)
 * Classes:
   * [struct and class](#t-struct-and-class)
   * [POD Type](#t-pod-type)
@@ -224,13 +224,13 @@ References:
 
 In short, a reference is an alternative name for a variable, while a pointer is a variable that holds the address of another.
 
-A pointer `*`:
+A pointer `*` [cpp:pointer](https://en.cppreference.com/w/cpp/language/pointer):
 * Holds the object's assigned memory address,
 * Can be reassigned any number of times, to different objects.
 * Takes storage equal to the address size.
 * Can point to other pointer, having multiple levels of indirection.
 
-A reference `&`:
+A reference `&` [cpp:reference](https://en.cppreference.com/w/cpp/language/reference):
 * Must be initialized when declared, or during construction when used as a class member.
 * Cannot point to something else.
 * Manipulate the object itself.
@@ -246,7 +246,7 @@ Dangling:
 * Regular types where the regular operations are implemented with the standard names are said to have *value semantics*.
 * When objects are referred to indirectly, through a shared reference or pointer, the objects are said to have reference semantics.
 
-#### T: value categories
+#### T: Value Categories
 
 LV, RV, PV, XV, ..
 TODO.
@@ -261,6 +261,21 @@ See [cpp:value_category](https://en.cppreference.com/w/cpp/language/value_catego
 Never use the `NULL` macro or `0` as replacements for null:
 * `nullptr` is always a pointer type.
 * `NULL` and `0` may cause ambiguity in overloaded function resolution.
+
+#### T: Enum Class
+
+The `enum class` and `enum struct` types provide solutions to problems the plain `enum` generates. [cpp:enum-class](https://en.cppreference.com/w/cpp/language/enum).
+
+Old Plain Enum:
+* Symbols are kept in current scope.
+* Integer type for members cannot be defined (`uint8_t`, `long`, ...): Cannot do math, and cannot forward declare! (compiler needs type).
+* Implicit conversion to integer!. May not be desired.
+
+Enum class and struct:
+* Members are scoped to the class.
+* Type is `int` unless specified.
+* No implicit conversion to number!. `static_cast` must be used.
+
 
 ### Classes
 
