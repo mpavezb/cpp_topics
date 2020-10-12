@@ -223,8 +223,7 @@ The lifetime of an object is less or equal than the lifetime of its storage. Lif
 The lifetime of a reference begins when its initialization is complete and ends as if it were a scalar object. The lifetime of the referred object may end before the end of the lifetime of the reference, which makes dangling references possible.
 
 
-TODO
-* Name Lookup:
+#### C++: TODO Name Lookup:
   - Qualified Name Lookup: https://en.cppreference.com/w/cpp/language/qualified_lookup
   - Unqualified Name Lookup: https://en.cppreference.com/w/cpp/language/unqualified_lookup
 
@@ -1490,9 +1489,9 @@ int sum = std::accumulate(v.begin(), v.end(), 0);
 int product = std::accumulate(v.begin(), v.end(), 1, std::multiplies<int>());
 ```
 
-#### T: Value Categories
+#### T: TODO : Value Categories
 
 LV, RV, PV, XV, ..
-TODO.
+
 
 See [cpp:value_category](https://en.cppreference.com/w/cpp/language/value_category).
