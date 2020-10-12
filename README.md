@@ -321,7 +321,105 @@ static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
 
 
 ### C++: Initialization
+
 ### C++: Functions
+
+#### C++: Function Overloading
+
+Functions are said to be overloaded when they share the name and they differ on any of the following:
+* Number of arguments.
+* Type of arguments.
+* References to `const` or `volatile`: `const T&` versus `T&`.
+* Pointers to `const` or `volatile`: `const T*` versus `T*`.
+* `const` or `volatile` when applied to the entire function.
+* Presence of ellipsis.
+* Function Ref-Qualifiers.
+
+Overloaded functions differentiate between argument types that take different initializers. Therefore, `T` and `T&` are considered the same for the purposes of overloading.
+
+The following elements are not considered for overloading.
+* Return Type. This can be modified only any of the other elements differ.
+* Type vs Type&
+
+```cpp
+// Valid Overloads
+void foo() {}
+void foo(int d) {}
+bool foo(double x) {}
+void foo(int a, int b) {}
+void foo(T& t) {}
+void foo(T* t) {}
+void foo(const T& t) {}
+void foo(const T* t) {}
+void foo(volatile T& t) {}
+void foo(volatile T* t) {}
+
+// Error: Conflicting return type
+void foo(int d) {}
+bool foo(int d) {}
+
+// Error: Conflicting type resolution
+void foo(T t) {}
+void foo(T& t) {}         // compiler error! conflicts with: void foo(T t) {}
+```
+
+##### Argument Matching
+
+Overloaded functions are selected for the best match of function declarations in the current scope:
+1. An exact match is found.
+2. A trivial conversion is performed.
+3. An integral promotion is performed.
+4. A standard conversion exists.
+5. A user-defined conversion exists: through conversion operator or constructor.
+6. Arguments represented by an ellipsis were found.
+
+The application of conversions is subject to the following rules:
+* Sequences of conversions using more than one user-defined conversion are not considered.
+* Sequences of conversions that can be shortened by removing intermediate conversions are not considered.
+
+Under the hood, the compiler creates a set of *best-matching-functions* for each of the arguments (number of sets is equal to the number of arguments). The selected function is the intersections of all those sets. If this results in multiple or missing functions, then there is a compiler error.
+
+TODO: Conversion Operator: https://en.cppreference.com/w/cpp/language/cast_operator
+
+##### Argument Matching and the this pointer
+
+Non-static functions have an implicit argument that supplies the `this` pointer. These functions require that the implied `this` pointer matches the object type through which the function is being called.
+
+Unlike other arguments in overloaded functions, no temporary objects are introduced and no conversions are attempted when trying to match the `this` pointer argument.
+* When the `->` member-selection operator is used, the `this` pointer has a type of `T * const`. If the members are declared `const` or `volatile`, the type is `const/volatile T * const`.
+* When the `.` member-selection operator works in the same way, but `obj.name` is switched to `(&obj)->name`.
+
+References:
+* https://docs.microsoft.com/en-us/cpp/cpp/function-overloading?view=vs-2019
+
+#### C++: Functors TODO
+
+A Functor (Function Object) is an object which behave as functions. It is achieved by defining the `operator()`.
+
+```cpp
+class Foo {
+	// overloads
+	bool operator()(int d) { return d > 0; }
+	bool operator()(float x) { return x > 0; }
+};
+
+Foo foo;
+bool a = foo(0);
+```
+
+
+
+[cpp:functional](https://en.cppreference.com/w/cpp/utility/functional)
+https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses
+
+    • A functor is pretty much just a class which defines the operator(). That lets you create objects which "look like" a function:
+    • Unlike regular functions, they can contain state. E.g., Functor behavior can be customized by their methods/constructor.
+    • When passed as functions, the compiler can know exactly what method to inline. When using function pointers, this is not clear, and has to be computed at runtime.
+
+See Also:
+* https://www.fluentcpp.com/2017/03/09/functors-are-not-dead-the-double-functor-trick/
+
+
 ### C++: Statements
 ### C++: Classes
 
