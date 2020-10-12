@@ -105,9 +105,13 @@ The following categorization is used:
 
 **Intermediate**
 * C++ Language:
+  - [private inheritance](#c-private-inheritance)
+  - [multiple inheritance](#c-multiple-inheritance)
+  - [diamond problem](#c-diamond-problem)
 * STL:
   - [smart pointers](#stl-smart-pointers)
-* Idioms:
+* Idioms and Best Practices:
+  - [composition versus inheritance](#i-composition-vs-inheritance)
   - [const-correctness](#i-const-correctness)
   - [pimpl](#i-pimpl)
   - [raii](#i-raii)
@@ -116,14 +120,11 @@ The following categorization is used:
   - deleted and defaulted functions
   - constructor delegation
   - exception handling (basics)
-  - [private inheritance](#c-private-inheritance)
-  - multiple inheritance
   - lambda expressions
   - functors
   - std::function
   - std::string_view
   - std::optional
-  - diamond problem.
   - uniform initialization
   - user-defined literals
   - Chrono
@@ -451,17 +452,24 @@ See also [faq:private-inheritance](https://isocpp.org/wiki/faq/private-inheritan
 
 #### C++: Multiple Inheritance
 
+Any class may derive from multiple classes [cpp:derived_class](https://en.cppreference.com/w/cpp/language/derived_class), but be cautious about this [faq:multiple-inheritance](https://isocpp.org/wiki/faq/multiple-inheritance).
+
+Rules of thumb for (multiple) inheritance: [faq:multiple-inheritance-disciplines](https://isocpp.org/wiki/faq/multiple-inheritance#mi-disciplines).
+1. Use inheritance only if doing so will remove `if`/`switch` statements from the caller code.
+2. Try hard to use pure ABCs (abstract base classes) when using multiple-inheritance.
+3. Consider the bridge pattern or nested generalization as possible alternatives.
+
 #### C++: Virtual Inheritance
 
 For each `virtual` base class, the derived object contains only one base class subobject of that type. [cpp:virtual-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Virtual_base_classes).
 
-In this example, every object of type `AA` has one `X`, one `Y`, one `Z`, and two `B`'s: one that is the base of `Z` and one that is **shared by X and Y**.
+In this example, every object of type `D` has one `X`, one `Y`, one `Z`, and two `B`'s: one that is the base of `Z` and one that is **shared by X and Y**.
 ```cpp
 struct B { int n; };
-class X : public virtual B {};
-class Y : virtual public B {};
-class Z : public B {};
-struct AA : X, Y, Z {};
+struct X : virtual B {};
+struct Y : virtual B {};
+struct Z : B {};
+struct D : X, Y, Z {};
 ```
 
 All virtual base subobjects are initialized before any non-virtual base subobject, so only the most derived class calls the constructors of the virtual bases in its member initializer list.
@@ -473,6 +481,23 @@ Considerations:
 
 It is commonly used to solve the diamond problem in multiple inheritance. See [faq:virtual-inheritance-where](https://isocpp.org/wiki/faq/multiple-inheritance#virtual-inheritance-where).
 
+#### C++: Diamond Problem
+
+The diamond problem is an issue with multiple inheritance, when a class derives from two classes, both deriving from a same base class. Class `D` would inherit 1 subobject for `B`, 1 for `C`, and 2 from `A`. Then the compiler cannot decide which one to use!.
+```cpp
+struct A {};
+struct B : A {};
+struct C : A {};
+struct D : B, C {}; // not possible!, D contains: A, B, A, C subobjects.
+```
+
+The problem can be solved through virtual inheritance, so that class `D` only gets one shared subobject for class `A`, instead of 2:
+```cpp
+struct A {};
+struct B : virtual A {};
+struct C : virtual A {};
+struct D : B, C {}; // OK!. D contains: B, C, A (shared) subobjects.
+```
 
 #### C++: Abstract Class
 
@@ -686,10 +711,23 @@ Performs dynamic assertion checking in debug build modes. [cpp:assert](https://e
 
 ## Idioms and Best Practices
 
+* [composition versus inheritance](#i-composition-vs-inheritance)
 * [const correctness](#i-const-correctness)
 * [pimpl](#i-pimpl)
 * [raii](#i-raii)
 * [runtime concept idiom](#i-runtime-concept-idiom)
+
+#### I: Composition vs Inheritance
+
+Composition:
+* Represents a **has-a** relationship.
+* Class contains other classes as members.
+
+Inheritance:
+* Represents a **is-a** relationship.
+* Class derives from other classes as bases.
+
+Inheritance is not for code reuse, but for subtyping and flexibility. Composition is best suited for code reuse. [faq:composition-and-inheritance](https://isocpp.org/wiki/faq/objective-c#objective-c-and-inherit).
 
 #### I: Const Correctness
 
@@ -699,7 +737,6 @@ In short, const-correctness:
 1. Protects from accidentally changing variables that aren't intended to be changed.
 2. Protects from accidental variable assignments.
 3. Allows compiler optimizations.
-
 
 #### I: PIMPL
 
