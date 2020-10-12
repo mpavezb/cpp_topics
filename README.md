@@ -77,17 +77,17 @@ Categorization comes directly from the official categorization: [cpp:cpp](https:
 The following categorization is used:
 
 * [C++ Language](#c-language):
-  - [Basic Concepts](#cpp-basic-concepts)
-  - [Keywords](#cpp-keywords)
-  - [Preprocessor](#cpp-preprocessor)
-  - [Expressions](#cpp-expressions)
-  - [Declaration](#cpp-declaration)
-  - [Initialization](#cpp-initialization)
-  - [Functions](#cpp-functions)
-  - [Statements](#cpp-statements)
-  - [Classes](#cpp-classes)
-  - [Templates](#cpp-templates)
-  - [Exceptions](#cpp-exceptions)
+  - [Basic Concepts](#c-basic-concepts)
+  - [Keywords](#c-keywords)
+  - [Preprocessor](#c-preprocessor)
+  - [Expressions](#c-expressions)
+  - [Declaration](#c-declaration)
+  - [Initialization](#c-initialization)
+  - [Functions](#c-functions)
+  - [Statements](#c-statements)
+  - [Classes](#c-classes)
+  - [Templates](#c-templates)
+  - [Exceptions](#c-exceptions)
 
 * [STL](#stl):
   - [General Utilities](#stl-general-utilities)
@@ -120,31 +120,31 @@ The following categorization is used:
 
 **Beginner**
 * C++ Language:
-  - Basics: loops, conditions, [reading type declarations](#t-reading-type-declarations), [semantics and syntax](#t-semantics-and-syntax).
-  - Declaration: [pointers and references](#t-pointers-and-references), [static_assert](#t-static-assert-c11), [enum class](#t-enum-class).
-  - Expression: [nullptr](#t-nullptr).
-  - Classes: [struct and class](#t-struct-and-class), [POD Type](#t-pod-type), [class size](#t-class-size), [object lifetime](#t-object-lifetime), [class initialization order](#t-class-initialization-order), [derived classes](#t-derived-classes), [public inheritance](#t-public-inheritance), [abstract class](#t-abstract-class), [dynamic polymorphism](#t-dynamic-polymorphism), function overloading, operator overloading.
+  - Basics: loops, conditions, [reading type declarations](#c-reading-type-declarations), [semantics and syntax](#c-semantics-and-syntax).
+  - Declaration: [pointers and references](#c-pointers-and-references), [static_assert](#c-static-assert-c11), [enum class](#c-enum-class).
+  - Expression: [nullptr](#c-nullptr).
+  - Classes: [struct and class](#c-struct-and-class), [POD Type](#c-pod-type), [class size](#c-class-size), [object lifetime](#c-object-lifetime), [class initialization order](#c-class-initialization-order), [derived classes](#c-derived-classes), [public inheritance](#c-public-inheritance), [abstract class](#c-abstract-class), [dynamic polymorphism](#c-dynamic-polymorphism), function overloading, operator overloading.
 * STL:
   - std::string: https://en.cppreference.com/w/cpp/string
   - std::vector: https://en.cppreference.com/w/cpp/container/vector
   - std::array: https://en.cppreference.com/w/cpp/container/array
-  - [assert](#t-assert)
+  - [assert](#c-assert)
 
 **Intermediate**
 * C++ Language:
 * STL:
-  - [smart pointers](#t-smart-pointers)
+  - [smart pointers](#stl-smart-pointers)
 * Idioms:
-  - [const-correctness](#t-const-correctness)
-  - [pimpl](#t-pimpl)
-  - [raii](#t-raii)
+  - [const-correctness](#i-const-correctness)
+  - [pimpl](#i-pimpl)
+  - [raii](#i-raii)
 * Misc:
   - dynamic memory management with new and delete
   - deleted and defaulted functions
   - constructor delegation
   - exception handling (basics)
-  - [private inheritance](#t-private-inheritance)
-  - [multiple inheritance](#t-multiple-inheritance)
+  - [private inheritance](#c-private-inheritance)
+  - [multiple inheritance](#c-multiple-inheritance)
   - lambda expressions
   - functors
   - std::function
@@ -152,7 +152,7 @@ The following categorization is used:
   - std::optional
   - diamond problem.
   - uniform initialization
-  - [user-defined literals](#t-user-defined-literals)
+  - [user-defined literals](#c-user-defined-literals)
   - Chrono
   - random number generation
   - STL containers
@@ -166,13 +166,13 @@ The following categorization is used:
   - return value optimization
 
 **Experienced:**
-* [dynamic polymorphism drawbacks](#t-dynamic-polymorphism-drawbacks)
-* [runtime concept idiom](#t-dynamic-polymorphism-drawbacks)
+* [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks)
+* [runtime concept idiom](#i-runtime-concept-idiom)
 * static polymorphism
 * casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.
 * Static Polimorphism
 * RValue References
-* [Object Slicing](#t-object-slicing)
+* Object Slicing
 * Move Semantics
 * Perfect Forwarding
 * Exception Safety Guarantees
@@ -184,14 +184,14 @@ The following categorization is used:
   * condition variables
   * futures
 * Argument-Dependent Lookup
-* [virtual inheritance](#t-virtual-inheritance)
+* [virtual inheritance](#c-virtual-inheritance)
 * Regular Expressions
 * I/O with streams
 * Iterator Categories
 * Custom memory Management
   * std::allocator
   * operator new and why
-* [Empty base optimization](#t-empty-base-optimization)
+* [Empty base optimization](#c-empty-base-optimization)
   
 **Expert:**
 * Auto Type Deduction
@@ -220,17 +220,17 @@ The following categorization is used:
 
 ## C++ Language
 
-* [Basic Concepts](#cpp-basic-concepts)
-* [Keywords](#cpp-keywords)
-* [Preprocessor](#cpp-preprocessor)
-* [Expressions](#cpp-expressions)
-* [Declaration](#cpp-declaration)
-* [Initialization](#cpp-initialization)
-* [Functions](#cpp-functions)
-* [Statements](#cpp-statements)
-* [Classes](#cpp-classes)
-* [Templates](#cpp-templates)
-* [Exceptions](#cpp-exceptions)
+* [Basic Concepts](#c-basic-concepts)
+* [Keywords](#c-keywords)
+* [Preprocessor](#c-preprocessor)
+* [Expressions](#c-expressions)
+* [Declaration](#c-declaration)
+* [Initialization](#c-initialization)
+* [Functions](#c-functions)
+* [Statements](#c-statements)
+* [Classes](#c-classes)
+* [Templates](#c-templates)
+* [Exceptions](#c-exceptions)
 
 ### C++: Basic Concepts
 
@@ -347,7 +347,7 @@ static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
 ```
 
 - The call is only evaluated once, at compile time, and only in one context (templates are different contexts).
-- For dynamic time assertion checking see: [assert](#t-assert).
+- For dynamic time assertion checking see: [assert](#c-assert).
 
 
 ### C++: Initialization
