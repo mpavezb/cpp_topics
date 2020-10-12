@@ -400,10 +400,9 @@ Unlike other arguments in overloaded functions, no temporary objects are introdu
 References:
 * https://docs.microsoft.com/en-us/cpp/cpp/function-overloading?view=vs-2019
 
-#### C++: Functors TODO
+#### C++: Functors
 
-A Functor (Function Object) is an object which behave as functions. It is achieved by defining the `operator()`.
-
+A Functor (Function Object) is an object which behave as functions [cpp:functor](https://en.cppreference.com/w/cpp/named_req/FunctionObject), [cpp:functional](https://en.cppreference.com/w/cpp/utility/functional). It is achieved by defining the `operator()`. Unlike regular functions, they can contain state, extra functions, and overloads:
 ```cpp
 class Foo {
 	// overloads
@@ -415,17 +414,29 @@ Foo foo;
 bool a = foo(0);
 ```
 
+A function type is defined by: the number of parameters, their type, and the type of the return value. But two functor classes defining the same function have different types!:
+```cpp
+// functions have the same type
+int foo(double x, long y);
+int bar(double a, long b);
 
+// These funtors have different types
+struct A {
+	int operator()(double x, long y);
+};
+struct B {
+	int operator()(double x, long y);
+};
+```
 
-[cpp:functional](https://en.cppreference.com/w/cpp/utility/functional)
-https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses
-
-    • A functor is pretty much just a class which defines the operator(). That lets you create objects which "look like" a function:
-    • Unlike regular functions, they can contain state. E.g., Functor behavior can be customized by their methods/constructor.
-    • When passed as functions, the compiler can know exactly what method to inline. When using function pointers, this is not clear, and has to be computed at runtime.
+Considerations:
+* Regular functions are not functor types, but can be used where functors are expected due to function-to-pointer implicit conversion.
+* When passed as functions, the compiler can know exactly what method to inline. When using function pointers, this is not clear, and has to be computed at runtime.
 
 See Also:
+* Code example in [functors.cpp](src/language/functors.cpp).
 * https://www.fluentcpp.com/2017/03/09/functors-are-not-dead-the-double-functor-trick/
+* https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses
 
 
 ### C++: Statements
@@ -962,13 +973,6 @@ For an example on how to implement this, see:
 
 ## SCRATCH
 
-### T: Functors
-https://en.cppreference.com/w/cpp/utility/functional
-https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses
-https://www.fluentcpp.com/2017/03/09/functors-are-not-dead-the-double-functor-trick/
-    • A functor is pretty much just a class which defines the operator(). That lets you create objects which "look like" a function:
-    • Unlike regular functions, they can contain state. E.g., Functor behavior can be customized by their methods/constructor.
-    • When passed as functions, the compiler can know exactly what method to inline. When using function pointers, this is not clear, and has to be computed at runtime.
 
 ### T: Object Slicing
 - https://stackoverflow.com/questions/274626/what-is-object-slicing
