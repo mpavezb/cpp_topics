@@ -268,6 +268,14 @@ Never use the `NULL` macro or `0` as replacements for null:
 * `nullptr` is always a pointer type.
 * `NULL` and `0` may cause ambiguity in overloaded function resolution.
 
+#### C++: Operator Overloading
+
+Language operators can be overloaded [cpp:operator-overloading](https://en.cppreference.com/w/cpp/language/operators).
+
+Operators `::`, `.`, `.*`, and `?:` cannot be overloaded. Some restrictions apply to the overloading of other operators.
+
+See also:
+* https://stackoverflow.com/questions/4421706/what-are-the-basic-rules-and-idioms-for-operator-overloading#4421719
 
 ### C++: Declaration
 
