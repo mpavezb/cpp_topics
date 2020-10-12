@@ -95,21 +95,21 @@ The following categorization is used:
 * C++ Language:
   - Basics: loops, conditions, [reading type declarations](#c-reading-type-declarations), [semantics and syntax](#c-semantics-and-syntax).
   - Declaration: [pointers and references](#c-pointers-and-references), [static_assert](#c-static-assert-c11), [enum class](#c-enum-class).
-  - Expression: [nullptr](#c-nullptr).
-  - Classes: [struct and class](#c-struct-and-class), [POD Type](#c-pod-type), [class size](#c-class-size), [object lifetime](#c-object-lifetime), [class initialization order](#c-class-initialization-order), [derived classes](#c-derived-classes), [public inheritance](#c-public-inheritance), [abstract class](#c-abstract-class), [dynamic polymorphism](#c-dynamic-polymorphism), function overloading, operator overloading.
+  - Expression: [nullptr](#c-nullptr), [operator overloading](#c-operator-overloading).
+  - Functions: [function overloading](#c-function-overloading).
+  - Classes: [struct and class](#c-struct-and-class), [POD Type](#c-pod-type), [class size](#c-class-size), [object lifetime](#c-object-lifetime), [class initialization order](#c-class-initialization-order), [derived classes](#c-derived-classes), [public inheritance](#c-public-inheritance), [abstract class](#c-abstract-class), [dynamic polymorphism](#c-dynamic-polymorphism).
 * STL:
-  - std::string: https://en.cppreference.com/w/cpp/string
-  - std::vector: https://en.cppreference.com/w/cpp/container/vector
-  - std::array: https://en.cppreference.com/w/cpp/container/array
-  - [assert](#stl-assert)
+  - Utils: [assert](#stl-assert).
+  - Containers: [std::vector](https://en.cppreference.com/w/cpp/container/vector), [std::array](https://en.cppreference.com/w/cpp/container/array).
+  - Strings: [std::string](https://en.cppreference.com/w/cpp/string)
 
 **Intermediate**
 * C++ Language:
   - [private inheritance](#c-private-inheritance)
   - [multiple inheritance](#c-multiple-inheritance)
   - [diamond problem](#c-diamond-problem)
+  - [functors](#c-functors)
   - lambda expressions: https://en.cppreference.com/w/cpp/language/lambda
-  - functors: https://en.cppreference.com/w/cpp/utility/functional,  https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses
   - deleted and defaulted functions: https://stackoverflow.com/questions/5513881/meaning-of-delete-after-function-declaration, https://en.cppreference.com/w/cpp/language/function#Deleted_functions, https://en.cppreference.com/w/cpp/language/function#Function_definition
   - constructor delegation: https://stackoverflow.com/questions/13961037/delegate-constructor-c, https://en.cppreference.com/w/cpp/language/constructor
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
@@ -186,6 +186,7 @@ The following categorization is used:
 * Associative Containers
 * What would happen if you insert a user defined class into a map that only has operator == defined?
 * Problem with vector of bools
+* function ref-qualifiers: https://en.cppreference.com/w/cpp/language/function, https://stackoverflow.com/questions/23011532/const-reference-qualifier-on-a-member-function, https://docs.microsoft.com/en-us/cpp/cpp/function-overloading?view=vs-2019#ref-qualifiers
 
 ## C++ Language
 
@@ -519,7 +520,7 @@ struct Car   : Vehicle { void accelerate() override; };
 struct Truck : Vehicle { void accelerate() override; };
 ```
 
-Compilers usually implement dynamic polymorphism through a *virtual table* `vtable`. The derived class holds a pointer to a table containing function pointers to the most derived implementations for the base class interface. Using the example above:
+Compilers usually implement dynamic polymorphism through a *virtual table* `vtable` (not in the standard!). The derived class holds a pointer to a table containing function pointers to the most derived implementations for the base class interface [see also](https://stackoverflow.com/questions/99297/how-are-virtual-functions-and-vtable-implemented). Using the example above:
 ```cpp
 struct Car : Vehicle {
 	__vtable* _vptr;
@@ -837,11 +838,6 @@ https://www.fluentcpp.com/2017/03/09/functors-are-not-dead-the-double-functor-tr
 - This can be avoided when pointers/references to objects are passed as function arguments. This way, the binding is delayed to runtime, and the proper methods will be called.
 - It can also be avoided by making the Base pure virtual.
 
-### ENUM CLASSES7
-https://en.cppreference.com/w/cpp/language/enum
-https://stackoverflow.com/questions/18335861/why-is-enum-class-preferred-over-plain-enum
-
-
 ### LAMBDA FUNCTIONS (C++11)
 https://en.cppreference.com/w/cpp/language/lambda
 https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-in-c11
@@ -1138,17 +1134,6 @@ string& look_up_a_string_2() { return lookup2(); }
 decltype(auto) look_up_a_string_1() { return lookup1(); }
 decltype(auto) look_up_a_string_2() { return lookup2(); }
 ```
-
-### VIRTUAL FUNCTIONS AND V-TABLE
-
-The vtable is not in the standard, but is the common way on how compilers implement dynamic dispatch (virtual methods).
-
-https://stackoverflow.com/questions/99297/how-are-virtual-functions-and-vtable-implemented
-
-    • C++ specification does not define that vtables are required, but most compilers use them to store knowledge about virtual functions.
-    • Modern compilers only create a vtable if a class has at least 1 virtual function.
-    • Using the vtable implies a space and time overhead vs calling a non virtual function.
-    • 
 
 
 
