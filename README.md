@@ -76,7 +76,7 @@ Categorization comes directly from the official categorization: [cpp:cpp](https:
 
 The following categorization is used:
 
-* [C++ Language:](#c-language):
+* [C++ Language](#c-language):
   - [Basic Concepts](#cpp-basic-concepts)
   - [Keywords](#cpp-keywords)
   - [Preprocessor](#cpp-preprocessor)
@@ -138,7 +138,7 @@ The following categorization is used:
   - [const-correctness](#t-const-correctness)
   - [pimpl](#t-pimpl)
   - [raii](#t-raii)
-
+* Misc:
   - dynamic memory management with new and delete
   - deleted and defaulted functions
   - constructor delegation
@@ -232,9 +232,9 @@ The following categorization is used:
 * [Templates](#cpp-templates)
 * [Exceptions](#cpp-exceptions)
 
-### CPP: Basic Concepts
+### C++: Basic Concepts
 
-#### CppBasics: Object Lifetime
+#### C++: Object Lifetime
 
 The lifetime of an object or a reference is a runtime property: There is a begin and an end. [cpp:lifetime](https://en.cppreference.com/w/cpp/language/lifetime).
 
@@ -257,7 +257,7 @@ TODO
   - Qualified Name Lookup: https://en.cppreference.com/w/cpp/language/qualified_lookup
   - Unqualified Name Lookup: https://en.cppreference.com/w/cpp/language/unqualified_lookup
 
-#### CppBasics: Reading Type Declarations
+#### C++: Reading Type Declarations
 
 Reading composed types with pointers, qualifiers, and other symbols may get difficult. The easy way is to follow the [clockwise/spiral rule](http://c-faq.com/decl/spiral.anderson.html).
 
@@ -280,16 +280,16 @@ References:
 * https://stackoverflow.com/questions/1143262/what-is-the-difference-between-const-int-const-int-const-and-int-const
 
 
-#### CppBasics: Semantics and Syntax
+#### C++: Semantics and Syntax
 
 * Regular types where the regular operations are implemented with the standard names are said to have *value semantics*.
 * When objects are referred to indirectly, through a shared reference or pointer, the objects are said to have reference semantics.
 
-### CPP: Keywords
-### CPP: Preprocessor
-### CPP: Expressions
+### C++: Keywords
+### C++: Preprocessor
+### C++: Expressions
 
-#### CppClasses: nullptr
+#### C++: nullptr
 
 `nullptr` is a pointer literal and a `prvalue` of type `std::nullptr_t`. [cpp:nullptr](https://en.cppreference.com/w/cpp/language/nullptr).
 
@@ -298,7 +298,7 @@ Never use the `NULL` macro or `0` as replacements for null:
 * `NULL` and `0` may cause ambiguity in overloaded function resolution.
 
 
-### CPP: Declaration
+### C++: Declaration
 
 #### CppDeclaration: Pointers and References
 
@@ -350,18 +350,18 @@ static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
 - For dynamic time assertion checking see: [assert](#t-assert).
 
 
-### CPP: Initialization
-### CPP: Functions
-### CPP: Statements
-### CPP: Classes
+### C++: Initialization
+### C++: Functions
+### C++: Statements
+### C++: Classes
 
-#### CppClasses: Struct and Class
+#### C++: Struct and Class
 
 They are the exactly the same, but `struct` has default `public` members and bases, while `class` has default `private` members and bases. Both `class` and `struct` can have a mixture of `public`, `protected` and `private` members, can use inheritance and can have member functions.
 
 The recommendation is to use `struct` for plain-old-data (POD) structures, and `class` for aggregate data structures with `private` data and member functions.
 
-#### CppClasses: POD Type
+#### C++: POD Type
 
 A Plain Old Data Structure in C++ is either a scalar type, or an aggregate class type that.
 
@@ -375,7 +375,7 @@ See:
 * [cpp:is_pod](https://en.cppreference.com/w/cpp/types/is_pod)
 
 
-#### CppClasses: Class Size
+#### C++: Class Size
 
 See [cpp:sizeof](https://en.cppreference.com/w/cpp/language/sizeof).
 
@@ -409,7 +409,7 @@ class C4 {
 class C5 : public C3 { };
 ```
 
-#### CppClasses: Empty Base Optimization
+#### C++: Empty Base Optimization
 
 EBO allows the size of an empty base (no non-static data members) subobject to be zero. [cpp:empty-base-optimization](https://en.cppreference.com/w/cpp/language/ebo).
 
@@ -420,7 +420,7 @@ This optimization is forbidden when the type of the first non-static data member
 This optimization relevant in policy based design, where classes can inherit privately from multiple policies, some of which can be optimized.
 
 
-#### CppClasses: Class Initialization Order
+#### C++: Class Initialization Order
 
 Initialization order depends on base classes and order of declarations. [cpp:initialization_order](https://en.cppreference.com/w/cpp/language/constructor#Initialization_order).
 
@@ -432,7 +432,7 @@ In short, the order is as follows:
 
 Destruction happends in reverse order.
 
-#### CppClasses: Derived Classes
+#### C++: Derived Classes
 
 Any `class` or `struct` may be declared as *derived* from one or more *base classes*. [cpp:derived_class](https://en.cppreference.com/w/cpp/language/derived_class).
 
@@ -449,7 +449,7 @@ The listed classes are *direct base classes*, while their bases are *indirect ba
 
 Each direct and indirect base class is present, as a *base class subobject*, within the object representation of the derived class. Empty bases usually do not increase the size of the derived object due to empty base optimization.
 
-#### CppClasses: Public Inheritance
+#### C++: Public Inheritance
 
 Implements subtyping relationship in OOP. The *derived* object IS-A *base* class object. References and pointers to the derived objects are expected to be usable by any code expecting any of its public bases (see Liskov-Substitution-Principle) [cpp:public-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Public_inheritance).
 
@@ -458,7 +458,7 @@ When a class is derived using the `public` specifier:
 * All `protected` members of the base class are accessible as `protected` members of the derived class.
 * Private members are never accessible unless friended.
 
-#### CppClasses: Protected Inheritance
+#### C++: Protected Inheritance
 
 Protected Inheritance can be used for *controlled polymorphism*, where the IS-A relationship is only kept within the members of the derived class, as well as within the members of all further-derived classes. [cpp:protected-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Protected_inheritance).
 
@@ -468,7 +468,7 @@ When a class is derived using the `protected` specifier:
 
 To make a `public` member of the base class `public` in the derived class, `using B::foo;` can be used.
 
-#### CppClasses: Private Inheritance
+#### C++: Private Inheritance
 
 Private Inheritance can be used for *controlled polymorphism*, where the IS-A relationship is only kept within the members of the derived class, but not within further-derived classes. [cpp:private-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Private_inheritance).
 
@@ -482,9 +482,9 @@ Private inheritance is commonly used in policy-based design, leveraging empty-ba
 
 See also [faq:private-inheritance](https://isocpp.org/wiki/faq/private-inheritance).
 
-#### CppClasses: Multiple Inheritance
+#### C++: Multiple Inheritance
 
-#### CppClasses: Virtual Inheritance
+#### C++: Virtual Inheritance
 
 For each `virtual` base class, the derived object contains only one base class subobject of that type. [cpp:virtual-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Virtual_base_classes).
 
@@ -507,13 +507,13 @@ Considerations:
 It is commonly used to solve the diamond problem in multiple inheritance. See [faq:virtual-inheritance-where](https://isocpp.org/wiki/faq/multiple-inheritance#virtual-inheritance-where).
 
 
-#### CppClasses: Abstract Class
+#### C++: Abstract Class
 
 Defines an abstract type which cannot be instantiated, but can be used as a base class. [cpp:abstract-class](https://en.cppreference.com/w/cpp/language/abstract_class).
 * Abstract class: Defines or inherits at least one pure virtual function.
 * Pure abstract class: Only pure virtual functions.
 
-#### CppClasses: Dynamic Polymorphism
+#### C++: Dynamic Polymorphism
 
 Runtime polymorphism is best suited to manipulate an open set of related types with different representations. This is implemented through inheritance, where derived classes implement a common interface. 
 
@@ -566,7 +566,7 @@ std::unique_ptr<Vehicle> selectVehicle(std::string choice) {
 * And the the visitation approach may not be convenient.
 TODO: Add variant example.
 
-#### CppClasses: Dynamic Polymorphism Drawbacks
+#### C++: Dynamic Polymorphism Drawbacks
 
 **Runtime polymorphism has some important drawbacks:**
 * Forces usage of reference semantics.
@@ -616,11 +616,10 @@ References:
 * CppCon 2017: Louis Dionne “Runtime Polymorphism: Back to the Basics”: https://www.youtube.com/watch?v=gVGtNFg4ay0
 * Better Code: Runtime Polymorphism - Sean Parent: https://www.youtube.com/watch?v=QGcVXgEVMJg
 
-#### CppClasses: Static Polymorphism
+#### C++: Static Polymorphism
 
-
-### CPP: Templates
-### CPP: Exceptions
+### C++: Templates
+### C++: Exceptions
 
 ## STL
 
@@ -642,7 +641,7 @@ References:
 
 ### STL: General Utilities
 
-#### STL-Utils: Smart Pointers
+#### STL: Smart Pointers
 
 A smart pointer is a class that wraps a 'raw' (or 'bare') C++ pointer, to manage the lifetime of the object being pointed to. With raw pointers, the programmer has to explicitly destroy the object when it is no longer useful. If there is any exception or interruption, the resources could not be freed, leading to a memory leak!.
 
