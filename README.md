@@ -7,11 +7,17 @@ This document serves as a knowledge base of important topics to know as a C++ De
 * To avoid redundant information, only small descriptions of each concept are provided, and further clarification when the official documentation might be hard to read.
 * There is also an index of topics by level of experience, which can be used as a guideline to study the language.
 
+Examples can be compiled through:
+```cpp
+mkdir -p build && cd build
+cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
+```
+
 ## Contents
 
 - [Resources](#resources)
+- [Categories](#categories)
 - [Topics by Level](#topics-by-level)
-- [Topics](#topics)
 - [Language Agnostic Topics](#language-agnostic-topics)
 
 ## Resources
@@ -64,12 +70,53 @@ This document serves as a knowledge base of important topics to know as a C++ De
 - Gregory Consulting, http://gregcons.com/
 - Andrei Alexandrescu, https://www.qa-systems.com/qa-academy/dr-andrei-alexandrescu/
 
-## Examples
+## Categories
 
-```cpp
-mkdir -p build && cd build
-cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
-```
+Categorization comes directly from the official categorization: [cpp:cpp](https://en.cppreference.com/w/cpp).
+
+The following categorization is used:
+
+* [C++ Language:](#c-language):
+  - [Basic Concepts](#cpp-basic-concepts)
+  - [Keywords](#cpp-keywords)
+  - [Preprocessor](#cpp-preprocessor)
+  - [Expressions](#cpp-expressions)
+  - [Declaration](#cpp-declaration)
+  - [Initialization](#cpp-initialization)
+  - [Functions](#cpp-functions)
+  - [Statements](#cpp-statements)
+  - [Classes](#cpp-classes)
+  - [Templates](#cpp-templates)
+  - [Exceptions](#cpp-exceptions)
+
+* [STL](#stl):
+  - [General Utilities](#stl-general-utilities)
+  - [Concepts](#stl-concepts)
+  - [Diagnostics](#stl-diagnostics)
+  - [Strings](#stl-strings)
+  - [Containers](#stl-containers)
+  - [Iterators](#stl-iterators)
+  - [Ranges](#stl-ranges)
+  - [Algorithms](#stl-algorithms)
+  - [Numerics](#stl-numerics)
+  - [Localization](#stl-localization)
+  - [Input/Output](#stl-input-output)
+  - [Filesystem](#stl-filesystem)
+  - [Regular Expressions](#stl-regular-expressions)
+  - [Atomic Operations](#stl-atomic-operations)
+  - [Threading](#stl-threading)
+
+* [Idioms and Best Practices](#idioms-and-best-practices)
+
+* [Language Agnostic Topics](#language-agnostic-topics)
+
+- GRASP (OOD).
+  - SOLID: theory and code reviews.
+  - Design Patterns: Creational, Structural, Behavioralm and **Concurrency**.
+  - Working with Legacy Code
+  - CLEAN Arquitecture
+  - TDD
+
 
 ## Topics by Level
 
@@ -186,28 +233,47 @@ cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
 * What would happen if you insert a user defined class into a map that only has operator == defined?
 * Problem with vector of bools
 
-## Language Agnostic Topics
 
-* GRASP (OOD).
-* SOLID: theory and code reviews.
-* Design Patterns: Creational, Structural, Behavioralm and **Concurrency**.
-* Working with Legacy Code
-* CLEAN Arquitecture
-* TDD
+## C++ Language
 
+* [Basic Concepts](#cpp-basic-concepts)
+* [Keywords](#cpp-keywords)
+* [Preprocessor](#cpp-preprocessor)
+* [Expressions](#cpp-expressions)
+* [Declaration](#cpp-declaration)
+* [Initialization](#cpp-initialization)
+* [Functions](#cpp-functions)
+* [Statements](#cpp-statements)
+* [Classes](#cpp-classes)
+* [Templates](#cpp-templates)
+* [Exceptions](#cpp-exceptions)
 
-## Topics
+### CPP: Basic Concepts
 
-### C Programming Language
+#### CppBasics: Object Lifetime
 
-### Basic Concepts
+The lifetime of an object or a reference is a runtime property: There is a begin and an end. [cpp:lifetime](https://en.cppreference.com/w/cpp/language/lifetime).
+
+The lifetime of an object begins when:
+* Its storage, with proper size and alignment, is obtained (or allocated). And,
+* Its initialization is complete (constructor).
+
+The lifetime of an object ends when:
+* if it is of non-class type, the object is destroyed, or
+* if it is of class type, the destructor call starts, or
+* the storage is released or is reused by another object.
+
+The lifetime of an object is less or equal than the lifetime of its storage. Lifetimes of non-static data members and base subobjects begin and end following class initialization order.
+
+The lifetime of a reference begins when its initialization is complete and ends as if it were a scalar object. The lifetime of the referred object may end before the end of the lifetime of the reference, which makes dangling references possible.
+
 
 TODO
 * Name Lookup:
   - Qualified Name Lookup: https://en.cppreference.com/w/cpp/language/qualified_lookup
   - Unqualified Name Lookup: https://en.cppreference.com/w/cpp/language/unqualified_lookup
 
-#### T: Reading Type Declarations
+#### CppBasics: Reading Type Declarations
 
 Reading composed types with pointers, qualifiers, and other symbols may get difficult. The easy way is to follow the [clockwise/spiral rule](http://c-faq.com/decl/spiral.anderson.html).
 
@@ -229,7 +295,28 @@ References:
 * http://c-faq.com/decl/spiral.anderson.html
 * https://stackoverflow.com/questions/1143262/what-is-the-difference-between-const-int-const-int-const-and-int-const
 
-#### T: Pointers and References
+
+#### CppBasics: Semantics and Syntax
+
+* Regular types where the regular operations are implemented with the standard names are said to have *value semantics*.
+* When objects are referred to indirectly, through a shared reference or pointer, the objects are said to have reference semantics.
+
+### CPP: Keywords
+### CPP: Preprocessor
+### CPP: Expressions
+
+#### CppClasses: nullptr
+
+`nullptr` is a pointer literal and a `prvalue` of type `std::nullptr_t`. [cpp:nullptr](https://en.cppreference.com/w/cpp/language/nullptr).
+
+Never use the `NULL` macro or `0` as replacements for null:
+* `nullptr` is always a pointer type.
+* `NULL` and `0` may cause ambiguity in overloaded function resolution.
+
+
+### CPP: Declaration
+
+#### CppDeclaration: Pointers and References
 
 In short, a reference is an alternative name for a variable, while a pointer is a variable that holds the address of another.
 
@@ -250,28 +337,8 @@ Dangling:
 * Dangling Pointer: When the lifetime of the pointed object ends before the end of the lifetime of the pointer, leading to a deallocated memory space.
 * Dangling Reference: When the lifetime of the referred object ends before the end of the lifetime of the reference (undefined behavior).
 
-#### T: Semantics and Syntax
 
-* Regular types where the regular operations are implemented with the standard names are said to have *value semantics*.
-* When objects are referred to indirectly, through a shared reference or pointer, the objects are said to have reference semantics.
-
-#### T: Value Categories
-
-LV, RV, PV, XV, ..
-TODO.
-
-See [cpp:value_category](https://en.cppreference.com/w/cpp/language/value_category).
-
-
-#### T: nullptr
-
-`nullptr` is a pointer literal and a `prvalue` of type `std::nullptr_t`. [cpp:nullptr](https://en.cppreference.com/w/cpp/language/nullptr).
-
-Never use the `NULL` macro or `0` as replacements for null:
-* `nullptr` is always a pointer type.
-* `NULL` and `0` may cause ambiguity in overloaded function resolution.
-
-#### T: Enum Class
+#### CppDeclaration: Enum Class
 
 The `enum class` and `enum struct` types provide solutions to problems the plain `enum` generates. [cpp:enum-class](https://en.cppreference.com/w/cpp/language/enum).
 
@@ -285,126 +352,32 @@ Enum class and struct:
 * Type is `int` unless specified.
 * No implicit conversion to number!. `static_cast` must be used.
 
-#### T: Const Correctness
 
-It is a good practice. It means using the keyword `const` to prevent objects from being modified. Const-Correctness can also be enforced through member functions using the `const` qualifier. [faq:const-correctness](https://isocpp.org/wiki/faq/const-correctness).
+#### CppDeclaration: Static Assert (C++11)
 
-In short, const-correctness:
-1. Protects from accidentally changing variables that aren't intended to be changed.
-2. Protects from accidental variable assignments.
-3. Allows compiler optimizations.
-
-#### T: Smart Pointers
-
-A smart pointer is a class that wraps a 'raw' (or 'bare') C++ pointer, to manage the lifetime of the object being pointed to. With raw pointers, the programmer has to explicitly destroy the object when it is no longer useful. If there is any exception or interruption, the resources could not be freed, leading to a memory leak!.
-
-A smart pointer by comparison defines a policy as to when the object is destroyed. You still have to create the object, but you no longer have to worry about destroying it.
-
-`unique_ptr` [cpp:unique-ptr](https://en.cppreference.com/w/cpp/memory/unique_ptr):
-* Move enabled and copy disabled: Prevents multiple deletion and enforces unique ownership.
-* References to the pointer can be passed around instead.
-* Destructor is called when the pointer goes out of scope.
-
-`shared_ptr` [cpp:shared-ptr](https://en.cppreference.com/w/cpp/memory/shared_ptr).
-* Allows the pointer to be copied.
-* Destructor is called when the reference count goes to zero.
-
-`weak_ptr` [cpp:weak-ptr](https://en.cppreference.com/w/cpp/memory/weak_ptr):
-* Holds a non-owning reference to an object that is managed by a `shared_ptr`.
-* It must be converted to `shared_ptr` in order to access the referenced object.
-* The object may be deleted at any time by someone else.
-* An important use case is to break reference cycles formed by objects managed by `shared_ptr`. If there were cycles, then the reference count would never get to zero, and the memory would leak.
-* Another good use case for `weak_ptr` is a cache, as it allows you to locate an object if it's still around, but it doesn't keep it around if nothing else needs it.
-
-The library functions `make_unique` and `make_shared` should be used instead of the constructor:
-* Avoids using the `new` operator explicitly!.
-* A `shared_ptr` manages 2 entities (control block + object), and `make_shared` ensures there will only be 1 heap-allocation instead of 2. This avoid having sparse memory allocations!.
-* Exception Safety (not a problem since C++17): `make_` functions prevent *unspecified-evaluation-order leak* triggered by expressions. Since C++17, each argument to a function is required to fully execute before evaluation of other arguments.
+Performs compile time assertion checking. [cpp:static_assert](https://en.cppreference.com/w/cpp/language/static_assert).
 
 ```cpp
-auto ptr = std::unique_ptr<T>(new T()); // uses new!
-auto ptr = std::make_unique<T>();       // good
-
-// C++ allows arbitrary order of evaluation of subexpressions, so one possible ordering is:
-//  new Lhs();
-//  new Rhs();           // <--- If exception is thrown here, memory for Lhs will leak!.
-//  std::shared_ptr<Lhs>
-//  std::shared_ptr<Rhs>
-//
-void foo(const std::shared_ptr<Lhs> &lhs, const std::shared_ptr<Rhs> &rhs) {};
-foo(std::shared_ptr<Lhs>(new Lhs()),
-    std::shared_ptr<Rhs>(new Rhs()));
+static_assert ( bool_constexpr , message );
+static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
 ```
 
-See also:
-* Advantages of using std::make_unique over new operator: https://stackoverflow.com/a/37514601
+- The call is only evaluated once, at compile time, and only in one context (templates are different contexts).
+- For dynamic time assertion checking see: [assert](#t-assert).
 
-#### T: RAII
 
-RAII (Resource Acquisition is Initialization) [cpp:raii](https://en.cppreference.com/w/cpp/language/raii) is a programming idiom for Scope-Bounded Resource Management. A resource may be any thing with a finite supply for which we need to control their usage: memory, file handles, sockets, etc. In RAII, the lifetime of an object is bound to the scope of a variable, so that when the variable goes out of scope, then the destructor will release the resource.
+### CPP: Initialization
+### CPP: Functions
+### CPP: Statements
+### CPP: Classes
 
-Benefits of RAII are:
-* Helps avoiding resource leaks (memory, handles, ...).
-* Greater exception safety.
-
-In good C++ code, most objects won't be constructed with `new`, and will be declared on the stack instead. Those constructed using `new` should be scoped (smart pointer).
-
-This is implemented by encapsulating the resource handler in a class, which deals with the initialization and destruction: The contructor acquires the resource and the destructor releases it:
-```cpp
-// Without RAII
-RawResource* handle = createNewResource();
-handle->performInvalidOperation();          // throw!
-deleteResource(handle);                     // not called -> leak 
-
-// With RAII
-class RAIIResource {
-public:
-   RAIIResource(RawResource* raw_) : raw(raw_) {};
-   ~RAIIResource() { delete raw; }
-private:
-   RawResource* raw;
-};
-
-RAIIResource handle(createNewResource());
-handle->performInvalidOperation();         // Resource is destroyed when stack is unwound
-```
-
-The RAII design is often used for controlling resources like mutex, pointers (smart pointers!), and files.
-
-Resources:
-* https://stackoverflow.com/questions/2321511/what-is-meant-by-resource-acquisition-is-initialization-raii
-* https://stackoverflow.com/questions/76796/general-guidelines-to-avoid-memory-leaks-in-c
-
-#### T: PIMPL
-
-The Pointer to Implementation [cpp:pimpl](https://en.cppreference.com/w/cpp/language/pimpl) idiom helps us hidding implementation details we do not want to expose. The details are put in a separate class, accessed through an opaque pointer. As a side feature, it introduces a compilation firewall and ABU stability.
-
-Pros:
-* Compilation Firewall: Pimpl allows us to change the internal implementation without touching the consumer headers. This way, we do not introduce binary incompatibility and compilation times are faster.
-* ABI (Application Binary Interface) stability: Newer versions of the library may change the implementation details while remaining ABI compatible with older versions.
-
-Cons:
-* Maintenance overhead: Dedicated translation unit (.cpp file), additional class, forwarding functions, allocators are exposed.
-* Runtime overhead:
-  - Access overhead: Double indirection on calls (from interface to impl, and vice versa), each crossing translation unit boundaries. This can only be optimized out link-time opimization.
-  - Space overhead: A pointer is required for pimpl, and another may be required for the implementation to access the interface members.
-  - Lifetime Management overhead: The implementation lives in the heap, causing overhead on construction and destruction.
-
-Example implementation in [pimpl.h](src/idioms/pimpl.h) and [pimpl.cpp](src/idioms/pimpl.cpp).
-
-Resources:
-* https://arne-mertz.de/2019/01/the-pimpl-idiom/
-* https://stackoverflow.com/questions/60570/why-should-the-pimpl-idiom-be-used
-
-### Classes
-
-#### T: Struct and Class
+#### CppClasses: Struct and Class
 
 They are the exactly the same, but `struct` has default `public` members and bases, while `class` has default `private` members and bases. Both `class` and `struct` can have a mixture of `public`, `protected` and `private` members, can use inheritance and can have member functions.
 
 The recommendation is to use `struct` for plain-old-data (POD) structures, and `class` for aggregate data structures with `private` data and member functions.
 
-#### T: POD Type
+#### CppClasses: POD Type
 
 A Plain Old Data Structure in C++ is either a scalar type, or an aggregate class type that.
 
@@ -418,7 +391,7 @@ See:
 * [cpp:is_pod](https://en.cppreference.com/w/cpp/types/is_pod)
 
 
-#### T: Class Size
+#### CppClasses: Class Size
 
 See [cpp:sizeof](https://en.cppreference.com/w/cpp/language/sizeof).
 
@@ -452,7 +425,7 @@ class C4 {
 class C5 : public C3 { };
 ```
 
-#### T: Empty Base Optimization
+#### CppClasses: Empty Base Optimization
 
 EBO allows the size of an empty base (no non-static data members) subobject to be zero. [cpp:empty-base-optimization](https://en.cppreference.com/w/cpp/language/ebo).
 
@@ -463,24 +436,7 @@ This optimization is forbidden when the type of the first non-static data member
 This optimization relevant in policy based design, where classes can inherit privately from multiple policies, some of which can be optimized.
 
 
-#### T: Object Lifetime
-
-The lifetime of an object or a reference is a runtime property: There is a begin and an end. [cpp:lifetime](https://en.cppreference.com/w/cpp/language/lifetime).
-
-The lifetime of an object begins when:
-* Its storage, with proper size and alignment, is obtained (or allocated). And,
-* Its initialization is complete (constructor).
-
-The lifetime of an object ends when:
-* if it is of non-class type, the object is destroyed, or
-* if it is of class type, the destructor call starts, or
-* the storage is released or is reused by another object.
-
-The lifetime of an object is less or equal than the lifetime of its storage. Lifetimes of non-static data members and base subobjects begin and end following class initialization order.
-
-The lifetime of a reference begins when its initialization is complete and ends as if it were a scalar object. The lifetime of the referred object may end before the end of the lifetime of the reference, which makes dangling references possible.
-
-#### T: Class Initialization Order
+#### CppClasses: Class Initialization Order
 
 Initialization order depends on base classes and order of declarations. [cpp:initialization_order](https://en.cppreference.com/w/cpp/language/constructor#Initialization_order).
 
@@ -492,7 +448,7 @@ In short, the order is as follows:
 
 Destruction happends in reverse order.
 
-#### T: Derived Classes
+#### CppClasses: Derived Classes
 
 Any `class` or `struct` may be declared as *derived* from one or more *base classes*. [cpp:derived_class](https://en.cppreference.com/w/cpp/language/derived_class).
 
@@ -509,7 +465,7 @@ The listed classes are *direct base classes*, while their bases are *indirect ba
 
 Each direct and indirect base class is present, as a *base class subobject*, within the object representation of the derived class. Empty bases usually do not increase the size of the derived object due to empty base optimization.
 
-#### T: Public Inheritance
+#### CppClasses: Public Inheritance
 
 Implements subtyping relationship in OOP. The *derived* object IS-A *base* class object. References and pointers to the derived objects are expected to be usable by any code expecting any of its public bases (see Liskov-Substitution-Principle) [cpp:public-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Public_inheritance).
 
@@ -518,7 +474,7 @@ When a class is derived using the `public` specifier:
 * All `protected` members of the base class are accessible as `protected` members of the derived class.
 * Private members are never accessible unless friended.
 
-#### T: Protected Inheritance
+#### CppClasses: Protected Inheritance
 
 Protected Inheritance can be used for *controlled polymorphism*, where the IS-A relationship is only kept within the members of the derived class, as well as within the members of all further-derived classes. [cpp:protected-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Protected_inheritance).
 
@@ -528,7 +484,7 @@ When a class is derived using the `protected` specifier:
 
 To make a `public` member of the base class `public` in the derived class, `using B::foo;` can be used.
 
-#### T: Private Inheritance
+#### CppClasses: Private Inheritance
 
 Private Inheritance can be used for *controlled polymorphism*, where the IS-A relationship is only kept within the members of the derived class, but not within further-derived classes. [cpp:private-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Private_inheritance).
 
@@ -542,9 +498,9 @@ Private inheritance is commonly used in policy-based design, leveraging empty-ba
 
 See also [faq:private-inheritance](https://isocpp.org/wiki/faq/private-inheritance).
 
-#### T: Multiple Inheritance
+#### CppClasses: Multiple Inheritance
 
-#### T: Virtual Inheritance
+#### CppClasses: Virtual Inheritance
 
 For each `virtual` base class, the derived object contains only one base class subobject of that type. [cpp:virtual-inheritance](https://en.cppreference.com/w/cpp/language/derived_class#Virtual_base_classes).
 
@@ -567,13 +523,13 @@ Considerations:
 It is commonly used to solve the diamond problem in multiple inheritance. See [faq:virtual-inheritance-where](https://isocpp.org/wiki/faq/multiple-inheritance#virtual-inheritance-where).
 
 
-#### T: Abstract Class
+#### CppClasses: Abstract Class
 
 Defines an abstract type which cannot be instantiated, but can be used as a base class. [cpp:abstract-class](https://en.cppreference.com/w/cpp/language/abstract_class).
 * Abstract class: Defines or inherits at least one pure virtual function.
 * Pure abstract class: Only pure virtual functions.
 
-#### T: Dynamic Polymorphism
+#### CppClasses: Dynamic Polymorphism
 
 Runtime polymorphism is best suited to manipulate an open set of related types with different representations. This is implemented through inheritance, where derived classes implement a common interface. 
 
@@ -626,7 +582,7 @@ std::unique_ptr<Vehicle> selectVehicle(std::string choice) {
 * And the the visitation approach may not be convenient.
 TODO: Add variant example.
 
-#### T: Dynamic Polymorphism Drawbacks
+#### CppClasses: Dynamic Polymorphism Drawbacks
 
 **Runtime polymorphism has some important drawbacks:**
 * Forces usage of reference semantics.
@@ -676,7 +632,184 @@ References:
 * CppCon 2017: Louis Dionne “Runtime Polymorphism: Back to the Basics”: https://www.youtube.com/watch?v=gVGtNFg4ay0
 * Better Code: Runtime Polymorphism - Sean Parent: https://www.youtube.com/watch?v=QGcVXgEVMJg
 
-#### T: Runtime Concept Idiom
+#### CppClasses: Static Polymorphism
+
+
+### CPP: Templates
+### CPP: Exceptions
+
+## STL
+
+* [General Utilities](#stl-general-utilities)
+* [Concepts](#stl-concepts)
+* [Diagnostics](#stl-diagnostics)
+* [Strings](#stl-strings)
+* [Containers](#stl-containers)
+* [Iterators](#stl-iterators)
+* [Ranges](#stl-ranges)
+* [Algorithms](#stl-algorithms)
+* [Numerics](#stl-numerics)
+* [Localization](#stl-localization)
+* [Input/Output](#stl-input-output)
+* [Filesystem](#stl-filesystem)
+* [Regular Expressions](#stl-regular-expressions)
+* [Atomic Operations](#stl-atomic-operations)
+* [Threading](#stl-threading)
+
+### STL: General Utilities
+
+#### STL-Utils: Smart Pointers
+
+A smart pointer is a class that wraps a 'raw' (or 'bare') C++ pointer, to manage the lifetime of the object being pointed to. With raw pointers, the programmer has to explicitly destroy the object when it is no longer useful. If there is any exception or interruption, the resources could not be freed, leading to a memory leak!.
+
+A smart pointer by comparison defines a policy as to when the object is destroyed. You still have to create the object, but you no longer have to worry about destroying it.
+
+`unique_ptr` [cpp:unique-ptr](https://en.cppreference.com/w/cpp/memory/unique_ptr):
+* Move enabled and copy disabled: Prevents multiple deletion and enforces unique ownership.
+* References to the pointer can be passed around instead.
+* Destructor is called when the pointer goes out of scope.
+
+`shared_ptr` [cpp:shared-ptr](https://en.cppreference.com/w/cpp/memory/shared_ptr).
+* Allows the pointer to be copied.
+* Destructor is called when the reference count goes to zero.
+
+`weak_ptr` [cpp:weak-ptr](https://en.cppreference.com/w/cpp/memory/weak_ptr):
+* Holds a non-owning reference to an object that is managed by a `shared_ptr`.
+* It must be converted to `shared_ptr` in order to access the referenced object.
+* The object may be deleted at any time by someone else.
+* An important use case is to break reference cycles formed by objects managed by `shared_ptr`. If there were cycles, then the reference count would never get to zero, and the memory would leak.
+* Another good use case for `weak_ptr` is a cache, as it allows you to locate an object if it's still around, but it doesn't keep it around if nothing else needs it.
+
+The library functions `make_unique` and `make_shared` should be used instead of the constructor:
+* Avoids using the `new` operator explicitly!.
+* A `shared_ptr` manages 2 entities (control block + object), and `make_shared` ensures there will only be 1 heap-allocation instead of 2. This avoid having sparse memory allocations!.
+* Exception Safety (not a problem since C++17): `make_` functions prevent *unspecified-evaluation-order leak* triggered by expressions. Since C++17, each argument to a function is required to fully execute before evaluation of other arguments.
+
+```cpp
+auto ptr = std::unique_ptr<T>(new T()); // uses new!
+auto ptr = std::make_unique<T>();       // good
+
+// C++ allows arbitrary order of evaluation of subexpressions, so one possible ordering is:
+//  new Lhs();
+//  new Rhs();           // <--- If exception is thrown here, memory for Lhs will leak!.
+//  std::shared_ptr<Lhs>
+//  std::shared_ptr<Rhs>
+//
+void foo(const std::shared_ptr<Lhs> &lhs, const std::shared_ptr<Rhs> &rhs) {};
+foo(std::shared_ptr<Lhs>(new Lhs()),
+    std::shared_ptr<Rhs>(new Rhs()));
+```
+
+See also:
+* Advantages of using std::make_unique over new operator: https://stackoverflow.com/a/37514601
+
+#### T: Assert
+
+Performs dynamic assertion checking in debug build modes. [cpp:assert](https://en.cppreference.com/w/cpp/error/assert)
+
+```cpp
+#ifdef NDEBUG
+#define assert(condition) ((void)0)
+#else
+#define assert(condition) /*implementation defined*/
+#endif
+```
+
+- The `assert()` macro depends on debug flags, and calls `std::abort` on error.
+- If `assert()` is called in a constexpr context, then it will work as expected at compile time!.
+
+
+### STL: Concepts
+### STL: Diagnostics
+### STL: Strings
+### STL: Containers
+### STL: Iterators
+### STL: Ranges
+### STL: Algorithms
+### STL: Numerics
+### STL: Localization
+### STL: Input/Output
+### STL: Filesystem
+### STL: Regular Expressions
+### STL: Atomic Operations
+### STL: Threading
+
+## Idioms and Best Practices
+
+* [const correctness](#i-const-correctness)
+* [pimpl](#i-pimpl)
+* [raii](#i-raii)
+* [runtime concept idiom](#i-runtime-concept-idiom)
+
+#### I: Const Correctness
+
+It is a good practice. It means using the keyword `const` to prevent objects from being modified. Const-Correctness can also be enforced through member functions using the `const` qualifier. [faq:const-correctness](https://isocpp.org/wiki/faq/const-correctness).
+
+In short, const-correctness:
+1. Protects from accidentally changing variables that aren't intended to be changed.
+2. Protects from accidental variable assignments.
+3. Allows compiler optimizations.
+
+
+#### I: PIMPL
+
+The Pointer to Implementation [cpp:pimpl](https://en.cppreference.com/w/cpp/language/pimpl) idiom helps us hidding implementation details we do not want to expose. The details are put in a separate class, accessed through an opaque pointer. As a side feature, it introduces a compilation firewall and ABU stability.
+
+Pros:
+* Compilation Firewall: Pimpl allows us to change the internal implementation without touching the consumer headers. This way, we do not introduce binary incompatibility and compilation times are faster.
+* ABI (Application Binary Interface) stability: Newer versions of the library may change the implementation details while remaining ABI compatible with older versions.
+
+Cons:
+* Maintenance overhead: Dedicated translation unit (.cpp file), additional class, forwarding functions, allocators are exposed.
+* Runtime overhead:
+  - Access overhead: Double indirection on calls (from interface to impl, and vice versa), each crossing translation unit boundaries. This can only be optimized out link-time opimization.
+  - Space overhead: A pointer is required for pimpl, and another may be required for the implementation to access the interface members.
+  - Lifetime Management overhead: The implementation lives in the heap, causing overhead on construction and destruction.
+
+Example implementation in [pimpl.h](src/idioms/pimpl.h) and [pimpl.cpp](src/idioms/pimpl.cpp).
+
+Resources:
+* https://arne-mertz.de/2019/01/the-pimpl-idiom/
+* https://stackoverflow.com/questions/60570/why-should-the-pimpl-idiom-be-used
+
+#### I: RAII
+
+RAII (Resource Acquisition is Initialization) [cpp:raii](https://en.cppreference.com/w/cpp/language/raii) is a programming idiom for Scope-Bounded Resource Management. A resource may be any thing with a finite supply for which we need to control their usage: memory, file handles, sockets, etc. In RAII, the lifetime of an object is bound to the scope of a variable, so that when the variable goes out of scope, then the destructor will release the resource.
+
+Benefits of RAII are:
+* Helps avoiding resource leaks (memory, handles, ...).
+* Greater exception safety.
+
+In good C++ code, most objects won't be constructed with `new`, and will be declared on the stack instead. Those constructed using `new` should be scoped (smart pointer).
+
+This is implemented by encapsulating the resource handler in a class, which deals with the initialization and destruction: The contructor acquires the resource and the destructor releases it:
+```cpp
+// Without RAII
+RawResource* handle = createNewResource();
+handle->performInvalidOperation();          // throw!
+deleteResource(handle);                     // not called -> leak 
+
+// With RAII
+class RAIIResource {
+public:
+   RAIIResource(RawResource* raw_) : raw(raw_) {};
+   ~RAIIResource() { delete raw; }
+private:
+   RawResource* raw;
+};
+
+RAIIResource handle(createNewResource());
+handle->performInvalidOperation();         // Resource is destroyed when stack is unwound
+```
+
+The RAII design is often used for controlling resources like mutex, pointers (smart pointers!), and files.
+
+Resources:
+* https://stackoverflow.com/questions/2321511/what-is-meant-by-resource-acquisition-is-initialization-raii
+* https://stackoverflow.com/questions/76796/general-guidelines-to-avoid-memory-leaks-in-c
+
+
+#### I: Runtime Concept Idiom
 
 Allows polymorphism when needed without inheritance. The only requirement is to provide external functions to satisfy the desired interface.
 
@@ -696,50 +829,9 @@ Cons:
 For an example on how to implement this, see:
 * Better Code: Runtime Polymorphism - Sean Parent: https://www.youtube.com/watch?v=QGcVXgEVMJg
 
-#### T: Static Polymorphism
-
-### Lambda Functions
-
-### Templates
-
-### Standard Library
-
-### Error Handling
-
-#### T: Static Assert (C++11)
-
-Performs compile time assertion checking. [cpp:static_assert](https://en.cppreference.com/w/cpp/language/static_assert).
-
-```cpp
-static_assert ( bool_constexpr , message );
-static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
-```
-
-- The call is only evaluated once, at compile time, and only in one context (templates are different contexts).
-- For dynamic time assertion checking see: [assert](#t-assert).
-
-#### T: Assert
-
-Performs dynamic assertion checking in debug build modes. [cpp:assert](https://en.cppreference.com/w/cpp/error/assert)
-
-```cpp
-#ifdef NDEBUG
-#define assert(condition) ((void)0)
-#else
-#define assert(condition) /*implementation defined*/
-#endif
-```
-
-- The `assert()` macro depends on debug flags, and calls `std::abort` on error.
-- If `assert()` is called in a constexpr context, then it will work as expected at compile time!.
 
 
-### Multi-Threading
-
-### Concepts
-
-
-## TODO
+## SCRATCH
 
 ### T: Functors
 https://en.cppreference.com/w/cpp/utility/functional
@@ -1283,3 +1375,10 @@ Sum s = std::for_each(nums.begin(), nums.end(), Sum());
 int sum = std::accumulate(v.begin(), v.end(), 0);
 int product = std::accumulate(v.begin(), v.end(), 1, std::multiplies<int>());
 ```
+
+#### T: Value Categories
+
+LV, RV, PV, XV, ..
+TODO.
+
+See [cpp:value_category](https://en.cppreference.com/w/cpp/language/value_category).
