@@ -97,7 +97,7 @@ The following categorization is used:
   - Declaration: [pointers and references](#c-pointers-and-references), [static_assert](#c-static-assert-c11), [enum class](#c-enum-class).
   - Expression: [nullptr](#c-nullptr), [operator overloading](#c-operator-overloading).
   - Functions: [function overloading](#c-function-overloading).
-  - Classes: [struct and class](#c-struct-and-class), [POD Type](#c-pod-type), [class size](#c-class-size), [object lifetime](#c-object-lifetime), [class initialization order](#c-class-initialization-order), [derived classes](#c-derived-classes), [public inheritance](#c-public-inheritance), [abstract class](#c-abstract-class), [dynamic polymorphism](#c-dynamic-polymorphism).
+  - Classes: [struct and class](#c-struct-and-class), [POD Type](#c-pod-type), [class size](#c-class-size), [object lifetime](#c-object-lifetime), [class initialization order](#c-class-initialization-order), [derived classes](#c-derived-classes), [public inheritance](#c-public-inheritance), [abstract class](#c-abstract-class), [dynamic polymorphism](#c-dynamic-polymorphism), [overriding non-virtual methods](#c-overriding-non-virtual-methods).
 * STL:
   - Utils: [assert](#stl-assert).
   - Containers: [std::vector](https://en.cppreference.com/w/cpp/container/vector), [std::array](https://en.cppreference.com/w/cpp/container/array).
@@ -611,6 +611,40 @@ References:
 * Better Code: Runtime Polymorphism - Sean Parent: https://www.youtube.com/watch?v=QGcVXgEVMJg
 
 #### C++: Static Polymorphism
+
+#### C++: Overriding Non-Virtual Functions
+
+Overriding non-virtual functions is possible (not an error), but dynamic dispatch won't be used.
+
+```cpp
+struct Base {
+	void foo() {};
+	virtual void vFoo() {};
+};
+
+struct Derived : Base {
+ 	void foo() {};           // hides Base::foo()
+	void vFoo() override {}; // dynamic dispatch
+};
+
+Base *b;
+Derived d;
+
+b = new Base();
+b->foo();  // calls Base::foo()      // ok
+b->vfoo(); // calls Base::vfoo()     // ok
+
+d = new Derived();
+d->foo();  // calls Derived::foo()   // hides
+d->vfoo(); // calls Derived::vfoo()  // overrides
+
+b = new Derived();
+b->foo();  // calls Base::foo()      // Not Dynamic Dispatch!
+b->vfoo(); // calls Derived::vfoo()  // Dynamic Dispatch
+```
+
+References:
+* https://stackoverflow.com/questions/11067975/overriding-non-virtual-methods
 
 ### C++: Templates
 ### C++: Exceptions
