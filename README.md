@@ -18,7 +18,6 @@ cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
 - [Resources](#resources)
 - [Categories](#categories)
 - [Topics by Level](#topics-by-level)
-- [Language Agnostic Topics](#language-agnostic-topics)
 
 ## Resources
 
@@ -100,7 +99,7 @@ The following categorization is used:
   - [Algorithms](#stl-algorithms)
   - [Numerics](#stl-numerics)
   - [Localization](#stl-localization)
-  - [Input/Output](#stl-input-output)
+  - [Input/Output](#stl-inputoutput)
   - [Filesystem](#stl-filesystem)
   - [Regular Expressions](#stl-regular-expressions)
   - [Atomic Operations](#stl-atomic-operations)
@@ -108,7 +107,7 @@ The following categorization is used:
 
 * [Idioms and Best Practices](#idioms-and-best-practices)
 
-* [Language Agnostic Topics](#language-agnostic-topics)
+* Language Agnostic Topics:
   - GRASP (OOD).
   - SOLID: theory and code reviews.
   - Design Patterns: Creational, Structural, Behavioralm and **Concurrency**.
@@ -128,7 +127,7 @@ The following categorization is used:
   - std::string: https://en.cppreference.com/w/cpp/string
   - std::vector: https://en.cppreference.com/w/cpp/container/vector
   - std::array: https://en.cppreference.com/w/cpp/container/array
-  - [assert](#c-assert)
+  - [assert](#stl-assert)
 
 **Intermediate**
 * C++ Language:
@@ -144,7 +143,7 @@ The following categorization is used:
   - constructor delegation
   - exception handling (basics)
   - [private inheritance](#c-private-inheritance)
-  - [multiple inheritance](#c-multiple-inheritance)
+  - multiple inheritance
   - lambda expressions
   - functors
   - std::function
@@ -152,7 +151,7 @@ The following categorization is used:
   - std::optional
   - diamond problem.
   - uniform initialization
-  - [user-defined literals](#c-user-defined-literals)
+  - user-defined literals
   - Chrono
   - random number generation
   - STL containers
@@ -207,16 +206,10 @@ The following categorization is used:
 * Application Binary Interface
 * Universal References.
 
-**New in C++20**
--  https://en.cppreference.com/w/cpp/language/constraints
-
 **Unassigned:**
-* Cyclic dependencies
-* Weak Ptr
 * Associative Containers
 * What would happen if you insert a user defined class into a map that only has operator == defined?
 * Problem with vector of bools
-
 
 ## C++ Language
 
@@ -300,7 +293,7 @@ Never use the `NULL` macro or `0` as replacements for null:
 
 ### C++: Declaration
 
-#### CppDeclaration: Pointers and References
+#### C++: Pointers and References
 
 In short, a reference is an alternative name for a variable, while a pointer is a variable that holds the address of another.
 
@@ -322,7 +315,7 @@ Dangling:
 * Dangling Reference: When the lifetime of the referred object ends before the end of the lifetime of the reference (undefined behavior).
 
 
-#### CppDeclaration: Enum Class
+#### C++: Enum Class
 
 The `enum class` and `enum struct` types provide solutions to problems the plain `enum` generates. [cpp:enum-class](https://en.cppreference.com/w/cpp/language/enum).
 
@@ -337,7 +330,7 @@ Enum class and struct:
 * No implicit conversion to number!. `static_cast` must be used.
 
 
-#### CppDeclaration: Static Assert (C++11)
+#### C++: Static Assert (C++11)
 
 Performs compile time assertion checking. [cpp:static_assert](https://en.cppreference.com/w/cpp/language/static_assert).
 
