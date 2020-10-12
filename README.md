@@ -97,7 +97,7 @@ The following categorization is used:
   - Declaration: [pointers and references](#c-pointers-and-references), [static_assert](#c-static-assert-c11), [enum class](#c-enum-class).
   - Expression: [nullptr](#c-nullptr), [operator overloading](#c-operator-overloading).
   - Functions: [function overloading](#c-function-overloading).
-  - Classes: [struct and class](#c-struct-and-class), [POD Type](#c-pod-type), [class size](#c-class-size), [object lifetime](#c-object-lifetime), [class initialization order](#c-class-initialization-order), [derived classes](#c-derived-classes), [public inheritance](#c-public-inheritance), [abstract class](#c-abstract-class), [dynamic polymorphism](#c-dynamic-polymorphism), [overriding non-virtual methods](#c-overriding-non-virtual-methods).
+  - Classes: [struct and class](#c-struct-and-class), [POD Type](#c-pod-type), [class size](#c-class-size), [object lifetime](#c-object-lifetime), [class initialization order](#c-class-initialization-order), [derived classes](#c-derived-classes), [public inheritance](#c-public-inheritance), [abstract class](#c-abstract-class), [dynamic polymorphism](#c-dynamic-polymorphism), [overriding non-virtual functions](#c-overriding-non-virtual-functions).
 * STL:
   - Utils: [assert](#stl-assert).
   - Containers: [std::vector](https://en.cppreference.com/w/cpp/container/vector), [std::array](https://en.cppreference.com/w/cpp/container/array).
@@ -121,6 +121,7 @@ The following categorization is used:
   - uniform initialization: https://arne-mertz.de/2015/07/new-c-features-uniform-initialization-and-initializer_list/
   - dynamic memory management with new and delete: https://en.cppreference.com/w/cpp/language/delete https://en.cppreference.com/w/cpp/language/new  https://en.cppreference.com/w/cpp/memory
   - exception handling (basics): https://en.cppreference.com/w/cpp/language/exceptions, https://isocpp.org/wiki/faq/exceptions, 
+  - `this` pointer and functions.
 * STL:
   - [smart pointers](#stl-smart-pointers)
   - std::string small string optimization : https://shaharmike.com/cpp/std-string/ https://stackoverflow.com/questions/21694302/what-are-the-mechanics-of-short-string-optimization-in-libc
