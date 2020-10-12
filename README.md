@@ -108,78 +108,79 @@ The following categorization is used:
   - [private inheritance](#c-private-inheritance)
   - [multiple inheritance](#c-multiple-inheritance)
   - [diamond problem](#c-diamond-problem)
+  - lambda expressions: https://en.cppreference.com/w/cpp/language/lambda
+  - functors: https://en.cppreference.com/w/cpp/utility/functional,  https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses
+  - deleted and defaulted functions: https://stackoverflow.com/questions/5513881/meaning-of-delete-after-function-declaration, https://en.cppreference.com/w/cpp/language/function#Deleted_functions, https://en.cppreference.com/w/cpp/language/function#Function_definition
+  - constructor delegation: https://stackoverflow.com/questions/13961037/delegate-constructor-c, https://en.cppreference.com/w/cpp/language/constructor
+  - templates (basics): https://en.cppreference.com/w/cpp/language/templates
+  - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization
+  - type inference (auto, decltype): https://en.cppreference.com/w/cpp/language/decltype, https://en.cppreference.com/w/cpp/language/auto
+  - return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
+  - copy elision: https://en.cppreference.com/w/cpp/language/copy_elision
+  - user-defined literals: https://en.cppreference.com/w/cpp/language/user_literal
+  - uniform initialization: https://arne-mertz.de/2015/07/new-c-features-uniform-initialization-and-initializer_list/
+  - dynamic memory management with new and delete: https://en.cppreference.com/w/cpp/language/delete https://en.cppreference.com/w/cpp/language/new  https://en.cppreference.com/w/cpp/memory
+  - exception handling (basics): https://en.cppreference.com/w/cpp/language/exceptions, https://isocpp.org/wiki/faq/exceptions, 
 * STL:
   - [smart pointers](#stl-smart-pointers)
+  - std::string small string optimization : https://shaharmike.com/cpp/std-string/ https://stackoverflow.com/questions/21694302/what-are-the-mechanics-of-short-string-optimization-in-libc
+  - std::function: https://en.cppreference.com/w/cpp/utility/functional/function
+  - std::string_view: https://en.cppreference.com/w/cpp/header/string_view
+  - std::optional : https://en.cppreference.com/w/cpp/utility/optional
+  - chrono: https://en.cppreference.com/w/cpp/chrono
+  - containers : https://en.cppreference.com/w/cpp/container
+  - iterators : https://en.cppreference.com/w/cpp/iterator
+  - algorithms : https://en.cppreference.com/w/cpp/algorithm
+  - random number generation: https://en.cppreference.com/w/cpp/numeric/random
 * Idioms and Best Practices:
   - [composition versus inheritance](#i-composition-vs-inheritance)
   - [const-correctness](#i-const-correctness)
   - [pimpl](#i-pimpl)
   - [raii](#i-raii)
+  - rule of five, rule of three, rule of zero: https://en.cppreference.com/w/cpp/language/rule_of_three
 * Misc:
-  - dynamic memory management with new and delete
-  - deleted and defaulted functions
-  - constructor delegation
-  - exception handling (basics)
-  - lambda expressions
-  - functors
-  - std::function
-  - std::string_view
-  - std::optional
-  - uniform initialization
-  - user-defined literals
-  - Chrono
-  - random number generation
-  - STL containers
-  - STL iterators
-  - STL algorithms
-  - templates (basics)
-  - template specialization
-  - type inference (auto, decltype)
-  - rule of five, rule of three, rule of zero.
-  - small string optimization
-  - return value optimization
 
 **Experienced:**
 * [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks)
 * [runtime concept idiom](#i-runtime-concept-idiom)
-* static polymorphism
-* casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.
-* Static Polimorphism
-* RValue References
-* Object Slicing
-* Move Semantics
-* Perfect Forwarding
-* Exception Safety Guarantees
-* noexcept
-* constexpr
+* static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
+* casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
+* RValue References: https://en.cppreference.com/w/cpp/language/value_category
+* Object Slicing: https://stackoverflow.com/questions/274626/what-is-object-slicing
+* Move Semantics: https://stackoverflow.com/questions/3106110/what-is-move-semantics, https://en.cppreference.com/w/cpp/language/move_constructor
+* Perfect Forwarding: https://en.cppreference.com/w/cpp/utility/forward, https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
+* Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
+* noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
+* constexpr: https://en.cppreference.com/w/cpp/language/constexpr
 * multi-threading
   * threads
   * atomics
   * condition variables
   * futures
-* Argument-Dependent Lookup
+* Argument-Dependent Lookup:  https://en.cppreference.com/w/cpp/language/adl
 * [virtual inheritance](#c-virtual-inheritance)
-* Regular Expressions
-* I/O with streams
-* Iterator Categories
-* Custom memory Management
+* Regular Expressions: https://en.cppreference.com/w/cpp/regex
+* I/O with streams: https://en.cppreference.com/w/cpp/io
+* Custom memory Management: https://en.cppreference.com/w/cpp/memory/allocator
   * std::allocator
   * operator new and why
 * [Empty base optimization](#c-empty-base-optimization)
+* https://en.cppreference.com/w/cpp/language/sfinae
+* https://en.cppreference.com/w/cpp/language/crtp
   
 **Expert:**
-* Auto Type Deduction
-* Template Type Deduction
-* Variadic Templates
-* Reference Collapsing
-* Template Recursion
-* Template Meta-Programming
-* Tag-Dispatch
-* Random Number Generation
-* Iterator Categories: Forward, Bidirectional, Input, Output, Random Access.
-* Overload Resolution
-* Application Binary Interface
-* Universal References.
+* Auto Type Deduction : https://en.cppreference.com/w/cpp/language/auto
+* Template Type Deduction :https://en.cppreference.com/w/cpp/language/template_argument_deduction 
+* Variadic Templates : https://en.cppreference.com/w/cpp/language/parameter_pack , https://en.cppreference.com/w/cpp/language/variable_template
+* Reference Collapsing : https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-collapsing-rules-requested-1-a-a-2 , https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
+* Template Recursion : https://stackoverflow.com/questions/54744252/recursive-template-explanation-c
+* Template Meta-Programming 
+* Tag-Dispatch : https://arne-mertz.de/2016/10/tag-dispatch/,  https://stackoverflow.com/questions/32522279/tag-dispatching-example-in-c, https://www.fluentcpp.com/2018/04/27/tag-dispatching/
+* Iterator Categories: Forward, Bidirectional, Input, Output, Random Access.https://en.cppreference.com/w/cpp/iterator
+* Overload Resolution https://en.cppreference.com/w/cpp/language/overload_resolution
+* Application Binary Interface : https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi , 
+* Universal References. https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
+* https://en.cppreference.com/w/cpp/language/Zero-overhead_principle
 
 **Unassigned:**
 * Associative Containers
