@@ -75,35 +75,9 @@ Categorization comes directly from the official categorization: [cpp:cpp](https:
 
 The following categorization is used:
 
-* [C++ Language](#c-language):
-  - [Basic Concepts](#c-basic-concepts)
-  - [Keywords](#c-keywords)
-  - [Preprocessor](#c-preprocessor)
-  - [Expressions](#c-expressions)
-  - [Declaration](#c-declaration)
-  - [Initialization](#c-initialization)
-  - [Functions](#c-functions)
-  - [Statements](#c-statements)
-  - [Classes](#c-classes)
-  - [Templates](#c-templates)
-  - [Exceptions](#c-exceptions)
+* [C++ Language](#c-language): [Basic Concepts](#c-basic-concepts), [Keywords](#c-keywords), [Preprocessor](#c-preprocessor), [Expressions](#c-expressions), [Declaration](#c-declaration), [Initialization](#c-initialization), [Functions](#c-functions), [Statements](#c-statements), [Classes](#c-classes), [Templates](#c-templates), [Exceptions](#c-exceptions)
 
-* [STL](#stl):
-  - [General Utilities](#stl-general-utilities)
-  - [Concepts](#stl-concepts)
-  - [Diagnostics](#stl-diagnostics)
-  - [Strings](#stl-strings)
-  - [Containers](#stl-containers)
-  - [Iterators](#stl-iterators)
-  - [Ranges](#stl-ranges)
-  - [Algorithms](#stl-algorithms)
-  - [Numerics](#stl-numerics)
-  - [Localization](#stl-localization)
-  - [Input/Output](#stl-inputoutput)
-  - [Filesystem](#stl-filesystem)
-  - [Regular Expressions](#stl-regular-expressions)
-  - [Atomic Operations](#stl-atomic-operations)
-  - [Threading](#stl-threading)
+* [STL](#stl): [General Utilities](#stl-general-utilities), [Concepts](#stl-concepts), [Diagnostics](#stl-diagnostics), [Strings](#stl-strings), [Containers](#stl-containers), [Iterators](#stl-iterators), [Ranges](#stl-ranges), [Algorithms](#stl-algorithms), [Numerics](#stl-numerics), [Localization](#stl-localization), [Input/Output](#stl-inputoutput), [Filesystem](#stl-filesystem), [Regular Expressions](#stl-regular-expressions), [Atomic Operations](#stl-atomic-operations), [Threading](#stl-threading)
 
 * [Idioms and Best Practices](#idioms-and-best-practices)
 
