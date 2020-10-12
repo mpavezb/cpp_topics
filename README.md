@@ -109,77 +109,61 @@ The following categorization is used:
 * [Idioms and Best Practices](#idioms-and-best-practices)
 
 * [Language Agnostic Topics](#language-agnostic-topics)
-
-- GRASP (OOD).
+  - GRASP (OOD).
   - SOLID: theory and code reviews.
   - Design Patterns: Creational, Structural, Behavioralm and **Concurrency**.
   - Working with Legacy Code
   - CLEAN Arquitecture
   - TDD
 
-
 ## Topics by Level
 
 **Beginner**
-* C programming language
-* Basic Concepts:
-  * loops
-  * conditions
-  * [pointers and references](#t-pointers-and-references)
-  * [reading type declarations](#t-reading-type-declarations)
-  * [semantics and syntax](#t-semantics-and-syntax)
-  * [nullptr](#t-nullptr)
-  * [enum class](#t-enum-class)
-* Classes:
-  * [struct and class](#t-struct-and-class)
-  * [POD Type](#t-pod-type)
-  * [class size](#t-class-size)
-  * [object lifetime](#t-object-lifetime)
-  * [class initialization order](#t-class-initialization-order)
-  * [derived classes](#t-derived-classes)
-  * [public inheritance](#t-public-inheritance)
-  * [abstract class](#t-abstract-class)
-  * [dynamic polymorphism](#t-dynamic-polymorphism)
-  * function overloading
-  * operator overloading
+* C++ Language:
+  - Basics: loops, conditions, [reading type declarations](#t-reading-type-declarations), [semantics and syntax](#t-semantics-and-syntax).
+  - Declaration: [pointers and references](#t-pointers-and-references), [static_assert](#t-static-assert-c11), [enum class](#t-enum-class).
+  - Expression: [nullptr](#t-nullptr).
+  - Classes: [struct and class](#t-struct-and-class), [POD Type](#t-pod-type), [class size](#t-class-size), [object lifetime](#t-object-lifetime), [class initialization order](#t-class-initialization-order), [derived classes](#t-derived-classes), [public inheritance](#t-public-inheritance), [abstract class](#t-abstract-class), [dynamic polymorphism](#t-dynamic-polymorphism), function overloading, operator overloading.
 * STL:
-  * std::string: https://en.cppreference.com/w/cpp/string
-  * std::vector: https://en.cppreference.com/w/cpp/container/vector
-  * std::array: https://en.cppreference.com/w/cpp/container/array
-* Error Handling:
-  * [static_assert](#t-static-assert-c11)
-  * [assert](#t-assert)
+  - std::string: https://en.cppreference.com/w/cpp/string
+  - std::vector: https://en.cppreference.com/w/cpp/container/vector
+  - std::array: https://en.cppreference.com/w/cpp/container/array
+  - [assert](#t-assert)
 
 **Intermediate**
-* [const-correctness](#t-const-correctness)
-* [smart pointers](#t-smart-pointers)
-* [raii](#t-raii)
-* [pimpl](#t-pimpl)
-* dynamic memory management with new and delete
-* deleted and defaulted functions
-* constructor delegation
-* exception handling (basics)
-* [private inheritance](#t-private-inheritance)
-* lambda expressions
-* functors
-* std::function
-* std::string_view
-* std::optional
-* [multiple inheritance](#t-multiple-inheritance)
-* diamond problem.
-* uniform initialization
-* [user-defined literals](#t-user-defined-literals)
-* Chrono
-* random number generation
-* STL containers
-* STL iterators
-* STL algorithms
-* templates (basics)
-* template specialization
-* type inference (auto, decltype)
-* rule of five, rule of three, rule of zero.
-* small string optimization
-* return value optimization
+* C++ Language:
+* STL:
+  - [smart pointers](#t-smart-pointers)
+* Idioms:
+  - [const-correctness](#t-const-correctness)
+  - [pimpl](#t-pimpl)
+  - [raii](#t-raii)
+
+  - dynamic memory management with new and delete
+  - deleted and defaulted functions
+  - constructor delegation
+  - exception handling (basics)
+  - [private inheritance](#t-private-inheritance)
+  - [multiple inheritance](#t-multiple-inheritance)
+  - lambda expressions
+  - functors
+  - std::function
+  - std::string_view
+  - std::optional
+  - diamond problem.
+  - uniform initialization
+  - [user-defined literals](#t-user-defined-literals)
+  - Chrono
+  - random number generation
+  - STL containers
+  - STL iterators
+  - STL algorithms
+  - templates (basics)
+  - template specialization
+  - type inference (auto, decltype)
+  - rule of five, rule of three, rule of zero.
+  - small string optimization
+  - return value optimization
 
 **Experienced:**
 * [dynamic polymorphism drawbacks](#t-dynamic-polymorphism-drawbacks)
