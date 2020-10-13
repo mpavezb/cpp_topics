@@ -5,4 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
+add_subdirectory(language)
+add_subdirectory(stl)
 add_subdirectory(idioms)

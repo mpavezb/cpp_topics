@@ -153,6 +153,7 @@ The following categorization is used:
 * Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
 * noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
 * constexpr: https://en.cppreference.com/w/cpp/language/constexpr
+* std::bind: https://en.cppreference.com/w/cpp/utility/functional/bind, [bind.cpp](src/stl/bind.cpp).
 * multi-threading
   * threads
   * atomics
