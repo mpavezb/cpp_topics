@@ -105,16 +105,14 @@ The following categorization is used:
 
 **Intermediate**
 * C++ Language:
-  - [private inheritance](#c-private-inheritance)
-  - [multiple inheritance](#c-multiple-inheritance)
-  - [diamond problem](#c-diamond-problem)
-  - [functors](#c-functors)
-  - [lambda expressions](#c-lambda-expressions)
+  - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions)
+  - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem)
+  - Declarations: [auto](#c-auto), [decltype](#c-decltype)
+  - 
   - deleted and defaulted functions: https://stackoverflow.com/questions/5513881/meaning-of-delete-after-function-declaration, https://en.cppreference.com/w/cpp/language/function#Deleted_functions, https://en.cppreference.com/w/cpp/language/function#Function_definition
   - constructor delegation: https://stackoverflow.com/questions/13961037/delegate-constructor-c, https://en.cppreference.com/w/cpp/language/constructor
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
-  - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization
-  - type inference (auto, decltype): https://en.cppreference.com/w/cpp/language/decltype, https://en.cppreference.com/w/cpp/language/auto
+  - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization 
   - return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
   - copy elision: https://en.cppreference.com/w/cpp/language/copy_elision
   - user-defined literals: https://en.cppreference.com/w/cpp/language/user_literal
@@ -300,6 +298,53 @@ Dangling:
 * Dangling Pointer: When the lifetime of the pointed object ends before the end of the lifetime of the pointer, leading to a deallocated memory space.
 * Dangling Reference: When the lifetime of the referred object ends before the end of the lifetime of the reference (undefined behavior).
 
+
+#### C++: auto
+
+Allows automatic type deduction [cpp:auto](https://en.cppreference.com/w/cpp/language/auto). However, it does not mean that the type is unknown!.
+
+TODO: Almost Always Auto idiom.
+
+The `auto` keyword is a breaking change:
+* The previous meaning was automatic storage duration, which is the default.
+* The commitee considers that the introduction of new keywords is extremely expensive.
+
+The main reasons for `auto` are: very complex types (like in STL), implementation of templates, and lambda functions.
+
+#### C++: decltype
+
+Inspects the declared type of an entity or the type and value category of an expression [cpp:decltype](https://en.cppreference.com/w/cpp/language/decltype). `decltype` is useful when declaring types that are difficult or impossible to declare using standard notation, like lambda-related types or types that depend on template parameters. 
+
+* `decltype(entity)`: Yields the type of the entity.
+* `decltype(expression)`: If the argument is an expression of type `T` and:
+  - Category *xvalue*, then yields: `T&&`.
+  - Category *lvalue*, then yields: `T&`.
+  - Category *prvalue*, then yields: `T`.
+  - The type does not require completeness or to have a destructor. It can also be abstract.
+
+```cpp
+// Example 1: entity vs expression
+struct A { double x; };
+const A* a;
+decltype(a->x) y;         // entity type              : double
+decltype((a->x)) z = y;   // (lvalue) expression type : const double&
+
+// Example 2: Function Template
+// (but this can be deduced since C++14)
+template<typename T, typename U>
+auto add(T t, U u) -> decltype(t + u) { return t + u; }
+
+// Example 3: Lambda Fuction
+auto f = [](int a, int b) -> int { return a * b; };
+decltype(f) g = f;
+f(2, 2);
+g(3, 3);
+```
+
+When to use `decltype`:
+* `decltype` should be used when we need a type to be precisely the type as another one. The type which `auto` yields could be potentially different than the type we need!.
+* Sometimes using `auto` and `decltype` yields the same results, so there is no win on using `decltype`.
+* Similar to `auto`, `decltype` can be used to write shorter expressions, when the type is complex and we have a good expression to mirror.
 
 #### C++: Enum Class
 
