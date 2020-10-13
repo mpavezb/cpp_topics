@@ -37,7 +37,8 @@ int main() {
   apply_to_A(a);  // ok
   // applyA(b);  // error!
 
-  // Function Templates allow
+  // Function Templates allow using functions and functors.
+  // The type is deduced.
   templated_apply(foo);
   templated_apply(bar);
   templated_apply(a);

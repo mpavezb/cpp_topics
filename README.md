@@ -109,7 +109,7 @@ The following categorization is used:
   - [multiple inheritance](#c-multiple-inheritance)
   - [diamond problem](#c-diamond-problem)
   - [functors](#c-functors)
-  - lambda expressions: https://en.cppreference.com/w/cpp/language/lambda
+  - [lambda expressions](#c-lambda-expressions)
   - deleted and defaulted functions: https://stackoverflow.com/questions/5513881/meaning-of-delete-after-function-declaration, https://en.cppreference.com/w/cpp/language/function#Deleted_functions, https://en.cppreference.com/w/cpp/language/function#Function_definition
   - constructor delegation: https://stackoverflow.com/questions/13961037/delegate-constructor-c, https://en.cppreference.com/w/cpp/language/constructor
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
@@ -444,6 +444,81 @@ See Also:
 * https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses
 
 
+#### C++: Lambda Expressions
+
+Lambda expressions are shorthands (syntactic sugar) for closures. A closure is an unnamed functor capable of capturing variables in scope. [cpp:lambda-expressions](https://en.cppreference.com/w/cpp/language/lambda).
+```cpp
+auto f = [captures](params) -> ret {body} // normal lambda declaration
+auto f = [captures](params){body}         // deduced return type
+auto f = [captures]{body}                 // no params, deduced return
+```
+
+Lambda Captures [cpp:lambda-captures](https://en.cppreference.com/w/cpp/language/lambda#Lambda_capture): 
+* Only objects of automatic storage duration can be captured (local variables which are not static).
+* Static storage duration objects cannot be captured, but they can still be accessed.
+* Data members can be captured through `this`, which (as a pointer) is captured by value.
+* Variables are captured by value, unless a reference is specified.
+* The capture by value is `const` by default, unless the lambda is specified as `mutable`. However, the external value wont be changed.
+* Pack expansions can be captured.
+* Initializers can also be captured. (C++14)
+* By-copy capture: `*this`. (C++17).
+* Default capture modes can be used: `=` (by-value) and `&` (by-ref).
+
+```bash
+struct Sample {
+	void func() {
+		int data = 0;
+		auto f = [ data] () {};          // capture by: const int
+		auto f = [&data] () {};          // capture by: int&
+		auto f = [ data] () mutable {};  // capture by: int
+
+		auto f = [ this]() {};           // capture this (pointer)
+		auto f = [*this]() {};           // capture this by const value
+		auto f = [*this]() mutable {};   // capture this by value
+
+		// This can lead to unwanted capturing!.
+		auto f  [=](){};                 // equivalent: [ a, this] (and other by-value!)
+		auto f  [=,&a](){};              // equivalent: [&a, this] (and other by-value!)
+		auto f  [&](){};                 // equivalent: [&a, this] (and other by-reference!)
+		auto f  [&,a](){};               // equivalent: [ a, this] (and other by-reference!)
+	}
+};
+```
+
+Compiler Point of View:
+* For each lambda declaration, the compiler declares a functor and instanciates it.
+* In the case of *state-less* or *capture-less* lambdas, the functor is not created by the compiler, just the function call (dont take resources!).
+* As the closure is defined by an unnamed type (not exposed), `auto` must be used as the lambda type.
+* Only capture-less allow being set to variables of function pointer type.
+* Lambdas typically generate better code. And calls through closures allow full inlining.
+```cpp
+typedef int (*Fp)(int);
+
+Fp f = [    ](int d) {} // OK
+Fp f = [data](int d) {} // NOK!! error
+```
+
+Generic Lambdas:
+* Allow type deduction for their arguments: `auto fn = [](auto x, auto y) { return x + y; }`.
+* Creates just one functor which declares multiple overloads based on a template.
+* Up to C++17 this is the only case where lambdas are defined without the `template` keyword.
+
+The trailing-return-type and return-type-deduction works for regular functions too!. This is specially useful for function templates.
+```cpp
+int  foo(int a, int b) { return a + b; }            //
+auto foo(int a, int b) { return a + b; }            // return-type-deduction
+auto foo(int a, int b) -> int { return a + b; }     // trailing-return-type
+
+// ERROR: compiler does not know a,b when parsing decltype.
+template<typename T>
+decltype(a+b) foo (T a, T b) { return a + b; }
+
+// GOOD:  compiler knows a,b when parsing decltype.
+template<typename T>
+auto foo (T a, T b) -> decltype(a+b) { return a + b; }
+```
+
+
 ### C++: Statements
 ### C++: Classes
 
@@ -773,6 +848,8 @@ References:
 
 ## STL
 
+Depend on STL libraries. They are usually faster, tested, and well documented. Also, this removes loops and improves readability.
+
 * [General Utilities](#stl-general-utilities)
 * [Concepts](#stl-concepts)
 * [Diagnostics](#stl-diagnostics)
@@ -987,25 +1064,6 @@ For an example on how to implement this, see:
 - This can be avoided when pointers/references to objects are passed as function arguments. This way, the binding is delayed to runtime, and the proper methods will be called.
 - It can also be avoided by making the Base pure virtual.
 
-### LAMBDA FUNCTIONS (C++11)
-https://en.cppreference.com/w/cpp/language/lambda
-https://stackoverflow.com/questions/7627098/what-is-a-lambda-expression-in-c11
-    • Lambda functions are just syntactic sugar for anonymous functors.
-    • It is possible to execute a lambda immediately upon definition
-    • Under the hood, it is the object of an autogenerated class with overloading operator() const. Such object is called closure and created by compiler. This 'closure' concept is near with the bind concept from C++11. But lambdas typically generate better code. And calls through closures allow full inlining.\
-
-    • [] is the capture list, () the argument list and {} the function body.
-    • []() { } // barebone lambda
-    • []() mutable -> T { } // T is the return type, still lacking throw()
-    • auto lambda = [](auto x, auto y) {return x + y;}; // generic lambda
-
-You can capture by both reference and value, which you can specify using & and = respectively:
-    • [&foo] capture by reference
-    • [&] captures all variables used in the lambda by reference
-    • [=] captures all variables used in the lambda by value
-    • [&, foo] captures variables like with [&], but foo by value
-    • [=, &foo] captures variables like with [=], but foo by reference
-The generated operator() is const by default, with the implication that captures will be const when you access them by default. This has the effect that each call with the same input would produce the same result, however you can mark the lambda as mutable to request that the operator() that is produced is not const.
 
 
 ### PARAMETER PACK - FUNCTIONS AND TEMPLATES  (C++11)
