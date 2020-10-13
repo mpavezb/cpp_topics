@@ -153,7 +153,7 @@ The following categorization is used:
 * Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
 * noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
 * constexpr: https://en.cppreference.com/w/cpp/language/constexpr
-* std::bind: https://en.cppreference.com/w/cpp/utility/functional/bind, [bind.cpp](src/stl/bind.cpp).
+* std::bind: https://en.cppreference.com/w/cpp/utility/functional/bind, [sample:bind.cpp](src/stl/bind.cpp).
 * multi-threading
   * threads
   * atomics
@@ -415,27 +415,31 @@ Foo foo;
 bool a = foo(0);
 ```
 
-A function type is defined by: the number of parameters, their type, and the type of the return value. But two functor classes defining the same function have different types!:
-```cpp
-// functions have the same type
-int foo(double x, long y);
-int bar(double a, long b);
+Functors and types [sample:functors-and-types.cpp](src/language/functors_and_types.cpp):
+* A regular function type is defined by: the number of parameters, their type, and the type of the return value. 
+* Two functor classes defining the same function have different types!.
+* Both, functors and functions can be used to instanciate same templates, because they syntactically behave the same.
 
-// These funtors have different types
-struct A {
-	int operator()(double x, long y);
-};
-struct B {
-	int operator()(double x, long y);
-};
-```
-
-Considerations:
+Benefits:
 * Regular functions are not functor types, but can be used where functors are expected due to function-to-pointer implicit conversion.
 * When passed as functions, the compiler can know exactly what method to inline. When using function pointers, this is not clear, and has to be computed at runtime.
+* Using functors with Function Templates allows reuse and faster code, because the same Funtion Template works for multiple functors, and because the compiler exactly knows which functions will be called.
+* Functors can be easily parameterized, because they are classes which can have other members.
+
+```cpp
+// LessThan Functor
+struct LessThan {
+	int val;
+	LessThan(int& x) : val(x) {}
+	bool operator()(const int& x) const { return x < val; }
+};
+
+// using functor with function template from STL
+auto p = find_if(v.begin(), v.end(), LessThan(100));
+```
 
 See Also:
-* Code example in [functors.cpp](src/language/functors.cpp).
+* Code example in [sample:functors.cpp](src/language/functors.cpp).
 * https://www.fluentcpp.com/2017/03/09/functors-are-not-dead-the-double-functor-trick/
 * https://stackoverflow.com/questions/356950/what-are-c-functors-and-their-uses
 
@@ -907,7 +911,7 @@ Cons:
   - Space overhead: A pointer is required for pimpl, and another may be required for the implementation to access the interface members.
   - Lifetime Management overhead: The implementation lives in the heap, causing overhead on construction and destruction.
 
-Example implementation in [pimpl.h](src/idioms/pimpl.h) and [pimpl.cpp](src/idioms/pimpl.cpp).
+Example implementation in [sample:pimpl.h](src/idioms/pimpl.h) and [sample:pimpl.cpp](src/idioms/pimpl.cpp).
 
 Resources:
 * https://arne-mertz.de/2019/01/the-pimpl-idiom/

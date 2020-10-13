@@ -4,26 +4,26 @@
 
 using namespace std;
 
-struct A {
+struct MyClass {
   void func(std::string s) { cout << "Calling A::func() // " << s << endl; }
 };
 
-void func(A& this_, std::string s) {
+void func(MyClass& this_, std::string s) {
   cout << "Calling func()    // " << s << endl;
 }
 
 int main() {
-  A a;
-  func(a, "free function");
-  a.func("member function");
+  MyClass an_object;
+  func(an_object, "free function");
+  an_object.func("member function");
 
   using namespace std::placeholders;
-  auto b1 = std::bind(&A::func, &a, _1);
-  auto b2 = std::bind(&A::func, _1, _2);
+  auto b1 = std::bind(&MyClass::func, &an_object, _1);
+  auto b2 = std::bind(&MyClass::func, _1, _2);
 
   b1("bind to 'a'");
-  b2(a, "bind using 'a' as argument");  // bind allows using A::func as if it
-                                        // were a free function!.
+  b2(an_object, "bind using 'a' as argument");  // bind allows using A::func as
+                                                // if it were a free function!.
 
   return 0;
 }

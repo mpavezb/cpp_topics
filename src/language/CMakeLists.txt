@@ -1,5 +1,4 @@
 project(language)
 
-# pimpl
 add_executable(functors functors.cpp)
-install(TARGETS functors DESTINATION ${PROJECT_NAME})
+add_executable(functors_and_types functors_and_types.cpp)
