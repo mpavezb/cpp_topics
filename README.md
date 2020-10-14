@@ -146,7 +146,7 @@ The following categorization is used:
 **Experienced:**
 * C++ Language:
   - Declarations: [const-and-volatile](#c-const-and-volatile), [constexpr](#c-constexpr).
-  - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks), [move semantics](#c-move-semantics).
+  - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks), [move semantics](#c-move-semantics), [object slicing](#c-object-slicing).
 * STL:
   - Utils: [stl:move](#stl-std-move).
   - std::bind: [stl:bind](https://en.cppreference.com/w/cpp/utility/functional/bind), [sample:bind.cpp](src/stl/bind.cpp).
@@ -156,7 +156,6 @@ The following categorization is used:
   - IMPORTANT static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
   - IMPORTANT casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
   - IMPORTANT RValue References: https://en.cppreference.com/w/cpp/language/value_category
-  - Object Slicing: https://stackoverflow.com/questions/274626/what-is-object-slicing
   - IMPORTANT Perfect Forwarding: https://en.cppreference.com/w/cpp/utility/forward, https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
   - IMPORTANT Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
   - noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
@@ -854,6 +853,8 @@ for (auto&& [first,second] : mymap)
 
 ### C++: Classes
 
+* [object slicing](#c-object-slicing)
+
 #### C++: Struct and Class
 
 They are the exactly the same, but `struct` has default `public` members and bases, while `class` has default `private` members and bases. Both `class` and `struct` can have a mixture of `public`, `protected` and `private` members, can use inheritance and can have member functions.
@@ -1182,6 +1183,15 @@ struct B : virtual A {};
 struct C : virtual A {};
 struct D : B, C {}; // OK!. D contains: B, C, A (shared) subobjects.
 ```
+
+#### C++: Object Slicing
+- https://stackoverflow.com/questions/274626/what-is-object-slicing
+- https://www.geeksforgeeks.org/object-slicing-in-c/
+
+- Happens when a derived class object is assigned to a base class object, additional attributes of a derived class object are sliced off to form the base class object. If a function gets the object by value, then only Base class methods will be called.
+- This can be avoided when pointers/references to objects are passed as function arguments. This way, the binding is delayed to runtime, and the proper methods will be called.
+- It can also be avoided by making the Base pure virtual.
+
 
 #### C++: Abstract Class
 
@@ -1608,16 +1618,6 @@ For an example on how to implement this, see:
 ## SCRATCH
 
 
-### T: Object Slicing
-- https://stackoverflow.com/questions/274626/what-is-object-slicing
-- https://www.geeksforgeeks.org/object-slicing-in-c/
-
-- Happens when a derived class object is assigned to a base class object, additional attributes of a derived class object are sliced off to form the base class object. If a function gets the object by value, then only Base class methods will be called.
-- This can be avoided when pointers/references to objects are passed as function arguments. This way, the binding is delayed to runtime, and the proper methods will be called.
-- It can also be avoided by making the Base pure virtual.
-
-
-
 ### PARAMETER PACK - FUNCTIONS AND TEMPLATES  (C++11)
 https://en.cppreference.com/w/cpp/language/parameter_pack
 
@@ -1829,17 +1829,11 @@ void maybe_take_an_int(optional<int> potential_value = nullopt);
 optional<int> maybe_return_an_int();
 ```
 
-
 ### DRY PRINCIPLE - DONT REPEAT YOURSELF
 https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 "Every piece of knowledge must have a single, unambiguous, authoritative representation within a system" - Andy Hunt, Dave Thomas
 
 WET: Violations of the DRY principle - "write everything twice", "we enjoy typing" or "waste everyone's time".
-
-
-
-
-
 
 ### REFERENCE COLLAPSING RULES
 https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
