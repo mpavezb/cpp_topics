@@ -147,7 +147,7 @@ The following categorization is used:
 **Experienced:**
 * C++ Language:
   - Declarations: [const-and-volatile](#c-const-and-volatile), [constexpr](#c-constexpr), [rvalue references](#c-rvalue-references).
-  - Expressions: [value categories](#c-value-categories).
+  - Expressions: [value categories](#c-value-categories), [casts](#c-casts).
   - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks), [move semantics](#c-move-semantics), [object slicing](#c-object-slicing).
   - Exceptions: [exception safety guarantees](#c-exception-safety-guarantees), [noexcept](#c-noexcept).
 * STL:
@@ -157,7 +157,6 @@ The following categorization is used:
   - [runtime concept idiom](#i-runtime-concept-idiom)
 * TODO:
   - IMPORTANT static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
-  - IMPORTANT casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
   - multi-threading
 	- threads
 	- atomics
@@ -269,6 +268,7 @@ References:
 ### C++: Expressions
 
 * [value categories](#c-value-categories)
+* [casts](#c-casts)
 
 #### C++: nullptr
 
@@ -378,6 +378,77 @@ References:
 * https://stackoverflow.com/questions/3601602/what-are-rvalues-lvalues-xvalues-glvalues-and-prvalues
 * https://en.cppreference.com/w/cpp/language/decltype
 * CppCon 2019:Ben Saks "Back to Basics: Understanding Value Categories": https://www.youtube.com/watch?v=XS2JddPq7GQ
+
+#### C++: Casts
+
+Old style C casts are hard to predict and understand, they may result in static, dynamic, reinterpret, const. C++ defines explicit cast operations for those. 
+
+Considerations:
+* Both `static_cast` and `dynamic_cast` are generally safe, as long as we take some precautions. 
+* Both `const_cast` and `reinterpret_cast` are generally dangerous, as they tell the compiler not to trust the type system.
+* An "up-cast" (cast to the base class) is always valid with both `static_cast` and `dynamic_cast`, and also without any cast, as an "up-cast" is an implicit conversion.
+
+The cast operator enables implicit or explisit conversions from a class type to another [cpp:cast-operator](User defined: https://en.cppreference.com/w/cpp/language/cast_operator).
+* The conversion function is declared like a non-static member function (or funtion template) with no parameters, no return type, and with(out) the `explicit` specifier.
+```cpp
+struct X {
+	         operator int () const { return 7;       } // implicit conversion
+    explicit operator int*() const { return nullptr; } // explicit conversion	
+};
+```
+
+`static_cast` [cpp:static-cast](https://en.cppreference.com/w/cpp/language/static_cast) converts between types using a combination of implicit and user-defined conversions.
+* Cannot cast away cv-qualifiers.
+* Type conversion if possible is equivalent to `new_type tmp(expression);`.
+* Can be used to downcast from a non-virtual base to a derived class. 
+* There are no runtime checks, that must be ensured through other means!!.
+
+`dynamic_cast` [cpp:dynamic-cast](https://en.cppreference.com/w/cpp/language/dynamic_cast)
+* It is useful when we dont know the dynamic type of the object.
+* If the object referred doesn't contain the type casted to as a base class, it returns a null pointer (for pointers), and throws a `bad_case` exception (for references).
+* It is safe as long as the result is checked.
+* The downcast is not valid if the base class is not-polymorphic (does not contain virtual functions).
+
+`const_cast` [cpp:const-cast](https://en.cppreference.com/w/cpp/language/const_cast) converts between types with different cv-qualification.
+* Does not work on pointers to (member) functions.
+* Using it on `const` variables results in undefined behavior.
+* It is used to remove the constness from references and pointers that ultimately refer to something that is not const.
+```cpp
+int i = 0;
+const int& ref = i;
+const int* ptr = &i;
+const_cast<int&>(ref) = 3;   // this is ok
+*const_cast<int*>(ptr) = 3;  // this is ok
+
+struct type {
+    int i; 
+    void f(int d) const {
+        const_cast<type*>(this)->i = d; // OK as long as the actual object is not really const.
+    }
+};
+```
+
+`reinterpret_cast` [cpp:reinterpret-cast](https://en.cppreference.com/w/cpp/language/reinterpret_cast)
+* https://stackoverflow.com/questions/573294/when-to-use-reinterpret-cast
+* `static_cast`ing a pointer to and from `void*` preserves the address. The intermediate `void*` is valid!.
+* `reinterpret_cast` only guarantees that if you cast a pointer to a different type, and then `reinterpret_cast` it back to the original type, you get the original value. The intermediate value (not necessarily `void*`) is in a unspecified state!.
+* `static_cast` should be used when the intermediate value is `void*`.
+```cpp
+int* a = new int();
+
+void* b = static_cast<void*>(a);      // b is valid
+int* c = static_cast<int*>(b);        // c is valid
+
+void* b = reinterpret_cast<void*>(a); // b is in unspecified state
+int* c = reinterpret_cast<int*>(b);   // c is valid
+```
+
+See also:
+* https://en.cppreference.com/w/cpp/language/explicit_cast
+* https://en.cppreference.com/w/cpp/language/implicit_conversion
+* https://stackoverflow.com/questions/28002/regular-cast-vs-static-cast-vs-dynamic-cast
+* https://stackoverflow.com/questions/103512/why-use-static-castintx-instead-of-intx
+* https://stackoverflow.com/questions/19554841/how-to-use-const-cast
 
 ### C++: Declarations
 
