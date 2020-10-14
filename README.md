@@ -722,12 +722,16 @@ This optimization relevant in policy based design, where classes can inherit pri
 Initialization order depends on base classes and order of declarations. [cpp:initialization_order](https://en.cppreference.com/w/cpp/language/constructor#Initialization_order).
 
 In short, the order is as follows:
+0. Object memory is allocated.
 1. Virtual bases: depth-first left-to-right order.
 2. Direct bases: left-to-right order.
-3. Non-static data members: order of declaration.
-4. Body of the constructor is executed.
+3. Non-static data members: order of declaration. (does not depend on the initializer list!)
+4. The object becomes a true instance of the class.
+5. Body of the constructor is executed.
 
 Destruction happends in reverse order.
+
+See also: https://stackoverflow.com/questions/7539282/order-of-calling-constructors-destructors-in-inheritance
 
 #### C++: Derived Classes
 
@@ -1513,17 +1517,6 @@ class_name c; // Fails to compile.
 
 OBS: There are more rules about implicit declarations, definitions and deletions of the default constructor, depending on the members and inheritance properties. See the link below.
 
-### Ctor/Dtor call order
-https://stackoverflow.com/questions/7539282/order-of-calling-constructors-destructors-in-inheritance
-0. Object memory is allocated. 
-1. Construction always starts with the base class. 
-  * virtual inheritance gets higher preference.
-  * multiple base classes: starts with the leftmost base.
-2. Initialize member fields in the order they are declared.
-3. The object becomes a true instance of the class.
-4. Constructor body is executed.
-5. 
-The order of the destructor is exactly the reverse
 
 ### Copy Constructor
 https://en.cppreference.com/w/cpp/language/copy_constructor
