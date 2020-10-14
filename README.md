@@ -32,6 +32,10 @@ cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
   - C++20: https://en.cppreference.com/w/cpp/20
 - Standard Library: https://en.cppreference.com/w/cpp/header
 
+**Online Tools:**
+- Compiler and Execution: https://wandbox.org/
+- Compilers to asm: https://godbolt.org/
+
 **Important Third-Party Libraries:**
 - GTest: https://github.com/google/googletest
 - Boost: https://www.boost.org/
@@ -135,50 +139,55 @@ The following categorization is used:
   - [pimpl](#i-pimpl)
   - [raii](#i-raii)
   - rule of five, rule of three, rule of zero: https://en.cppreference.com/w/cpp/language/rule_of_three
-* Misc:
 
 **Experienced:**
-* [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks)
-* [runtime concept idiom](#i-runtime-concept-idiom)
-* static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
-* casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
-* RValue References: https://en.cppreference.com/w/cpp/language/value_category
-* Object Slicing: https://stackoverflow.com/questions/274626/what-is-object-slicing
-* Move Semantics: https://stackoverflow.com/questions/3106110/what-is-move-semantics, https://en.cppreference.com/w/cpp/language/move_constructor
-* Perfect Forwarding: https://en.cppreference.com/w/cpp/utility/forward, https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
-* Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
-* noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
-* constexpr: https://en.cppreference.com/w/cpp/language/constexpr
-* std::bind: https://en.cppreference.com/w/cpp/utility/functional/bind, [sample:bind.cpp](src/stl/bind.cpp).
-* multi-threading
-  * threads
-  * atomics
-  * condition variables
-  * futures
-* Argument-Dependent Lookup:  https://en.cppreference.com/w/cpp/language/adl
-* [virtual inheritance](#c-virtual-inheritance)
-* Regular Expressions: https://en.cppreference.com/w/cpp/regex
-* I/O with streams: https://en.cppreference.com/w/cpp/io
-* Custom memory Management: https://en.cppreference.com/w/cpp/memory/allocator
-  * std::allocator
-  * operator new and why
-* [Empty base optimization](#c-empty-base-optimization)
-* https://en.cppreference.com/w/cpp/language/sfinae
-* https://en.cppreference.com/w/cpp/language/crtp
+* C++ Language:
+  - Declarations: [const-and-volatile](#c-const-and-volatile), [constexpr](#c-constexpr).
+  - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks)
+* STL:
+  - std::bind: [stl:bind](https://en.cppreference.com/w/cpp/utility/functional/bind), [sample:bind.cpp](src/stl/bind.cpp).
+* Idioms and Best Practices:
+  - [runtime concept idiom](#i-runtime-concept-idiom)
+* TODO:
+  - static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
+  - casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
+  - RValue References: https://en.cppreference.com/w/cpp/language/value_category
+  - Object Slicing: https://stackoverflow.com/questions/274626/what-is-object-slicing
+  - Move Semantics: https://stackoverflow.com/questions/3106110/what-is-move-semantics, https://en.cppreference.com/w/cpp/language/move_constructor
+  - Perfect Forwarding: https://en.cppreference.com/w/cpp/utility/forward, https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
+  - Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
+  - noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
+  - multi-threading
+	- threads
+	- atomics
+	- condition variables
+	- futures
+  - Argument-Dependent Lookup:  https://en.cppreference.com/w/cpp/language/adl
+  - Regular Expressions: https://en.cppreference.com/w/cpp/regex
+  - I/O with streams: https://en.cppreference.com/w/cpp/io
+  - Custom memory Management: https://en.cppreference.com/w/cpp/memory/allocator
+    - std::allocator
+    - operator new and why
+  - https://en.cppreference.com/w/cpp/language/sfinae
+  - https://en.cppreference.com/w/cpp/language/crtp
 
 **Expert:**
-* Auto Type Deduction : https://en.cppreference.com/w/cpp/language/auto
-* Template Type Deduction :https://en.cppreference.com/w/cpp/language/template_argument_deduction
-* Variadic Templates : https://en.cppreference.com/w/cpp/language/parameter_pack , https://en.cppreference.com/w/cpp/language/variable_template
-* Reference Collapsing : https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-collapsing-rules-requested-1-a-a-2 , https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
-* Template Recursion : https://stackoverflow.com/questions/54744252/recursive-template-explanation-c
-* Template Meta-Programming
-* Tag-Dispatch : https://arne-mertz.de/2016/10/tag-dispatch/,  https://stackoverflow.com/questions/32522279/tag-dispatching-example-in-c, https://www.fluentcpp.com/2018/04/27/tag-dispatching/
-* Iterator Categories: Forward, Bidirectional, Input, Output, Random Access.https://en.cppreference.com/w/cpp/iterator
-* Overload Resolution https://en.cppreference.com/w/cpp/language/overload_resolution
-* Application Binary Interface : https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi ,
-* Universal References. https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
-* https://en.cppreference.com/w/cpp/language/Zero-overhead_principle
+* C++ Language:
+* STL:
+* Idioms and Best Practices:
+* TODO:
+  - Auto Type Deduction : https://en.cppreference.com/w/cpp/language/auto
+  - Template Type Deduction :https://en.cppreference.com/w/cpp/language/template_argument_deduction
+  - Variadic Templates : https://en.cppreference.com/w/cpp/language/parameter_pack , https://en.cppreference.com/w/cpp/language/variable_template
+  - Reference Collapsing : https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-collapsing-rules-requested-1-a-a-2 , https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
+  - Template Recursion : https://stackoverflow.com/questions/54744252/recursive-template-explanation-c
+  - Template Meta-Programming
+  - Tag-Dispatch : https://arne-mertz.de/2016/10/tag-dispatch/,  https://stackoverflow.com/questions/32522279/tag-dispatching-example-in-c, https://www.fluentcpp.com/2018/04/27/tag-dispatching/
+  - Iterator Categories: Forward, Bidirectional, Input, Output, Random Access.https://en.cppreference.com/w/cpp/iterator
+  - Overload Resolution https://en.cppreference.com/w/cpp/language/overload_resolution
+  - Application Binary Interface : https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi ,
+  - Universal References. https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
+  - https://en.cppreference.com/w/cpp/language/Zero-overhead_principle
 
 **Unassigned:**
 * Associative Containers
@@ -192,7 +201,7 @@ The following categorization is used:
 * [Keywords](#c-keywords)
 * [Preprocessor](#c-preprocessor)
 * [Expressions](#c-expressions)
-* [Declaration](#c-declaration)
+* [Declarations](#c-declarations)
 * [Initialization](#c-initialization)
 * [Functions](#c-functions)
 * [Statements](#c-statements)
@@ -295,7 +304,7 @@ constexpr MyReal operator""_mr(const char* x);                // 90'123'456'789_
 constexpr auto x = 9.0_mr; // captures: long double
 ```
 
-### C++: Declaration
+### C++: Declarations
 
 #### C++: Pointers and References
 
@@ -384,6 +393,47 @@ decltype(auto) wrapper_1() { return lookup1(); }  // string
 decltype(auto) wrapper_2() { return lookup2(); }  // string&
 ```
 
+#### C++: const and volatile
+
+Appears in any type specifier, to specify constness or volatility of the object being declared or type being named [cpp:cv-qualifiers](#https://en.cppreference.com/w/cpp/language/cv).
+
+For any type T, other than function or reference, C++ defines the types:
+* `const object`: Object cannot be modified. Attempts result in **compile time error**.
+* `volatile object`: TODO.
+* `const volatile object`: Behaves as both.
+
+The `const` keyword tells the compiler to report a compile time error for any command that could change the object **in runtime**. The compiler does not need to know the exact value, just that that variable is read-only.
+
+The *constness* of a value can be used by the compiler to create optimizations when it can prove which values will be computed:
+```cpp
+const int offset{10};
+int foo(int x)
+{
+	if (x>0) return x + offset;
+	else return x * 2;
+}
+
+// compiler can simply optimize out the following function calls!
+int a = foo(5);  // --> int a = 15;
+int b = foo(-5); // --> int b = -10;
+```
+
+The `mutable` specifier allows the modification of objects declared as `const`.
+
+#### C++: constexpr
+
+Specifies that the value of a variable or function can appear in constant expressions [cpp:constexpr](https://en.cppreference.com/w/cpp/language/constexpr). In other words, it tells the compiler that something should be constant at compile time.
+
+The compiler enforces that `constexpr` definitions can be computed at compile-time. There some restrictions. In particular, all chained calls must be explicitely declared as constexpr.
+```cpp
+constexpr int x = 5 * 6;
+const     int foo() {}      // invalid
+constexpr int foo() {}      // OK
+constexpr int foo(int d) {} // OK, but if called in constexpr context, the argument also needs to be constexpr.
+```
+Objects and functions declared `constexpr` can also be called in non-constexpr contexts. C++20 adds keyword `consteval` to enforce usage in compile-time.
+
+Note: std::vector is not constexpr compliant, but std::array is.
 
 #### C++: Enum Class
 
