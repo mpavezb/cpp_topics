@@ -156,7 +156,6 @@ The following categorization is used:
 * TODO:
   - IMPORTANT static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
   - IMPORTANT casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
-  - IMPORTANT RValue References: https://en.cppreference.com/w/cpp/language/value_category
   - IMPORTANT Perfect Forwarding: https://en.cppreference.com/w/cpp/utility/forward, https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
   - IMPORTANT Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
   - noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
@@ -176,13 +175,13 @@ The following categorization is used:
 
 **Expert:**
 * C++ Language:
+  - Declarations: [reference collapsing rules](#c-reference-collapsing-rules).
 * STL:
 * Idioms and Best Practices:
 * TODO:
   - Auto Type Deduction : https://en.cppreference.com/w/cpp/language/auto
   - Template Type Deduction :https://en.cppreference.com/w/cpp/language/template_argument_deduction
   - Variadic Templates : https://en.cppreference.com/w/cpp/language/parameter_pack , https://en.cppreference.com/w/cpp/language/variable_template
-  - Reference Collapsing : https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-collapsing-rules-requested-1-a-a-2 , https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
   - Template Recursion : https://stackoverflow.com/questions/54744252/recursive-template-explanation-c
   - Template Meta-Programming
   - Tag-Dispatch : https://arne-mertz.de/2016/10/tag-dispatch/,  https://stackoverflow.com/questions/32522279/tag-dispatching-example-in-c, https://www.fluentcpp.com/2018/04/27/tag-dispatching/
@@ -191,6 +190,7 @@ The following categorization is used:
   - Application Binary Interface : https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi ,
   - Universal References. https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
   - https://en.cppreference.com/w/cpp/language/Zero-overhead_principle
+  - calling conventions: https://stackoverflow.com/questions/949862/what-are-the-different-calling-conventions-in-c-c-and-what-do-each-mean
 
 **Unassigned:**
 * Associative Containers
@@ -381,6 +381,9 @@ References:
 
 ### C++: Declarations
 
+* [rvalue references](#c-rvalue-references)
+* [reference collapsing rules](#c-reference-collapsing-rules)
+
 #### C++: Pointers and References
 
 In short, a reference is an alternative name for a variable, while a pointer is a variable that holds the address of another.
@@ -398,6 +401,10 @@ A reference `&` [cpp:reference](https://en.cppreference.com/w/cpp/language/refer
 * Is stored as an address to the object, in most implementations.
 * Cannot be assigned `nullptr`.
 
+Reference Declaration Limitations:
+* There cannot be to `void`.
+* Reference types cannot be *cv-qualified*.
+* References are not objects: there cannot be arrays of references, pointers to references, or references to references.
 
 Most code using references can be rewritten as using `* const`. They were really introduced to be able to implement special overloaded operators, like `++` and `*`, just like if we were using them for built-in types. Moreover, special operators cannot be overloaded using pointers!.
 ```cpp
@@ -417,6 +424,44 @@ int a;
 Dangling:
 * Dangling Pointer: When the lifetime of the pointed object ends before the end of the lifetime of the pointer, leading to a deallocated memory space.
 * Dangling Reference: When the lifetime of the referred object ends before the end of the lifetime of the reference (undefined behavior).
+
+#### C++: RValue References
+
+References declare a named variable as an alias to an already-existing object or function [cpp:reference](https://en.cppreference.com/w/cpp/language/reference).
+
+Reference types:
+* lvalue reference `&`: only binds to lvalues.
+* rvalue reference `&&`: only binds to rvalues.
+* const lvalue ref `const &`: binds to both.
+
+RValue reference properties:
+* Prolongs the lifetime of temporary objects (the same as `const &`).
+* It has binding priority in case if overloads accept `const &`.
+
+An lvalue argument can be forced to become a rvalue reference through the `std::move` function.
+
+#### C++: Reference Collapsing Rules:
+
+Forming references to references is **only allowed through manipulations in templates or typedefs**, in which case the *reference-collapsing* rules apply [cpp:reference](https://en.cppreference.com/w/cpp/language/reference):
+
+The reference collapsing rules (save for `A& & -> A&`, which is from C++98/03) exist for one reason: to allow perfect forwarding to work.
+
+The rule:
+* `T&& &&` collapses to `T&&`.
+* All other combinations collapse to `T&`.
+
+Because of how the collapsing rules work, rvalue references are also called *universal references*.
+
+| pass-by    | function          | `5` |`int a`|`int &r=a`|`int &&rr=5`|`const int a`|`const int& cr=a`|
+| ---------- | ----------------- |-----| ----- | -------- |----------- | ----------- | --------------- |
+| value      | `foo(T x)`        |`int`|`int`  |`int`     |`int`       |`int`        |`int`            |
+| lvalue ref | `foo(T x)`        |  -  |`int`  |`int`     |`int`       |`const int`  |`const int`      |
+| const  ref | `foo(const T& x)` |`int`|`int`  |`int`     |`int`       |`int`        |`int`            |
+| rvalue ref | `foo(T&& x)`      |`int`|`int&` |`int&`    |`int&`      |`const int&` |`const int&`     |
+
+See also:
+* https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
+* https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-collapsing-rules-requested-1-a-a-2
 
 
 #### C++: auto
@@ -1470,9 +1515,13 @@ See also:
 
 Indicates that an object **may be moved from**, allowing the efficient transfer of resources (move ctor) [cpp:move](https://en.cppreference.com/w/cpp/utility/move).
 
-`std::move()` is a cast that produces an *rvalue* reference to an object, to enable moving from it. A object marked with `std::move`
-It's a new C++ way to avoid copies. For example, using a move constructor, a std::vector could just copy its internal pointer to data to the new object, leaving the moved object in an incorrect state, avoiding to copy all data.
+The `std::move()` function is a cast that produces an *rvalue* reference to an object, so it can be moved.
 
+After an object marked with `std::move`:
+* it is considered to be in an indeterminate, but valid state.
+* only two operations are safe: destruction or reassignement.
+
+It can be used to avoid copies from lvalues. For example, a std::vector could just copy its internal pointer to data to the new object:
 ```cpp
 std::string str = "Hello";
 std::vector<std::string> v;
@@ -1891,22 +1940,6 @@ https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 "Every piece of knowledge must have a single, unambiguous, authoritative representation within a system" - Andy Hunt, Dave Thomas
 
 WET: Violations of the DRY principle - "write everything twice", "we enjoy typing" or "waste everyone's time".
-
-### REFERENCE COLLAPSING RULES
-https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
-https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-collapsing-rules-requested-1-a-a-2
-https://en.cppreference.com/w/cpp/language/reference
-
-
-	• The reference collapsing rules (save for A& & -> A&, which is C++98/03) exist for one reason: to allow perfect forwarding to work.
-	•
-
-
-* Constructor call order
-* Late vs early binding
-* Pointer arithmetic
-* C language aspects
-* Lambdas
 
 
 # General
