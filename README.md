@@ -117,21 +117,22 @@ The following categorization is used:
 
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
   - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization
-  - return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
-  - copy elision: https://en.cppreference.com/w/cpp/language/copy_elision
+  - IMPORTANT return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
+  - IMPORTANT copy elision: https://en.cppreference.com/w/cpp/language/copy_elision, https://en.wikipedia.org/wiki/Copy_elision#Return_value_optimization elision: the omission of a sound or syllable
   - dynamic memory management with new and delete: https://en.cppreference.com/w/cpp/language/delete https://en.cppreference.com/w/cpp/language/new  https://en.cppreference.com/w/cpp/memory
   - exception handling (basics): https://en.cppreference.com/w/cpp/language/exceptions, https://isocpp.org/wiki/faq/exceptions,
   - `this` pointer and functions.
 * STL:
-  - [smart pointers](#stl-smart-pointers)
+  - Algorithm : https://en.cppreference.com/w/cpp/algorithm
+  - Chrono: https://en.cppreference.com/w/cpp/chrono
+  - Containers: https://en.cppreference.com/w/cpp/container
+  - String: [stl:string_view](#stl-string_view).
+  - Utils: [smart pointers](#stl-smart-pointers)
+  -
   - std::string small string optimization : https://shaharmike.com/cpp/std-string/ https://stackoverflow.com/questions/21694302/what-are-the-mechanics-of-short-string-optimization-in-libc
   - std::function: https://en.cppreference.com/w/cpp/utility/functional/function
-  - std::string_view: https://en.cppreference.com/w/cpp/header/string_view
   - std::optional : https://en.cppreference.com/w/cpp/utility/optional
-  - chrono: https://en.cppreference.com/w/cpp/chrono
-  - containers : https://en.cppreference.com/w/cpp/container
   - iterators : https://en.cppreference.com/w/cpp/iterator
-  - algorithms : https://en.cppreference.com/w/cpp/algorithm
   - random number generation: https://en.cppreference.com/w/cpp/numeric/random
 * Idioms and Best Practices:
   - [composition versus inheritance](#i-composition-vs-inheritance)
@@ -149,13 +150,13 @@ The following categorization is used:
 * Idioms and Best Practices:
   - [runtime concept idiom](#i-runtime-concept-idiom)
 * TODO:
-  - static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
-  - casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
-  - RValue References: https://en.cppreference.com/w/cpp/language/value_category
+  - IMPORTANT static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
+  - IMPORTANT casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
+  - IMPORTANT RValue References: https://en.cppreference.com/w/cpp/language/value_category
   - Object Slicing: https://stackoverflow.com/questions/274626/what-is-object-slicing
-  - Move Semantics: https://stackoverflow.com/questions/3106110/what-is-move-semantics, https://en.cppreference.com/w/cpp/language/move_constructor
-  - Perfect Forwarding: https://en.cppreference.com/w/cpp/utility/forward, https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
-  - Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
+  - IMPORTANT Move Semantics: https://stackoverflow.com/questions/3106110/what-is-move-semantics, https://en.cppreference.com/w/cpp/language/move_constructor
+  - IMPORTANT Perfect Forwarding: https://en.cppreference.com/w/cpp/utility/forward, https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
+  - IMPORTANT Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
   - noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
   - multi-threading
 	- threads
@@ -166,8 +167,8 @@ The following categorization is used:
   - Regular Expressions: https://en.cppreference.com/w/cpp/regex
   - I/O with streams: https://en.cppreference.com/w/cpp/io
   - Custom memory Management: https://en.cppreference.com/w/cpp/memory/allocator
-    - std::allocator
-    - operator new and why
+	- std::allocator
+	- operator new and why
   - https://en.cppreference.com/w/cpp/language/sfinae
   - https://en.cppreference.com/w/cpp/language/crtp
 
