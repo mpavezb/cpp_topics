@@ -111,7 +111,7 @@ The following categorization is used:
 **Intermediate**
 * C++ Language:
   - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions), [deleted and defaulted functions](#c-deleted-and-defaulted-functions).
-  - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem), [constructor delegation](#c-constructor-delegation), [explicit](#c-explicit).
+  - Classes: [copy constructor](#c-copy-constructor), [copy assignment](#c-copy-assignment-operator), [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem), [constructor delegation](#c-constructor-delegation), [explicit](#c-explicit).
   - Declarations: [auto](#c-auto), [decltype](#c-decltype).
   - Expressions: [user-defined literals](#c-user-defined-literals), [string literals](#c-string-literals).
   - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization).
@@ -138,6 +138,7 @@ The following categorization is used:
 * Idioms and Best Practices:
   - [composition versus inheritance](#i-composition-vs-inheritance)
   - [const-correctness](#i-const-correctness)
+  - [copy and swap idiom](#i-copy-and-swap-idiom)
   - [pimpl](#i-pimpl)
   - [raii](#i-raii)
   - rule of five, rule of three, rule of zero: https://en.cppreference.com/w/cpp/language/rule_of_three
@@ -989,6 +990,58 @@ static_assert(c); // OK!
 c || c ;          // OK!.
 ```
 
+#### C++: Copy Constructor
+https://en.cppreference.com/w/cpp/language/copy_constructor
+
+`class_name ( const class_name & );`:
+* Constructs an object based on the state of an existing object.
+* If not provided, the compiler declares it as non-explicit, inline, and public.
+* Can be deleted or defaulted.
+
+```cpp
+struct Foo
+{
+	int n;
+	Foo(int n = 1): n(n) { }
+
+	// user-defined copy ctor
+	Foo(const Foo& o): n(o.n) { }
+};
+
+Foo o1(0);
+Foo o2(o1); // copy!
+```
+
+#### C++: Copy Assignment Operator
+https://en.cppreference.com/w/cpp/language/copy_assignment
+
+`T& operator=(T )` or `T& operator=(const T&)`:
+* Copies the state of an object into the other.
+* More complex, because the target object is already in some valid state.
+* If not provided, the compiler declares it as inline and public.
+* Can be deleted or defaulted.
+* The `const` version cannot use the *copy-and-swap* idiom.
+
+This should be implemented using the [copy and swap idiom](#i-copy-and-swap-idiom).
+
+```cpp
+struct A {
+  int n;
+  std::string s1;
+
+  // copy assignment, copy-and-swap form
+  A& operator=(A other) {
+	std::cout << "copy assignment of A\n";
+	std::swap(n, other.n);
+	std::swap(s1, other.s1);
+	return *this;
+  }
+};
+
+A a1, a2;
+a1 = a2;  // copy!
+```
+
 #### C++: Move Semantics
 
 The final goal from move semantics is to avoid copy operations [cpp:move-ctor](https://en.cppreference.com/w/cpp/language/move_constructor). Copies happen through arguments to functions (can use `const T&` instead), returns, and assignment operations. The move operations allow taking ownership of a piece of memory or a dying object (destructor is not called).
@@ -1432,6 +1485,7 @@ TODO: C++20 adds the `std::span` abstraction, which works similar, but for lists
 
 * [composition versus inheritance](#i-composition-vs-inheritance)
 * [const correctness](#i-const-correctness)
+* [copy and swap idiom](#i-copy-and-swap-idiom)
 * [pimpl](#i-pimpl)
 * [raii](#i-raii)
 * [runtime concept idiom](#i-runtime-concept-idiom)
@@ -1456,6 +1510,20 @@ In short, const-correctness:
 1. Protects from accidentally changing variables that aren't intended to be changed.
 2. Protects from accidental variable assignments.
 3. Allows compiler optimizations.
+
+#### I: Copy-and-Swap Idiom
+
+The copy assignment operator is difficult to implement!. If an exception is thrown, the object MUST keep its invariant and remain in a valid state.
+This idiom helps avoiding code duplication and provides a strong exception guarantee.
+
+Requisites:
+* Working copy-constructor.
+* Working destructor.
+* Non-throwing swap function!!!.
+
+We cannot use std::swap, as it is based on the copy ctor and copy assignment operator.
+
+Generally, the implementation IS NOT SIMPLE!. In C++11, there is a simpler solution!. Better check: https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
 
 #### I: PIMPL
 
@@ -1794,86 +1862,11 @@ https://en.cppreference.com/w/cpp/language/reference
 	•
 
 
-
-
 * Constructor call order
 * Late vs early binding
 * Pointer arithmetic
 * C language aspects
 * Lambdas
-
-
-# Classes
-
-
-### Copy Constructor
-https://en.cppreference.com/w/cpp/language/copy_constructor
-
-class_name ( const class_name & ) ;
-Constructs an object based on the state of an existing object.
-If not provided, the compiler declares it as non-explicit, inline, and public.
-Can be deleted or defaulted.
-
-```cpp
-struct Foo
-{
-	int n;
-	Foo(int n = 1): n(n) { }
-
-	// user-defined copy ctor
-	Foo(const Foo& o): n(o.n) { }
-};
-
-
-// Create o2 based on o1.
-Foo o1(0);
-Foo o2(o1);
-```
-
-### Copy Assignment Operator
-https://en.cppreference.com/w/cpp/language/copy_assignment
-
-T& operator=(T ) or T& operator=(const T&)
-* The “const” version cannot use the copy-and-swap idiom.
-* Copies the state of an object into the other.
-* It is a little more complex, because the target object is already in some valid state.
-* If not provided, the compiler declares it as inline and public.
-* Can be deleted or defaulted.
-
-```cpp
-struct A {
-  int n;
-  std::string s1;
-
-  // copy assignment, copy-and-swap form
-  A& operator=(A other) {
-	std::cout << "copy assignment of A\n";
-	std::swap(n, other.n);
-	std::swap(s1, other.s1);
-	return *this;
-  }
-};
-
-// example
-A a1, a2;
-a1 = a2;  // this cannot be done if deleted.
-
-```
-
-### Copy-and-Swap idiom (easier in C++11)
-https://en.cppreference.com/w/cpp/language/operators#Assignment_operator
-https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
-
-The copy assignment operator is difficult to implement!. If an exception is thrown, the object MUST keep its invariant and remain in a valid state.
-This idiom helps avoiding code duplication and provides a strong exception guarantee.
-
-Requisites:
-* Working copy-constructor.
-* Working destructor.
-* Non-throwing swap function!!!.
-
-We cannot use std::swap, as it is based on the copy ctor and copy assignment operator.
-Generally, the implementation IS NOT SIMPLE!. In C++11, there is a simpler solution!. Better check the stackoverflow reference!.
 
 
 # General
