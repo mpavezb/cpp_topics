@@ -109,14 +109,14 @@ The following categorization is used:
   - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem), [constructor delegation](#c-constructor-delegation), [explicit](#c-explicit).
   - Declarations: [auto](#c-auto), [decltype](#c-decltype).
   - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization).
-  - 
+
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
-  - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization 
+  - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization
   - return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
   - copy elision: https://en.cppreference.com/w/cpp/language/copy_elision
   - user-defined literals: https://en.cppreference.com/w/cpp/language/user_literal
   - dynamic memory management with new and delete: https://en.cppreference.com/w/cpp/language/delete https://en.cppreference.com/w/cpp/language/new  https://en.cppreference.com/w/cpp/memory
-  - exception handling (basics): https://en.cppreference.com/w/cpp/language/exceptions, https://isocpp.org/wiki/faq/exceptions, 
+  - exception handling (basics): https://en.cppreference.com/w/cpp/language/exceptions, https://isocpp.org/wiki/faq/exceptions,
   - `this` pointer and functions.
 * STL:
   - [smart pointers](#stl-smart-pointers)
@@ -165,18 +165,18 @@ The following categorization is used:
 * [Empty base optimization](#c-empty-base-optimization)
 * https://en.cppreference.com/w/cpp/language/sfinae
 * https://en.cppreference.com/w/cpp/language/crtp
-  
+
 **Expert:**
 * Auto Type Deduction : https://en.cppreference.com/w/cpp/language/auto
-* Template Type Deduction :https://en.cppreference.com/w/cpp/language/template_argument_deduction 
+* Template Type Deduction :https://en.cppreference.com/w/cpp/language/template_argument_deduction
 * Variadic Templates : https://en.cppreference.com/w/cpp/language/parameter_pack , https://en.cppreference.com/w/cpp/language/variable_template
 * Reference Collapsing : https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-collapsing-rules-requested-1-a-a-2 , https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
 * Template Recursion : https://stackoverflow.com/questions/54744252/recursive-template-explanation-c
-* Template Meta-Programming 
+* Template Meta-Programming
 * Tag-Dispatch : https://arne-mertz.de/2016/10/tag-dispatch/,  https://stackoverflow.com/questions/32522279/tag-dispatching-example-in-c, https://www.fluentcpp.com/2018/04/27/tag-dispatching/
 * Iterator Categories: Forward, Bidirectional, Input, Output, Random Access.https://en.cppreference.com/w/cpp/iterator
 * Overload Resolution https://en.cppreference.com/w/cpp/language/overload_resolution
-* Application Binary Interface : https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi , 
+* Application Binary Interface : https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi ,
 * Universal References. https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
 * https://en.cppreference.com/w/cpp/language/Zero-overhead_principle
 
@@ -313,7 +313,7 @@ The main reasons for `auto` are: very complex types (like in STL), implementatio
 
 #### C++: decltype
 
-Inspects the declared type of an entity or the type and value category of an expression [cpp:decltype](https://en.cppreference.com/w/cpp/language/decltype). `decltype` is useful when declaring types that are difficult or impossible to declare using standard notation, like lambda-related types or types that depend on template parameters. 
+Inspects the declared type of an entity or the type and value category of an expression [cpp:decltype](https://en.cppreference.com/w/cpp/language/decltype). `decltype` is useful when declaring types that are difficult or impossible to declare using standard notation, like lambda-related types or types that depend on template parameters.
 
 * `decltype(entity)`: Yields the type of the entity.
 * `decltype(expression)`: If the argument is an expression of type `T` and:
@@ -352,7 +352,7 @@ The placeholder `decltype(auto)` can also be used, and it must be the the sole c
 // Allows perfect forwarding of return type:
 template<class Fun, class... Args>
 decltype(auto) Example(Fun fun, Args&&... args) {
-    return fun(std::forward<Args>(args)...);
+	return fun(std::forward<Args>(args)...);
 }
 
 // Allows keeping the referenceness of the return type
@@ -393,7 +393,7 @@ static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
 
 ### C++: Initialization
 
-The *initialization* ob an object provides its initial value at the time of construction: [cpp:initialization](https://en.cppreference.com/w/cpp/language/initialization).
+The *initialization* of an object provides its initial value at the time of construction: [cpp:initialization](https://en.cppreference.com/w/cpp/language/initialization).
 
 It happens through the following expressions: `(expression-list)`, `= expression`, and `{ initializer-list}`.
 
@@ -416,12 +416,12 @@ Class::Class() : member{arg1, arg2, ...} ... {}  // in ctor member-initializer-l
 
 // copy-list-initialization
 T object = {arg1, arg2, ...};               // initialize named variable after =
-Class { T member = { arg1, arg2, ... }; }; 	// initialize class member after =
+Class { T member = { arg1, arg2, ... }; };  // initialize class member after =
 function( { arg1, arg2, ... } )             // initialize parameter to function
 return { arg1, arg2, ... } ;                // initialize returned object
 object[ { arg1, arg2, ... } ]               // initialize parameter to []
 object = { arg1, arg2, ... }                // initialize parameter to operator=
-U( { arg1, arg2, ... } ) 	                // initialize parameter to ctor
+U( { arg1, arg2, ... } )                    // initialize parameter to ctor
 ```
 
 C++11 introduces the type `std::initializer_list<T>`. Objects of that class are container proxies with forward iterators and a size to a temporary array. These are different to the list initialization concept!.
@@ -558,9 +558,9 @@ The keywords `default` and `delete` were introduced in C++11 to replace the body
 
 ```cpp
 class A {
-    // Avoid deletion of the defaut constructor
-    A() = default;
-    A(int d) {}
+	// Avoid deletion of the defaut constructor
+	A() = default;
+	A(int d) {}
 };
 ```
 
@@ -573,13 +573,13 @@ class A {
 
 ```cpp
 class A {
-    // Forbid copy assignment and copy constructor
-    A& operator=(const X&) = delete;
-    A(const X&) = delete;
+	// Forbid copy assignment and copy constructor
+	A& operator=(const X&) = delete;
+	A(const X&) = delete;
 
-    // Forbid implicit conversion
-    A(long long);     // can initialize with an long long
-    A(long) = delete; // but not anything less
+	// Forbid implicit conversion
+	A(long long);     // can initialize with an long long
+	A(long) = delete; // but not anything less
 };
 ```
 
@@ -588,9 +588,9 @@ class A {
 A Functor (Function Object) is an object which behave as functions [cpp:functor](https://en.cppreference.com/w/cpp/named_req/FunctionObject), [cpp:functional](https://en.cppreference.com/w/cpp/utility/functional). It is achieved by defining the `operator()`. Unlike regular functions, they can contain state, extra functions, and overloads:
 ```cpp
 class Foo {
-    // overloads
-    bool operator()(int d) { return d > 0; }
-    bool operator()(float x) { return x > 0; }
+	// overloads
+	bool operator()(int d) { return d > 0; }
+	bool operator()(float x) { return x > 0; }
 };
 
 Foo foo;
@@ -598,7 +598,7 @@ bool a = foo(0);
 ```
 
 Functors and types [sample:functors-and-types.cpp](src/language/functors_and_types.cpp):
-* A regular function type is defined by: the number of parameters, their type, and the type of the return value. 
+* A regular function type is defined by: the number of parameters, their type, and the type of the return value.
 * Two functor classes defining the same function have different types!.
 * Both, functors and functions can be used to instanciate same templates, because they syntactically behave the same.
 
@@ -635,7 +635,7 @@ auto f = [captures](params){body}         // deduced return type
 auto f = [captures]{body}                 // no params, deduced return
 ```
 
-Lambda Captures [cpp:lambda-captures](https://en.cppreference.com/w/cpp/language/lambda#Lambda_capture): 
+Lambda Captures [cpp:lambda-captures](https://en.cppreference.com/w/cpp/language/lambda#Lambda_capture):
 * Only objects of automatic storage duration can be captured (local variables which are not static).
 * Static storage duration objects cannot be captured, but they can still be accessed.
 * Data members can be captured through `this`, which (as a pointer) is captured by value.
@@ -740,18 +740,18 @@ class C1 {};
 
 // 1 byte
 class C2 {
-    int f();
+	int f();
 };
 
 // sizeof(void*)
 class C3 {
-    virtual int vf1();
-    virtual int vf2();
+	virtual int vf1();
+	virtual int vf2();
 };
 
 // sizeof(int)
 class C4 {
-    int data;
+	int data;
 };
 
 // sizeof(void*)
@@ -948,7 +948,7 @@ Defines an abstract type which cannot be instantiated, but can be used as a base
 
 #### C++: Dynamic Polymorphism
 
-Runtime polymorphism is best suited to manipulate an open set of related types with different representations. This is implemented through inheritance, where derived classes implement a common interface. 
+Runtime polymorphism is best suited to manipulate an open set of related types with different representations. This is implemented through inheritance, where derived classes implement a common interface.
 
 ```cpp
 struct Vehicle {
@@ -1062,7 +1062,7 @@ struct Base {
 };
 
 struct Derived : Base {
- 	void foo() {};           // hides Base::foo()
+	void foo() {};           // hides Base::foo()
 	void vFoo() override {}; // dynamic dispatch
 };
 
@@ -1149,7 +1149,7 @@ auto ptr = std::make_unique<T>();       // good
 //
 void foo(const std::shared_ptr<Lhs> &lhs, const std::shared_ptr<Rhs> &rhs) {};
 foo(std::shared_ptr<Lhs>(new Lhs()),
-    std::shared_ptr<Rhs>(new Rhs()));
+	std::shared_ptr<Rhs>(new Rhs()));
 ```
 
 See also:
@@ -1251,7 +1251,7 @@ This is implemented by encapsulating the resource handler in a class, which deal
 // Without RAII
 RawResource* handle = createNewResource();
 handle->performInvalidOperation();          // throw!
-deleteResource(handle);                     // not called -> leak 
+deleteResource(handle);                     // not called -> leak
 
 // With RAII
 class RAIIResource {
@@ -1314,10 +1314,10 @@ https://en.cppreference.com/w/cpp/language/parameter_pack
 ```cpp
 // Variadic class template
 template<class ... Types> struct Tuple {};
-Tuple<> t0;       	// Types contains no arguments
-Tuple<int> t1;    	// Types contains one argument: int
+Tuple<> t0;			// Types contains no arguments
+Tuple<int> t1;		// Types contains one argument: int
 Tuple<int, float> t2; // Types contains two arguments: int and float
-Tuple<0> error;   	// error: 0 is not a type
+Tuple<0> error;		// error: 0 is not a type
 
 // Variadic function template
 template<class ... Types> void f(Types ... args);
@@ -1332,15 +1332,15 @@ https://en.cppreference.com/w/cpp/utility/forward     (GOOD EXAMPLE!)
 https://cpppatterns.com/patterns/perfect-forwarding.html
 https://www.modernescpp.com/index.php/perfect-forwarding
 
-    • Intent: Forward arguments of one function to another as though the wrapped function had been called directly.
-    • Perfect forwarding allows us to preserve an argument’s value category (lvalue/rvalue) and const/volatile modifiers. Perfect forwarding is performed in two steps:
-        ◦ receive a forwarding reference (also known as universal reference), 
-        ◦ then forward it using std::forward.
-    • It is often used with variadic templates to wrap calls to functions with an arbitrary number of arguments. For example, std::make_unique and std::make_shared both use perfect forwarding to forward their arguments to the constructor of the wrapped type.
+	• Intent: Forward arguments of one function to another as though the wrapped function had been called directly.
+	• Perfect forwarding allows us to preserve an argument’s value category (lvalue/rvalue) and const/volatile modifiers. Perfect forwarding is performed in two steps:
+		◦ receive a forwarding reference (also known as universal reference),
+		◦ then forward it using std::forward.
+	• It is often used with variadic templates to wrap calls to functions with an arbitrary number of arguments. For example, std::make_unique and std::make_shared both use perfect forwarding to forward their arguments to the constructor of the wrapped type.
 
 ```cpp
-#include <utility> 
-template<typename T, typename U> 
+#include <utility>
+template<typename T, typename U>
 std::pair<T, U> make_pair_wrapper(T&& t, U&& u)
 {
   return std::make_pair(std::forward<T>(t), std::forward<U>(u));
@@ -1353,8 +1353,8 @@ std::pair<T, U> make_pair_wrapper(T&& t, U&& u)
 ### NOEXCEPT OPERATOR (C++11)
 https://en.cppreference.com/w/cpp/language/noexcept
 
-    • performs a compile-time check that returns true if an expression is declared to not throw any exceptions.
-    • It can be used within a function template's noexcept specifier to declare that the function will throw exceptions for some types but not others.
+	• performs a compile-time check that returns true if an expression is declared to not throw any exceptions.
+	• It can be used within a function template's noexcept specifier to declare that the function will throw exceptions for some types but not others.
 
 ```cpp
 void may_throw();
@@ -1362,22 +1362,22 @@ void no_throw() noexcept;
 auto lmay_throw = []{};
 auto lno_throw = []() noexcept {};
 std::cout << std::boolalpha
-           << "Is may_throw() noexcept? " << noexcept(may_throw()) << '\n'  // true
-           << "Is no_throw() noexcept? " << noexcept(no_throw()) << '\n'       // true
-           << "Is lmay_throw() noexcept? " << noexcept(lmay_throw()) << '\n' // true
-           << "Is lno_throw() noexcept? " << noexcept(lno_throw()) << '\n'    //true
+		   << "Is may_throw() noexcept? " << noexcept(may_throw()) << '\n'  // true
+		   << "Is no_throw() noexcept? " << noexcept(no_throw()) << '\n'       // true
+		   << "Is lmay_throw() noexcept? " << noexcept(lmay_throw()) << '\n' // true
+		   << "Is lno_throw() noexcept? " << noexcept(lno_throw()) << '\n'    //true
 ```
 
 ### CONSTEXPR (C++11)
 https://en.cppreference.com/w/cpp/language/constexpr
 
-    • Declares that it is possible to evaluate the value of the function or variable at compile time. Such variables and functions can then be used where only compile time constant expressions are allowed 
-    • A constexpr specifier used in an object declaration (or non-static member function) implies const.
-    • A constexpr specifier used in a function or static member variable (since C++17) declaration implies inline.
+	• Declares that it is possible to evaluate the value of the function or variable at compile time. Such variables and functions can then be used where only compile time constant expressions are allowed
+	• A constexpr specifier used in an object declaration (or non-static member function) implies const.
+	• A constexpr specifier used in a function or static member variable (since C++17) declaration implies inline.
 A constexpr variable must satisfy the following requirements:
-    • its type must be a LiteralType.
-    • it must be immediately initialized
-    • the full-expression of its initialization, including all implicit conversions, constructors calls, etc, must be a constant expression
+	• its type must be a LiteralType.
+	• it must be immediately initialized
+	• the full-expression of its initialization, including all implicit conversions, constructors calls, etc, must be a constant expression
 
 
 ### TEMPLATE RECURSION (C++11)
@@ -1401,56 +1401,56 @@ https://www.fluentcpp.com/2017/05/12/curiously-recurring-template-pattern/
 https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
 
 ```cpp
-template <class T> 
+template <class T>
 class X{...};   // methods within Base can use template to access members of Derived
 class A : public X<A> {...};
 
-    • idiom in C++ in which a class X derives from a class template instantiation using X itself as template argument
-    • known as F-bound polymorphism
-    • This actually gives the X template the ability to be a base class for its specializations. 
+	• idiom in C++ in which a class X derives from a class template instantiation using X itself as template argument
+	• known as F-bound polymorphism
+	• This actually gives the X template the ability to be a base class for its specializations.
 
 
-Example: 
+Example:
 class A: public Singleton<A>
 {
    //Rest of functionality for class A
 };
 
-    • From the perspective of the base object, the derived object is itself, but downcasted. Therefore the base class can access the derived class by static_casting itself into the derived class.
+	• From the perspective of the base object, the derived object is itself, but downcasted. Therefore the base class can access the derived class by static_casting itself into the derived class.
 template <typename T>
 class Base
 {
 public:
-    void doSomething()
-    {
-        // Base class is designed to be inherited from by its template parameter
-        T& derived = static_cast<T&>(*this);
-        use derived...
-    }
+	void doSomething()
+	{
+		// Base class is designed to be inherited from by its template parameter
+		T& derived = static_cast<T&>(*this);
+		use derived...
+	}
 };
 ```
 
 ### SFINAE: Substitution Failure Is Not An Error
 https://en.cppreference.com/w/cpp/language/sfinae
-    • This rule applies during overload resolution of function templates.
-    • When substituting the explicitly specified or deduced type for the template parameter fails, the specialization is discarded from the overload set instead of causing a compile error.
-    • This feature is used in template metaprogramming.
+	• This rule applies during overload resolution of function templates.
+	• When substituting the explicitly specified or deduced type for the template parameter fails, the specialization is discarded from the overload set instead of causing a compile error.
+	• This feature is used in template metaprogramming.
 
 
 ### TEMPLATE META-PROGRAMMING
 https://www.codeproject.com/Articles/3743/A-gentle-introduction-to-Template-Metaprogramming
 https://en.wikipedia.org/wiki/Template_metaprogramming
 
-    • Intent: Do the job at compile time.
-    • They are not MACROS!. 
-    • Based on extremely early binding. The compiler acts as an interpreter or a "virtual computer" that emits the instructions that make up the final program. 
-    • Requires the template definition and an instantiation as starting point.
-    • Optimization is an advantage, but can greatly increase the size of the program.
-    • Template metaprogramming is Turing Complete!
-    • 
-    • There are no mutable variables!.
-    • Flow control is usually made through recursion.
-    • You can implement IF/ELSE, SWITCH, LOOPS,.. Everything computable at compile time.
+	• Intent: Do the job at compile time.
+	• They are not MACROS!.
+	• Based on extremely early binding. The compiler acts as an interpreter or a "virtual computer" that emits the instructions that make up the final program.
+	• Requires the template definition and an instantiation as starting point.
+	• Optimization is an advantage, but can greatly increase the size of the program.
+	• Template metaprogramming is Turing Complete!
+	•
+	• There are no mutable variables!.
+	• Flow control is usually made through recursion.
+	• You can implement IF/ELSE, SWITCH, LOOPS,.. Everything computable at compile time.
 
 ```cpp
 Example:
@@ -1458,40 +1458,40 @@ Example:
 template< int i >
 class FACTOR{
   public:
-      enum {RESULT = i * FACTOR<I-1>::RESULT};
+	  enum {RESULT = i * FACTOR<I-1>::RESULT};
 };
 
 class FACTOR< 1 >{
   public:
-      enum {RESULT = 1};
+	  enum {RESULT = 1};
 };
 // know at compile time!
 // compiler sues recursion to generate classes from FACTOR<0> to FACTOR<5>.
-int j = FACTOR< 5 >::RESULT; 
+int j = FACTOR< 5 >::RESULT;
 ```
 
 #### Loop Unrolling:
 A great advantage of TMP is loop unrolling!. We avoid runtime checks and iterations.
 We remove the loop, and just create lots of scenarios for each value.
-    • there is no loop in the resulting binary code. 
+	• there is no loop in the resulting binary code.
 
 ```cpp
 // Example: Addition on vector.
 template <int length>
-Vector<length>& Vector<length>::operator+=(const Vector<length>& rhs) 
+Vector<length>& Vector<length>::operator+=(const Vector<length>& rhs)
 {
-    for (int i = 0; i < length; ++i)
-        value[i] += rhs.value[i];
-    return *this;
+	for (int i = 0; i < length; ++i)
+		value[i] += rhs.value[i];
+	return *this;
 }
 
 // Code like this is generated FOR EACH length.
 template <>
-Vector<2>& Vector<2>::operator+=(const Vector<2>& rhs) 
+Vector<2>& Vector<2>::operator+=(const Vector<2>& rhs)
 {
-    value[0] += rhs.value[0];
-    value[1] += rhs.value[1];
-    return *this;
+	value[0] += rhs.value[0];
+	value[1] += rhs.value[1];
+	return *this;
 }
 ```
 
@@ -1504,9 +1504,9 @@ https://en.cppreference.com/w/cpp/chrono
 https://en.cppreference.com/w/cpp/utility/functional/function
 https://stackoverflow.com/questions/20353210/usage-and-syntax-of-stdfunction
 
-    • std::function is a type erasure object. That means it erases the details of how some operations happen, and provides a uniform run time interface to them. For std::function, the operations are copy/move and 'invocation' with operator() -- the 'function like call operator'.
-    • In less abstruse English, it means that std::function can contain almost any object that acts like a function pointer in how you call it.
-    • The signature it supports goes inside the angle brackets: std::function<void()> takes zero arguments and returns nothing. std::function< double( int, int ) > takes two int arguments and returns double. In general, std::function supports storing any function-like object whose arguments can be converted-from its argument list, and whose return value can be converted-to its return value.
+	• std::function is a type erasure object. That means it erases the details of how some operations happen, and provides a uniform run time interface to them. For std::function, the operations are copy/move and 'invocation' with operator() -- the 'function like call operator'.
+	• In less abstruse English, it means that std::function can contain almost any object that acts like a function pointer in how you call it.
+	• The signature it supports goes inside the angle brackets: std::function<void()> takes zero arguments and returns nothing. std::function< double( int, int ) > takes two int arguments and returns double. In general, std::function supports storing any function-like object whose arguments can be converted-from its argument list, and whose return value can be converted-to its return value.
 
 ### STD STRING_VIEW (C++17)
 https://en.cppreference.com/w/cpp/string/basic_string_view
@@ -1519,10 +1519,10 @@ The purpose of std::string_view is to avoid copying data which is already owned 
 https://devblogs.microsoft.com/cppblog/stdoptional-how-when-and-why/
 https://en.cppreference.com/w/cpp/utility/optional
 
-    • Allows to solve the problem where a value is SOMETIMES-A-THING.
-    • This can mean sometimes a return, or sometimes a valid argument.
-    • Also, can help with delayed initialization of resources.
-    • Helps avoiding all common and ugly solutions to his problem. E.g., forget about using an extra bool arg, or a default value of -1 to overcome this.
+	• Allows to solve the problem where a value is SOMETIMES-A-THING.
+	• This can mean sometimes a return, or sometimes a valid argument.
+	• Also, can help with delayed initialization of resources.
+	• Helps avoiding all common and ugly solutions to his problem. E.g., forget about using an extra bool arg, or a default value of -1 to overcome this.
 
 ```cpp
 // UGLY -1
@@ -1559,12 +1559,12 @@ https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-co
 https://en.cppreference.com/w/cpp/language/reference
 
 
-    • The reference collapsing rules (save for A& & -> A&, which is C++98/03) exist for one reason: to allow perfect forwarding to work.
-    • 
-	
-	
-	
-	
+	• The reference collapsing rules (save for A& & -> A&, which is C++98/03) exist for one reason: to allow perfect forwarding to work.
+	•
+
+
+
+
 * Constructor call order
 * Late vs early binding
 * Pointer arithmetic
@@ -1578,7 +1578,7 @@ https://en.cppreference.com/w/cpp/language/reference
 ### Copy Constructor
 https://en.cppreference.com/w/cpp/language/copy_constructor
 
-class_name ( const class_name & ) ;   
+class_name ( const class_name & ) ;
 Constructs an object based on the state of an existing object.
 If not provided, the compiler declares it as non-explicit, inline, and public.
 Can be deleted or defaulted.
@@ -1586,17 +1586,17 @@ Can be deleted or defaulted.
 ```cpp
 struct Foo
 {
-    int n;
-    Foo(int n = 1): n(n) { }
+	int n;
+	Foo(int n = 1): n(n) { }
 
-    // user-defined copy ctor
-    Foo(const Foo& o): n(o.n) { } 
+	// user-defined copy ctor
+	Foo(const Foo& o): n(o.n) { }
 };
 
 
-// Create o2 based on o1. 
+// Create o2 based on o1.
 Foo o1(0);
-Foo o2(o1); 
+Foo o2(o1);
 ```
 
 ### Copy Assignment Operator
@@ -1605,7 +1605,7 @@ https://en.cppreference.com/w/cpp/language/copy_assignment
 T& operator=(T ) or T& operator=(const T&)
 * The “const” version cannot use the copy-and-swap idiom.
 * Copies the state of an object into the other.
-* It is a little more complex, because the target object is already in some valid state. 
+* It is a little more complex, because the target object is already in some valid state.
 * If not provided, the compiler declares it as inline and public.
 * Can be deleted or defaulted.
 
@@ -1616,10 +1616,10 @@ struct A {
 
   // copy assignment, copy-and-swap form
   A& operator=(A other) {
-    std::cout << "copy assignment of A\n";
-    std::swap(n, other.n);
-    std::swap(s1, other.s1);
-    return *this;
+	std::cout << "copy assignment of A\n";
+	std::swap(n, other.n);
+	std::swap(s1, other.s1);
+	return *this;
   }
 };
 
@@ -1643,7 +1643,7 @@ Requisites:
 
 We cannot use std::swap, as it is based on the copy ctor and copy assignment operator.
 Generally, the implementation IS NOT SIMPLE!. In C++11, there is a simpler solution!. Better check the stackoverflow reference!.
- 
+
 ### std::move (C++11)
 https://stackoverflow.com/questions/3413470/what-is-stdmove-and-when-should-it-be-used
 https://en.cppreference.com/w/cpp/utility/move
@@ -1656,7 +1656,7 @@ It's a new C++ way to avoid copies. For example, using a move constructor, a std
 ```cpp
 std::string str = "Hello";
 std::vector<std::string> v;
- 
+
 // This operation needs to copy the str.
 v.push_back(str);
 
@@ -1672,9 +1672,9 @@ v.push_back(std::move(str));
 https://en.cppreference.com/w/cpp/language/range-for
 
 ```cpp
-Given: 
+Given:
 std::vector<int> v = {0, 1, 2, 3, 4, 5};
- 
+
 // traditional
 for(int i=0;i<SIZE;i++)
 
@@ -1690,19 +1690,19 @@ for (int n : a)
 
 // iterator
 for (auto iter = v.begin(); iter != v.end(); ++iter)
-  
+
 // access by const reference
 for (const int& i : v)
 
 
 // access by value
 // the type of i is int
-for (auto i : v) 
+for (auto i : v)
 
 
 // access by forwarding reference
 // the type of i is int&
-for (auto&& i : v) 
+for (auto&& i : v)
 
 
 // map access (since C++17)
@@ -1715,19 +1715,19 @@ https://en.cppreference.com/w/cpp/algorithm/for_each
 https://en.cppreference.com/w/cpp/algorithm/accumulate
 ```cpp
 std::vector<int> v{3, 4, 2, 8, 15, 267};
- 
+
 // Lambda (print)
 auto print = [](const int& n) { std::cout << " " << n; };
 std::for_each(nums.begin(), nums.end(), print);
- 
+
 // Lambda (increase by 1)
 std::for_each(nums.begin(), nums.end(), [](int &n){ n++; });
 
 // Struct (reduce by sum)
 struct Sum {
-    Sum(): sum{0} { }
-    void operator()(int n) { sum += n; }
-    int sum;
+	Sum(): sum{0} { }
+	void operator()(int n) { sum += n; }
+	int sum;
 };
 Sum s = std::for_each(nums.begin(), nums.end(), Sum());
 
