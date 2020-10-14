@@ -112,7 +112,7 @@ The following categorization is used:
   - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions), [deleted and defaulted functions](#c-deleted-and-defaulted-functions).
   - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem), [constructor delegation](#c-constructor-delegation), [explicit](#c-explicit).
   - Declarations: [auto](#c-auto), [decltype](#c-decltype).
-  - Expressions: [user-defined literals](#c-user-defined-literals).
+  - Expressions: [user-defined literals](#c-user-defined-literals), [string literals](#c-string-literals).
   - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization).
 
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
@@ -302,6 +302,38 @@ constexpr MyReal operator""_mr(const char* x);                // 90'123'456'789_
 
 // usage
 constexpr auto x = 9.0_mr; // captures: long double
+```
+
+#### C++: String Literals
+
+String literals allow declaring `std::string` and `const char*` objects, based on literals. They are inherited from C, but C++ adds extra functionality. [cpp:string-literals](https://en.cppreference.com/w/cpp/language/string_literal).
+
+Prefixes define encoding:
+* `"..."`: narrow string literal: `const char[N]`.
+* `L"..."`: wide string literal: `const wchar_t[N]`.
+* `u8"..."`: UTF-8 encoded literal: `const char[N]`.
+* `u"..."`: UTF-16 encoded literal: `const char[N]`.
+* `U"..."`: UTF-32 encoded literal: `const char[N]`.
+* `<encoding>R"<delimiter-seq>(raw-characters)<delimiter-seq>"`: Allows escaping sequence.
+
+Suffix is used to specify the type:
+* `"..."`: `const char[N]`.
+* `"..."s`: `std::string`.
+
+Using the `"..."s` suffix is important:
+* Optimization: No need to call `std::string` constructor with type `const char*` and no need to compute length. Using the literal the conversion is known at compile time.
+* Type Deduction: Useful for proper type deductions where `const char*` is not wanted!: Return types, template calls, ...
+```cpp
+// Type Deductions
+auto str = "Foo"s;         // variable
+[]() {return "Foo"s;}      // return
+
+template<typename T> void foo(T &&t) {...}  // function template call
+foo("Foo"s);
+
+// optimization
+std::string str = "foo";  // NOK
+std::string str = "foo"s; // OK
 ```
 
 ### C++: Declarations
