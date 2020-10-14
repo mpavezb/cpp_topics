@@ -35,6 +35,7 @@ cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
 **Online Tools:**
 - Compiler and Execution: https://wandbox.org/
 - Compilers to asm: https://godbolt.org/
+- Compile to show hidden optimizations: https://cppinsights.io/
 
 **Important Third-Party Libraries:**
 - GTest: https://github.com/google/googletest
@@ -148,7 +149,7 @@ The following categorization is used:
   - Declarations: [const-and-volatile](#c-const-and-volatile), [constexpr](#c-constexpr), [rvalue references](#c-rvalue-references).
   - Expressions: [value categories](#c-value-categories).
   - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks), [move semantics](#c-move-semantics), [object slicing](#c-object-slicing).
-  - Exceptions: [exception safety guarantees](#c-exception-safety-guarantees).
+  - Exceptions: [exception safety guarantees](#c-exception-safety-guarantees), [noexcept](#c-noexcept).
 * STL:
   - Utils: [stl:move](#stl-std-move), [stl:forward](#stl-std-forward).
   - std::bind: [stl:bind](https://en.cppreference.com/w/cpp/utility/functional/bind), [sample:bind.cpp](src/stl/bind.cpp).
@@ -157,8 +158,6 @@ The following categorization is used:
 * TODO:
   - IMPORTANT static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
   - IMPORTANT casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
-
-  - noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
   - multi-threading
 	- threads
 	- atomics
@@ -197,6 +196,7 @@ The following categorization is used:
 * What would happen if you insert a user defined class into a map that only has operator == defined?
 * Problem with vector of bools
 * function ref-qualifiers: https://en.cppreference.com/w/cpp/language/function, https://stackoverflow.com/questions/23011532/const-reference-qualifier-on-a-member-function, https://docs.microsoft.com/en-us/cpp/cpp/function-overloading?view=vs-2019#ref-qualifiers
+* std::expected
 
 ## C++ Language
 
@@ -1469,6 +1469,36 @@ Exception safety for move enabled types may be difficult, as there is no way to 
 
 There is a special *exception-neutral guarantee* for templates: If an exception is thrown from a template parameter, it is propagated, unchanged, to the caller. 
 
+#### C++: noexcept
+
+The `noexcept` keyword has two uses: marking functions as nothrow, and checking whether a function is marked [cpp:noexcept-operator](https://en.cppreference.com/w/cpp/language/noexcept), [cpp:noexcept-specifier](https://en.cppreference.com/w/cpp/language/noexcept_spec).
+
+The compiler does not check compliance with the specifier, but the execution will fail at runtime with std::terminate.
+
+```cpp
+void may_throw();
+void no_throw() noexcept;
+auto lmay_throw = []{};
+auto lno_throw = []() noexcept {};
+
+noexcept(may_throw())  // true
+noexcept(no_throw())   // true
+noexcept(lmay_throw()) // true
+noexcept(lno_throw())  // true
+```
+
+This operator is best suited when used in templates:
+```cpp
+// noexcept declaration depends on if the expression T() will throw
+template <class T>
+void foo() noexcept(noexcept(T())) {}
+ 
+foo<int>();  // noexcept(noexcept(int())) => noexcept(true), so this is fine
+```
+
+TODO: https://www.youtube.com/watch?v=ARYP83yNAWk, CppCon 2019: Herb Sutter "De-fragmenting C++: Making Exceptions and RTTI More Affordable and Usable"
+TODO: C++Now 2019: Andreas Weis Exceptions Demystified https://www.youtube.com/watch?v=kO0KVB-XIeE
+TODO: std::move_if_noexcept
 
 ## STL
 
@@ -1813,27 +1843,6 @@ template<class ... Types> void f(Types ... args);
 f();       // OK: args contains no arguments
 f(1);      // OK: args contains one argument: int
 f(2, 1.0); // OK: args contains two arguments: int and double
-```
-
-
-
-
-### NOEXCEPT OPERATOR (C++11)
-https://en.cppreference.com/w/cpp/language/noexcept
-
-	• performs a compile-time check that returns true if an expression is declared to not throw any exceptions.
-	• It can be used within a function template's noexcept specifier to declare that the function will throw exceptions for some types but not others.
-
-```cpp
-void may_throw();
-void no_throw() noexcept;
-auto lmay_throw = []{};
-auto lno_throw = []() noexcept {};
-std::cout << std::boolalpha
-		   << "Is may_throw() noexcept? " << noexcept(may_throw()) << '\n'  // true
-		   << "Is no_throw() noexcept? " << noexcept(no_throw()) << '\n'       // true
-		   << "Is lmay_throw() noexcept? " << noexcept(lmay_throw()) << '\n' // true
-		   << "Is lno_throw() noexcept? " << noexcept(lno_throw()) << '\n'    //true
 ```
 
 
