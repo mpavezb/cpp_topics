@@ -349,6 +349,23 @@ When to use `decltype`:
 * Sometimes using `auto` and `decltype` yields the same results, so there is no win on using `decltype`.
 * Similar to `auto`, `decltype` can be used to write shorter expressions, when the type is complex and we have a good expression to mirror.
 
+
+The placeholder `decltype(auto)` can also be used, and it must be the the sole constituent of the declared type:
+```cpp
+// Allows perfect forwarding of return type:
+template<class Fun, class... Args>
+decltype(auto) Example(Fun fun, Args&&... args) {
+    return fun(std::forward<Args>(args)...);
+}
+
+// Allows keeping the referenceness of the return type
+string  lookup1();
+string& lookup2();
+decltype(auto) wrapper_1() { return lookup1(); }  // string
+decltype(auto) wrapper_2() { return lookup2(); }  // string&
+```
+
+
 #### C++: Enum Class
 
 The `enum class` and `enum struct` types provide solutions to problems the plain `enum` generates. [cpp:enum-class](https://en.cppreference.com/w/cpp/language/enum).
@@ -1441,40 +1458,6 @@ https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 WET: Violations of the DRY principle - "write everything twice", "we enjoy typing" or "waste everyone's time".
 
 
-### AUTO TYPE DEDUCTION (C++11)
-https://en.cppreference.com/w/cpp/language/auto
-https://stackoverflow.com/questions/24109737/what-are-some-uses-of-decltypeauto
-
-    • The auto and decltype(auto) type-speciﬁers designate a placeholder type that will be replaced later, either by deduction from an initializer or by explicit speciﬁcation with a trailing-return-type. 
-    • auto:  For variables, specifies that the type of the variable that is being declared will be automatically deduced from its initializer. 
-    • decltype(auto): For functions, specifies that the return type will be deduced from its return statements. (C++14)
-    • For non-type template parameters, specifies that the type will be deduced from the argument. (C++17)
-    • The auto type-speciﬁer is also used to signify that a lambda is a generic lambda.
-    • The placeholder auto may be accompanied by modifiers, such as const or &, which will participate in the type deduction. 
-    • The placeholder decltype(auto) must be the the sole constituent of the declared type. (since C++14)
-
-```cpp
-Usage examples
-// Force usage of const& as return type.
-auto const& Example(int const& i) { 	return i;  }
-
-// in generic code you want to be able to perfectly forward a return type without knowing whether you are dealing with a reference or a value. decltype(auto) gives you that ability:
-template<class Fun, class... Args>
-decltype(auto) Example(Fun fun, Args&&... args) { 
-    return fun(std::forward<Args>(args)...); 
-}
-
-// Example on decltype(auto)
-string  lookup1();
-string& lookup2();
-// C++11 way of keeping the “referenceness” of the return type
-string  look_up_a_string_1() { return lookup1(); }
-string& look_up_a_string_2() { return lookup2(); }
-
-// C++14 way of doing the same.
-decltype(auto) look_up_a_string_1() { return lookup1(); }
-decltype(auto) look_up_a_string_2() { return lookup2(); }
-```
 
 
 
