@@ -105,13 +105,11 @@ The following categorization is used:
 
 **Intermediate**
 * C++ Language:
-  - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions).
+  - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions), [deleted and defaulted functions](#c-deleted-and-defaulted-functions).
   - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem).
   - Declarations: [auto](#c-auto), [decltype](#c-decltype).
   - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization).
   - 
-  - [deleted and defaulted functions](#c-deleted-and-defaulted-functions)
-  -
   - constructor delegation: https://stackoverflow.com/questions/13961037/delegate-constructor-c, https://en.cppreference.com/w/cpp/language/constructor
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
   - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization 
@@ -427,7 +425,7 @@ object = { arg1, arg2, ... }                // initialize parameter to operator=
 U( { arg1, arg2, ... } ) 	                // initialize parameter to ctor
 ```
 
-C++11 introduces the type `std::initializer_list<T>`. Objects of that class are container proxies with forward iterators and a size to a temporary array.
+C++11 introduces the type `std::initializer_list<T>`. Objects of that class are container proxies with forward iterators and a size to a temporary array. These are different to the list initialization concept!.
 
 list-initialization limits the allowed implicit conversions by prohibiting the following:
 * demotion of `long double`, `double` or `float` to smaller types (except when constant expression and no overflow).
@@ -440,6 +438,7 @@ TODO: Can an object be partially initialized? See: [sample:list-initialization.c
 See also:
 * https://stackoverflow.com/questions/13461027/why-does-the-standard-differentiate-between-direct-list-initialization-and-copy
 * https://stackoverflow.com/questions/50422129/differences-between-direct-list-initialization-and-copy-list-initialization
+* http://mikelui.io/2019/01/03/seriously-bonkers.html
 
 #### C++: Uniform Initialization
 
@@ -548,14 +547,51 @@ Unlike other arguments in overloaded functions, no temporary objects are introdu
 References:
 * https://docs.microsoft.com/en-us/cpp/cpp/function-overloading?view=vs-2019
 
+#### C++: Deleted and Defaulted Functions
+
+The keywords `default` and `delete` were introduced in C++11 to replace the body of some functions: [cpp:default](https://en.cppreference.com/w/cpp/language/function#Function_definition), [cpp:delete](https://en.cppreference.com/w/cpp/language/function#Deleted_functions).
+
+`default`:
+* Can be applied to special member functions (ctor, copy, move, assgnmnt, dtor) and comparison operators.
+* Defaulted functions are implemented by the compiler.
+* Can be used to avoid deletion of default constructor, when other ctors are provided.
+* The default constructor is created with argument list and empty body!.
+
+```cpp
+class A {
+    // Avoid deletion of the defaut constructor
+    A() = default;
+    A(int d) {}
+};
+```
+
+
+`delete`:
+* Can be applied to any function.
+* Deleted functions are hidden by the compiler.
+* Can be used to forbid functions like copy ctors (this was done by defining them as private or protected).
+* Can be used to avoid implicit conversions.
+
+```cpp
+class A {
+    // Forbid copy assignment and copy constructor
+    A& operator=(const X&) = delete;
+    A(const X&) = delete;
+
+    // Forbid implicit conversion
+    A(long long);     // can initialize with an long long
+    A(long) = delete; // but not anything less
+};
+```
+
 #### C++: Functors
 
 A Functor (Function Object) is an object which behave as functions [cpp:functor](https://en.cppreference.com/w/cpp/named_req/FunctionObject), [cpp:functional](https://en.cppreference.com/w/cpp/utility/functional). It is achieved by defining the `operator()`. Unlike regular functions, they can contain state, extra functions, and overloads:
 ```cpp
 class Foo {
-	// overloads
-	bool operator()(int d) { return d > 0; }
-	bool operator()(float x) { return x > 0; }
+    // overloads
+    bool operator()(int d) { return d > 0; }
+    bool operator()(float x) { return x > 0; }
 };
 
 Foo foo;
@@ -1482,23 +1518,6 @@ https://en.cppreference.com/w/cpp/language/reference
 
 
 # Classes
-
-### Ctor()=default; Ctor()=delete; (since C++11)
-https://en.cppreference.com/w/cpp/language/default_constructor
-A default constructor can be called without arguments. 
-A type with a public default constructor is DefaultConstructible.
-
-// Default constructor
-// The compiler will define the implicit default constructor even if other constructors are present.
-class_name() = default ;
-
-// Deleted default constructor
-// Deleted default constructor: if it is selected by overload resolution, the program fails to compile.
-class_name() = delete ;
-class_name c; // Fails to compile.
- 
-
-OBS: There are more rules about implicit declarations, definitions and deletions of the default constructor, depending on the members and inheritance properties. See the link below.
 
 
 ### Copy Constructor
