@@ -141,13 +141,14 @@ The following categorization is used:
   - [copy and swap idiom](#i-copy-and-swap-idiom)
   - [pimpl](#i-pimpl)
   - [raii](#i-raii)
-  - rule of five, rule of three, rule of zero: https://en.cppreference.com/w/cpp/language/rule_of_three
+  - rule of five, rule of three, rule of zero: https://en.cppreference.com/w/cpp/language/rule_of_three, https://stackoverflow.com/questions/4172722/what-is-the-rule-of-three
 
 **Experienced:**
 * C++ Language:
   - Declarations: [const-and-volatile](#c-const-and-volatile), [constexpr](#c-constexpr), [rvalue references](#c-rvalue-references).
   - Expressions: [value categories](#c-value-categories).
   - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks), [move semantics](#c-move-semantics), [object slicing](#c-object-slicing).
+  - Exceptions: [exception safety guarantees](#c-exception-safety-guarantees).
 * STL:
   - Utils: [stl:move](#stl-std-move), [stl:forward](#stl-std-forward).
   - std::bind: [stl:bind](https://en.cppreference.com/w/cpp/utility/functional/bind), [sample:bind.cpp](src/stl/bind.cpp).
@@ -157,7 +158,6 @@ The following categorization is used:
   - IMPORTANT static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
   - IMPORTANT casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
 
-  - IMPORTANT Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
   - noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
   - multi-threading
 	- threads
@@ -1442,6 +1442,33 @@ References:
 
 ### C++: Templates
 ### C++: Exceptions
+
+#### C++: Exception Safety Guarantees
+
+Provide information with regards to the state of the program after an error condition is thrown [cpp:exception-safety](https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety). The standard does not recognize the exception safety guarantees, but they are used in STL.
+
+The exception safety levels are:
+1. *Nothrow/Nofail exception guarantee*:
+   - Nothrow: The function never throws exceptions.
+	 - Errors are reported by other means or concealed.
+	 - It is expected for destructors and other functions that may be called during stack unwinding.
+     - Destructors are declared `noexcept` by default.
+   - Nofail: The function always succeeds.
+	 - It is expected of swaps, move constructors, and other functions used by lower safety levels.
+2. *Strong exception guarantee*: If the function throws an exception, the state of the program is rolled back to the state just before the function call.
+3. *Basic exception guarantee*: If the function throws an exception, the program is in a valid state. No resources are leaked, and all objects' invariants are intact.
+4. *No exception guarantee*: If the function throws an exception, the program may not be in a valid state: resource leaks, memory corruption, or other invariant-destroying errors may have occurred. 
+
+In short:
+1. *Nothrow*: Don't throw even on failures.
+2. *Strong*: Commit/Rollback semantics. Objects are repared before throw.
+3. *Basic*: No leak. Objects in usable state.
+4. *No guarantee*: Objects should not be used.
+
+Exception safety for move enabled types may be difficult, as there is no way to rollback. Try making the move constructor nothrow in order to provide fast and strong guarantees.
+
+There is a special *exception-neutral guarantee* for templates: If an exception is thrown from a template parameter, it is propagated, unchanged, to the caller. 
+
 
 ## STL
 
