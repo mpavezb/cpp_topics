@@ -1794,11 +1794,6 @@ Vector<2>& Vector<2>::operator+=(const Vector<2>& rhs)
 }
 ```
 
-
-### STD CHRONO (C++11)
-https://en.cppreference.com/w/cpp/chrono
-
-
 ### STD FUNCTION (C++11)
 https://en.cppreference.com/w/cpp/utility/functional/function
 https://stackoverflow.com/questions/20353210/usage-and-syntax-of-stdfunction
@@ -1807,12 +1802,6 @@ https://stackoverflow.com/questions/20353210/usage-and-syntax-of-stdfunction
 	• In less abstruse English, it means that std::function can contain almost any object that acts like a function pointer in how you call it.
 	• The signature it supports goes inside the angle brackets: std::function<void()> takes zero arguments and returns nothing. std::function< double( int, int ) > takes two int arguments and returns double. In general, std::function supports storing any function-like object whose arguments can be converted-from its argument list, and whose return value can be converted-to its return value.
 
-### STD STRING_VIEW (C++17)
-https://en.cppreference.com/w/cpp/string/basic_string_view
-https://www.modernescpp.com/index.php/c-17-avoid-copying-with-std-string-view
-https://www.modernescpp.com/index.php/c-17-what-s-new-in-the-library
-
-The purpose of std::string_view is to avoid copying data which is already owned  by someone else and of which only a non-mutating view is required. So, this post is mainly about performance
 
 ### STD OPTIONAL (C++17)
 https://devblogs.microsoft.com/cppblog/stdoptional-how-when-and-why/
