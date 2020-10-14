@@ -106,11 +106,10 @@ The following categorization is used:
 **Intermediate**
 * C++ Language:
   - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions), [deleted and defaulted functions](#c-deleted-and-defaulted-functions).
-  - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem).
+  - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem), [constructor delegation](#c-constructor-delegation).
   - Declarations: [auto](#c-auto), [decltype](#c-decltype).
   - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization).
   - 
-  - constructor delegation: https://stackoverflow.com/questions/13961037/delegate-constructor-c, https://en.cppreference.com/w/cpp/language/constructor
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
   - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization 
   - return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
@@ -785,6 +784,27 @@ In short, the order is as follows:
 Destruction happends in reverse order.
 
 See also: https://stackoverflow.com/questions/7539282/order-of-calling-constructors-destructors-in-inheritance
+
+#### C++: Constructor Delegation
+
+Constructors can now be defined based on other constructors: [cpp:delegating-constructor](https://en.cppreference.com/w/cpp/language/constructor#Delegating_constructor).
+
+This must be done in the initialization list, otherwise a temporary object will be created. We can even make the constructor private!.
+
+```cpp
+struct Rectangle {
+	Rectangle(Point xy, int ww, int hh) : x(xy), w(ww), h(hh) {
+		if (h <= 0 || w <= 0) error("Bad arguments");
+	}
+
+	// delegates hard work to other constructor
+	Rectangle(Point a, Point b) : Rectangle(a, b.x-a.x, b.y-a.y) {}
+
+	point x;
+	int w;
+	int h;
+};
+```
 
 #### C++: Derived Classes
 
