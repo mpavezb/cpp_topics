@@ -105,18 +105,19 @@ The following categorization is used:
 
 **Intermediate**
 * C++ Language:
-  - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions)
-  - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem)
-  - Declarations: [auto](#c-auto), [decltype](#c-decltype)
+  - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions).
+  - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem).
+  - Declarations: [auto](#c-auto), [decltype](#c-decltype).
+  - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization).
   - 
-  - deleted and defaulted functions: https://stackoverflow.com/questions/5513881/meaning-of-delete-after-function-declaration, https://en.cppreference.com/w/cpp/language/function#Deleted_functions, https://en.cppreference.com/w/cpp/language/function#Function_definition
+  - [deleted and defaulted functions](#c-deleted-and-defaulted-functions)
+  -
   - constructor delegation: https://stackoverflow.com/questions/13961037/delegate-constructor-c, https://en.cppreference.com/w/cpp/language/constructor
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
   - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization 
   - return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
   - copy elision: https://en.cppreference.com/w/cpp/language/copy_elision
   - user-defined literals: https://en.cppreference.com/w/cpp/language/user_literal
-  - uniform initialization: https://arne-mertz.de/2015/07/new-c-features-uniform-initialization-and-initializer_list/
   - dynamic memory management with new and delete: https://en.cppreference.com/w/cpp/language/delete https://en.cppreference.com/w/cpp/language/new  https://en.cppreference.com/w/cpp/memory
   - exception handling (basics): https://en.cppreference.com/w/cpp/language/exceptions, https://isocpp.org/wiki/faq/exceptions, 
   - `this` pointer and functions.
@@ -303,6 +304,8 @@ Dangling:
 
 Allows automatic type deduction [cpp:auto](https://en.cppreference.com/w/cpp/language/auto). However, it does not mean that the type is unknown!.
 
+The `auto` placeholder may be accompanied by modifiers, such as `const` or `&`, which will participate in the type deduction.
+
 TODO: Almost Always Auto idiom.
 
 The `auto` keyword is a breaking change:
@@ -375,6 +378,88 @@ static_assert(FooLib::Version > 2, "An updated FooLib is required.!");
 
 
 ### C++: Initialization
+
+The *initialization* ob an object provides its initial value at the time of construction: [cpp:initialization](https://en.cppreference.com/w/cpp/language/initialization).
+
+It happens through the following expressions: `(expression-list)`, `= expression`, and `{ initializer-list}`.
+
+#### C++: List Initialization
+
+Allows initialization of an object from a *braced-init-list*: `{initializer-list}` [cpp:list-initialization](https://en.cppreference.com/w/cpp/language/list_initialization).
+
+Depending on how the list is constructed, the standard defines *direct-list-initialization* and *copy-list-initialization*:
+* *direct-list-initialization* works for any constructor.
+* *copy-list-initialization* only works for non `explicit` constructors.
+* On any case, the list expression always uses braces.
+
+```cpp
+// direct-list-initialization
+T object { arg1, arg2, ... };                    // initialize named variable
+T { arg1, arg2, ... }                            // initialize unnamed temporary
+new T { arg1, arg2, ... }                        // initialize in new expression
+Class { T member { arg1, arg2, ... }; };         // initialize class member
+Class::Class() : member{arg1, arg2, ...} ... {}  // in ctor member-initializer-list
+
+// copy-list-initialization
+T object = {arg1, arg2, ...};               // initialize named variable after =
+Class { T member = { arg1, arg2, ... }; }; 	// initialize class member after =
+function( { arg1, arg2, ... } )             // initialize parameter to function
+return { arg1, arg2, ... } ;                // initialize returned object
+object[ { arg1, arg2, ... } ]               // initialize parameter to []
+object = { arg1, arg2, ... }                // initialize parameter to operator=
+U( { arg1, arg2, ... } ) 	                // initialize parameter to ctor
+```
+
+C++11 introduces the type `std::initializer_list<T>`. Objects of that class are container proxies with forward iterators and a size to a temporary array.
+
+list-initialization limits the allowed implicit conversions by prohibiting the following:
+* demotion of `long double`, `double` or `float` to smaller types (except when constant expression and no overflow).
+* conversion from floating-point type to integer type.
+* conversion from integer type to floating-point type (except when constant expression and can be stored exactly).
+* ...
+
+TODO: Can an object be partially initialized? See: [sample:list-initialization.cpp](src/language/list_initialization.cpp).
+
+See also:
+* https://stackoverflow.com/questions/13461027/why-does-the-standard-differentiate-between-direct-list-initialization-and-copy
+* https://stackoverflow.com/questions/50422129/differences-between-direct-list-initialization-and-copy-list-initialization
+
+#### C++: Uniform Initialization
+
+Was introduced in C++11, where almost anything can be initialized using curly braces: initializer lists.
+
+In short, it solves the following problems:
+* Aggregates (arrays, POD types) can be initialized in the initializer list (avoids executing body if initialization fails!).
+* Solves the *most vexing parse* problem, where `C c()` may look like a ctor call, but it actually means function declaration.
+* Initialization of complex containers is easier.
+
+Drawbacks:
+* The list initialization may select a constructor which is not intende to be used (see the example below).
+
+```cpp
+// initializer list
+struct PODType { int d; float x; }
+struct C {
+	PODType pod;
+	int array[3];
+	double d;
+	C() : pod{2, 1.0}, array{0,1,2}, d{3.0} {}
+};
+
+// Most Vexing Parse problem
+C c(); // Maybe not ok. Function declaration!!!
+C c{}; // Good.
+
+// complex containers
+std::vector<std::string> names{ "Braum", "Janna", "Leona", "Sona" };
+std::map<std::string, int> scores{ {"Alex", 522}, {"Pumu", 423}, {"Kitten", 956} };
+
+// Problem with constructors
+std::vector<int> aDozenOfFives{12, 5}; // actually creates a vector of two elements, instead of 12
+std::vector<int> aDozenOfFives(12, 5); // explicit call solves the issue.
+```
+
+See: https://arne-mertz.de/2015/07/new-c-features-uniform-initialization-and-initializer_list/
 
 ### C++: Functions
 
