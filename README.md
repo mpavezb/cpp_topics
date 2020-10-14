@@ -106,7 +106,7 @@ The following categorization is used:
 **Intermediate**
 * C++ Language:
   - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions), [deleted and defaulted functions](#c-deleted-and-defaulted-functions).
-  - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem), [constructor delegation](#c-constructor-delegation).
+  - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem), [constructor delegation](#c-constructor-delegation), [explicit](#c-explicit).
   - Declarations: [auto](#c-auto), [decltype](#c-decltype).
   - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization).
   - 
@@ -805,6 +805,41 @@ struct Rectangle {
 	int h;
 };
 ```
+
+#### C++: Explicit
+
+The `explicit` specifier forces a function to be called explicitly, without implicit conversions: [cpp:explicit](https://en.cppreference.com/w/cpp/language/explicit).
+
+It can be used to avoid unintended implicit conversions. But conversion to `bool` is considered explicit when used in a condition-like context (see [discussion here](https://stackoverflow.com/questions/39995573/when-can-i-use-explicit-operator-bool-without-a-cast)):
+```cpp
+struct MyClass {
+	explicit MyClass(int d) {};
+	explicit operator int() const;
+	friend MyClass operator+(MyClass a, MyClass b);
+
+	explicit operator bool() const { return true; }
+};
+
+void foo(MyClass c);
+void bar(int d);
+
+MyClass c{0};  // OK
+MyClass c = 0; // Does not compile
+
+foo(0);                       // Does not compile
+foo(static_cast<MyClass>(0)); // OK
+
+bar(c);        // Does not compile
+bar(int(c));   // OK!
+
+c = c + 0;     // Does not compile
+c = c + c;     // OK!
+
+if (c) ;          // OK!
+static_assert(c); // OK!
+c || c ;          // OK!.
+```
+
 
 #### C++: Derived Classes
 
