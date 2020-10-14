@@ -100,6 +100,7 @@ The following categorization is used:
   - Basics: loops, conditions, [reading type declarations](#c-reading-type-declarations), [semantics and syntax](#c-semantics-and-syntax).
   - Declaration: [pointers and references](#c-pointers-and-references), [static_assert](#c-static-assert-c11), [enum class](#c-enum-class).
   - Expressions: [nullptr](#c-nullptr), [operator overloading](#c-operator-overloading).
+  - Statements: [range based for loops](#c-range-based-for-loops).
   - Functions: [function overloading](#c-function-overloading).
   - Classes: [struct and class](#c-struct-and-class), [POD Type](#c-pod-type), [class size](#c-class-size), [object lifetime](#c-object-lifetime), [class initialization order](#c-class-initialization-order), [derived classes](#c-derived-classes), [public inheritance](#c-public-inheritance), [abstract class](#c-abstract-class), [dynamic polymorphism](#c-dynamic-polymorphism), [overriding non-virtual functions](#c-overriding-non-virtual-functions).
 * STL:
@@ -144,8 +145,9 @@ The following categorization is used:
 **Experienced:**
 * C++ Language:
   - Declarations: [const-and-volatile](#c-const-and-volatile), [constexpr](#c-constexpr).
-  - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks)
+  - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks), [move semantics](#c-move-semantics).
 * STL:
+  - Utils: [stl:move](#stl-std-move).
   - std::bind: [stl:bind](https://en.cppreference.com/w/cpp/utility/functional/bind), [sample:bind.cpp](src/stl/bind.cpp).
 * Idioms and Best Practices:
   - [runtime concept idiom](#i-runtime-concept-idiom)
@@ -154,7 +156,6 @@ The following categorization is used:
   - IMPORTANT casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
   - IMPORTANT RValue References: https://en.cppreference.com/w/cpp/language/value_category
   - Object Slicing: https://stackoverflow.com/questions/274626/what-is-object-slicing
-  - IMPORTANT Move Semantics: https://stackoverflow.com/questions/3106110/what-is-move-semantics, https://en.cppreference.com/w/cpp/language/move_constructor
   - IMPORTANT Perfect Forwarding: https://en.cppreference.com/w/cpp/utility/forward, https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
   - IMPORTANT Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
   - noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
@@ -464,6 +465,11 @@ const     int foo() {}      // invalid
 constexpr int foo() {}      // OK
 constexpr int foo(int d) {} // OK, but if called in constexpr context, the argument also needs to be constexpr.
 ```
+
+Considerations:
+* `constexpr` used in an object declaration (or non-static member function) implies `const`.
+* `constexpr` used in a function or static member variable (since C++17) declaration implies inline.
+
 Objects and functions declared `constexpr` can also be called in non-constexpr contexts. C++20 adds keyword `consteval` to enforce usage in compile-time.
 
 Note: std::vector is not constexpr compliant, but std::array is.
@@ -807,6 +813,44 @@ auto foo (T a, T b) -> decltype(a+b) { return a + b; }
 
 
 ### C++: Statements
+
+* [range based for loops](#c-range-based-for-loops).
+
+#### C++: Range-Based FOR loops
+https://en.cppreference.com/w/cpp/language/range-for
+
+```cpp
+Given:
+std::vector<int> v = {0, 1, 2, 3, 4, 5};
+
+// traditional
+for(int i=0;i<SIZE;i++)
+
+// initializer == braced-init-list
+for (int n : {0, 1, 2, 3, 4, 5})
+
+// initializer == array
+int a[] = {0, 1, 2, 3, 4, 5};
+for (int n : a)
+
+// iterator
+for (auto iter = v.begin(); iter != v.end(); ++iter)
+
+// access by const reference
+for (const int& i : v)
+
+// access by value
+// the type of i is int
+for (auto i : v)
+
+// access by forwarding reference
+// the type of i is int&
+for (auto&& i : v)
+
+// map access (since C++17)
+for (auto&& [first,second] : mymap)
+```
+
 ### C++: Classes
 
 #### C++: Struct and Class
@@ -945,6 +989,47 @@ static_assert(c); // OK!
 c || c ;          // OK!.
 ```
 
+#### C++: Move Semantics
+
+The final goal from move semantics is to avoid copy operations [cpp:move-ctor](https://en.cppreference.com/w/cpp/language/move_constructor). Copies happen through arguments to functions (can use `const T&` instead), returns, and assignment operations. The move operations allow taking ownership of a piece of memory or a dying object (destructor is not called).
+
+```cpp
+struct Matrix {
+	Matrix() {};
+	~Matrix() { delete[] data; }
+
+	Matrix(const Matrix& x);
+	Matrix(Matrix&& x);
+
+	Matrix& operator=(const Matrix& x);
+	Matrix& operator=(Matrix&& x);
+private:
+	double* data = nullptr;
+	int size = 0;
+};
+```
+
+The move ctor/operator will be called implicitely on cases where the compiler knows the object is dying, e.g, returns and temporary objects in expressions.
+
+```cpp
+Matrix foo() {
+	Matrix m;
+	...
+	return m; // move ctor is called instead of copy.
+}
+
+Matrix a, b, c;
+c = a + b;        // move assignment is called
+Matrix d = a + b; // move constructor is called
+```
+
+The rule of five might enter into the standard to be enforced. Most often you will custom define all 5 special member functions or none (copy ctor, copy assignment, move ctor, move assignment, dtor).
+
+For *strong exception guarantee*, user-defined move constructors should not throw exceptions.
+
+See also:
+* https://stackoverflow.com/questions/3413470/what-is-stdmove-and-when-should-it-be-used
+* https://stackoverflow.com/questions/3106110/what-is-move-semantics
 
 #### C++: Derived Classes
 
@@ -1260,6 +1345,27 @@ foo(std::shared_ptr<Lhs>(new Lhs()),
 See also:
 * Advantages of using std::make_unique over new operator: https://stackoverflow.com/a/37514601
 
+
+#### STL: std::move
+
+Indicates that an object **may be moved from**, allowing the efficient transfer of resources (move ctor) [cpp:move](https://en.cppreference.com/w/cpp/utility/move).
+
+`std::move()` is a cast that produces an *rvalue* reference to an object, to enable moving from it. A object marked with `std::move` 
+It's a new C++ way to avoid copies. For example, using a move constructor, a std::vector could just copy its internal pointer to data to the new object, leaving the moved object in an incorrect state, avoiding to copy all data.
+
+```cpp
+std::string str = "Hello";
+std::vector<std::string> v;
+
+// This operation needs to copy the str.
+v.push_back(str);
+
+// This operation marks the str as movable.
+// MAYBE the string will not be copied, instead, the contents of str will be moved into the vector.
+// This also means str might now be empty.
+v.push_back(std::move(str));
+```
+
 #### T: Assert
 
 Performs dynamic assertion checking in debug build modes. [cpp:assert](https://en.cppreference.com/w/cpp/error/assert)
@@ -1503,17 +1609,6 @@ std::cout << std::boolalpha
 		   << "Is lmay_throw() noexcept? " << noexcept(lmay_throw()) << '\n' // true
 		   << "Is lno_throw() noexcept? " << noexcept(lno_throw()) << '\n'    //true
 ```
-
-### CONSTEXPR (C++11)
-https://en.cppreference.com/w/cpp/language/constexpr
-
-	• Declares that it is possible to evaluate the value of the function or variable at compile time. Such variables and functions can then be used where only compile time constant expressions are allowed
-	• A constexpr specifier used in an object declaration (or non-static member function) implies const.
-	• A constexpr specifier used in a function or static member variable (since C++17) declaration implies inline.
-A constexpr variable must satisfy the following requirements:
-	• its type must be a LiteralType.
-	• it must be immediately initialized
-	• the full-expression of its initialization, including all implicit conversions, constructors calls, etc, must be a constant expression
 
 
 ### TEMPLATE RECURSION (C++11)
@@ -1780,71 +1875,8 @@ Requisites:
 We cannot use std::swap, as it is based on the copy ctor and copy assignment operator.
 Generally, the implementation IS NOT SIMPLE!. In C++11, there is a simpler solution!. Better check the stackoverflow reference!.
 
-### std::move (C++11)
-https://stackoverflow.com/questions/3413470/what-is-stdmove-and-when-should-it-be-used
-https://en.cppreference.com/w/cpp/utility/move
-
-Indicates that an object MAY be "moved from" , allowing the efficient transfer of resources.
-The move constructor could be used instead of the copy constructor, if the object has type "rvalue reference" (Type &&).
-std::move() is a cast that produces an rvalue reference to an object, to enable moving from it.
-It's a new C++ way to avoid copies. For example, using a move constructor, a std::vector could just copy its internal pointer to data to the new object, leaving the moved object in an incorrect state, avoiding to copy all data.
-
-```cpp
-std::string str = "Hello";
-std::vector<std::string> v;
-
-// This operation needs to copy the str.
-v.push_back(str);
-
-// This operation marks the str as movable.
-// MAYBE the string will not be copied, instead, the contents of str will be moved into the vector.
-// This also means str might now be empty.
-v.push_back(std::move(str));
-```
 
 # General
-
-### Range-Based FOR loops (since C++11)
-https://en.cppreference.com/w/cpp/language/range-for
-
-```cpp
-Given:
-std::vector<int> v = {0, 1, 2, 3, 4, 5};
-
-// traditional
-for(int i=0;i<SIZE;i++)
-
-
-// initializer == braced-init-list
-for (int n : {0, 1, 2, 3, 4, 5})
-
-
-// initializer == array
-int a[] = {0, 1, 2, 3, 4, 5};
-for (int n : a)
-
-
-// iterator
-for (auto iter = v.begin(); iter != v.end(); ++iter)
-
-// access by const reference
-for (const int& i : v)
-
-
-// access by value
-// the type of i is int
-for (auto i : v)
-
-
-// access by forwarding reference
-// the type of i is int&
-for (auto&& i : v)
-
-
-// map access (since C++17)
-for (auto&& [first,second] : mymap)
-```
-
 
 ### for_each (algorithm)
 https://en.cppreference.com/w/cpp/algorithm/for_each
