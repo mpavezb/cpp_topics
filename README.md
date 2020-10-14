@@ -145,7 +145,8 @@ The following categorization is used:
 
 **Experienced:**
 * C++ Language:
-  - Declarations: [const-and-volatile](#c-const-and-volatile), [constexpr](#c-constexpr).
+  - Declarations: [const-and-volatile](#c-const-and-volatile), [constexpr](#c-constexpr), [rvalue references](#c-rvalue-references).
+  - Expressions: [value categories](#c-value-categories).
   - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks), [move semantics](#c-move-semantics), [object slicing](#c-object-slicing).
 * STL:
   - Utils: [stl:move](#stl-std-move).
@@ -267,6 +268,8 @@ References:
 ### C++: Preprocessor
 ### C++: Expressions
 
+* [value categories](#c-value-categories)
+
 #### C++: nullptr
 
 `nullptr` is a pointer literal and a `prvalue` of type `std::nullptr_t`. [cpp:nullptr](https://en.cppreference.com/w/cpp/language/nullptr).
@@ -338,6 +341,44 @@ std::string str = "foo";  // NOK
 std::string str = "foo"s; // OK
 ```
 
+#### C++: Value Categories
+
+Are a semantic framework for the compiler to understand the language. They are not language features. It helps understanding how the language works. [cpp:value_category](https://en.cppreference.com/w/cpp/language/value_category).
+
+In older C/C++, only *lvalues* and *rvalues* existed. The distinction is important, so that compilers can assume rvalues *might not* take space in memory.
+
+C++ introduced new value categories **to support move semantics**. They can be easily explained by defining the following concepts:
+* `i` as in has-identity: Can have addres taken.
+* `m` as in can-be-moved-from: We are allowed to leave it in some indeterminate, but valid state.
+* `I` as in not `i`: temporary or not associated with an object.
+* `M` as in not `m`:
+
+Then the following configurations are of interest: `im`, `iM`, `Im`, `i` as the combination of `iM` and `im`, and `m` as the combination of `Im` and `im`.
+* `iM`: *lvalue*
+* `im`: *xvalue*  (expiring value)
+* `Im`: *prvalue* (pure rvalue)
+* `i` : *glvalue* (generalized lvalue) : either a *lvalue* or *xvalue*.
+* `m` : *rvalue*: either a *prvalue* or *xvalue*.
+
+The compiler can select move operations only when it is unquestionably safe to do so:
+1. *prvalues*: implicit moves.
+2. *xvalues*: explicit moves (through `std::move`).
+
+For a pass-by-ref to const to work as a replacement to pass by value, there is an exception to the rule that `T const &` must bind to an lvalue object of the same type. In this case, **binding or to a temporal expression which can be converted to that type is allowed**:
+```cpp
+{
+	// 1. conversion: int -> double
+	// 2. create temp double
+	// 3. rg binds to the temp object.
+	double const &rd = 3;
+} // temp is destroyed when out of scope.
+```
+
+References:
+* https://stackoverflow.com/questions/3601602/what-are-rvalues-lvalues-xvalues-glvalues-and-prvalues
+* https://en.cppreference.com/w/cpp/language/decltype
+* CppCon 2019:Ben Saks "Back to Basics: Understanding Value Categories": https://www.youtube.com/watch?v=XS2JddPq7GQ
+
 ### C++: Declarations
 
 #### C++: Pointers and References
@@ -356,6 +397,22 @@ A reference `&` [cpp:reference](https://en.cppreference.com/w/cpp/language/refer
 * Manipulate the object itself.
 * Is stored as an address to the object, in most implementations.
 * Cannot be assigned `nullptr`.
+
+
+Most code using references can be rewritten as using `* const`. They were really introduced to be able to implement special overloaded operators, like `++` and `*`, just like if we were using them for built-in types. Moreover, special operators cannot be overloaded using pointers!.
+```cpp
+struct S {
+	... operator++(month  x) {}; // NOK
+	... operator++(month *x) {}; // NOK
+	... operator++(month &x) {}; // OK
+};
+S s;
+int a;
+++a;   // built-in
+++s;   // by-value   - looks good, but only modifies the temporary!.
+++&s;  // by-pointer - breaks illusion of expected usage.
+++s;   // by-ref     - OK!.
+```
 
 Dangling:
 * Dangling Pointer: When the lifetime of the pointed object ends before the end of the lifetime of the pointer, leading to a deallocated memory space.
@@ -1413,7 +1470,7 @@ See also:
 
 Indicates that an object **may be moved from**, allowing the efficient transfer of resources (move ctor) [cpp:move](https://en.cppreference.com/w/cpp/utility/move).
 
-`std::move()` is a cast that produces an *rvalue* reference to an object, to enable moving from it. A object marked with `std::move` 
+`std::move()` is a cast that produces an *rvalue* reference to an object, to enable moving from it. A object marked with `std::move`
 It's a new C++ way to avoid copies. For example, using a move constructor, a std::vector could just copy its internal pointer to data to the new object, leaving the moved object in an incorrect state, avoiding to copy all data.
 
 ```cpp
@@ -1879,10 +1936,3 @@ Sum s = std::for_each(nums.begin(), nums.end(), Sum());
 int sum = std::accumulate(v.begin(), v.end(), 0);
 int product = std::accumulate(v.begin(), v.end(), 1, std::multiplies<int>());
 ```
-
-#### T: TODO : Value Categories
-
-LV, RV, PV, XV, ..
-
-
-See [cpp:value_category](https://en.cppreference.com/w/cpp/language/value_category).
