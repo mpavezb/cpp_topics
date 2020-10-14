@@ -452,16 +452,16 @@ The rule:
 
 Because of how the collapsing rules work, rvalue references are also called *universal references*.
 
-| pass-by    | function          | `5` |`int a`|`int &r=a`|`int &&rr=5`|`const int a`|`const int& cr=a`|
-| ---------- | ----------------- |-----| ----- | -------- |----------- | ----------- | --------------- |
-| value      | `foo(T x)`        |`int`|`int`  |`int`     |`int`       |`int`        |`int`            |
-| lvalue ref | `foo(T x)`        |  -  |`int`  |`int`     |`int`       |`const int`  |`const int`      |
-| const  ref | `foo(const T& x)` |`int`|`int`  |`int`     |`int`       |`int`        |`int`            |
-| rvalue ref | `foo(T&& x)`      |`int`|`int&` |`int&`    |`int&`      |`const int&` |`const int&`     |
+| `template<class T>`| `5` |`int a`|`int &r=a`|`int &&rr=5`|`const int a`|`const int& cr=ca`|
+| ------------------ |-----| ----- | -------- |----------- | ----------- | ---------------  |
+| `foo(T x)`         |`int`|`int`  |`int`     |`int`       |`int`        |`int`             |
+| `foo(T& x)`        |  -  |`int`  |`int`     |`int`       |`const int`  |`const int`       |
+| `foo(const T& x)`  |`int`|`int`  |`int`     |`int`       |`int`        |`int`             |
+| `foo(T&& x)`       |`int`|`int&` |`int&`    |`int&`      |`const int&` |`const int&`      |
 
 See also:
 * https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
-* https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-collapsing-rules-requested-1-a-a-2
+* TODO: https://stackoverflow.com/questions/13725747/concise-explanation-of-reference-collapsing-rules-requested-1-a-a-2
 
 
 #### C++: auto
