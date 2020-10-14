@@ -149,14 +149,14 @@ The following categorization is used:
   - Expressions: [value categories](#c-value-categories).
   - Classes: [Empty base optimization](#c-empty-base-optimization), [virtual inheritance](#c-virtual-inheritance), [dynamic polymorphism drawbacks](#c-dynamic-polymorphism-drawbacks), [move semantics](#c-move-semantics), [object slicing](#c-object-slicing).
 * STL:
-  - Utils: [stl:move](#stl-std-move).
+  - Utils: [stl:move](#stl-std-move), [stl:forward](#stl-std-forward).
   - std::bind: [stl:bind](https://en.cppreference.com/w/cpp/utility/functional/bind), [sample:bind.cpp](src/stl/bind.cpp).
 * Idioms and Best Practices:
   - [runtime concept idiom](#i-runtime-concept-idiom)
 * TODO:
   - IMPORTANT static polymorphism : https://stackoverflow.com/questions/19062733/what-is-the-motivation-behind-static-polymorphism-in-c
   - IMPORTANT casts in dept: `const_cast`, `reinterpret_cast`, `static_cast`, `dynamic_cast`, `pointer_cast`.: https://en.cppreference.com/w/cpp/language/explicit_cast, https://en.cppreference.com/w/cpp/language/dynamic_cast, https://en.cppreference.com/w/cpp/language/reinterpret_cast, https://en.cppreference.com/w/cpp/language/static_cast, https://en.cppreference.com/w/cpp/language/const_cast, https://en.cppreference.com/w/cpp/language/implicit_conversion, https://en.cppreference.com/w/cpp/language/cast_operator
-  - IMPORTANT Perfect Forwarding: https://en.cppreference.com/w/cpp/utility/forward, https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
+
   - IMPORTANT Exception Safety Guarantees: https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety
   - noexcept: https://en.cppreference.com/w/cpp/keyword/noexcept
   - multi-threading
@@ -1535,6 +1535,52 @@ v.push_back(str);
 v.push_back(std::move(str));
 ```
 
+#### STL: std::forward
+
+Allows implementing perfect forwarding of lvalue and rvalue references in function templates [cpp:forwarding-reference](https://en.cppreference.com/w/cpp/language/reference#Forwarding_references), [cpp:forward](https://en.cppreference.com/w/cpp/utility/forward).
+
+A *forwarding reference* is a special kind of reference, which preserves the value category of a function argument (lvalue, rvalue, and cv-qualifiers). They can be forwarded through the `std::forward` function.
+
+Forwarding reference as a function template parameter:
+* Function parameter is declared as a forwarding reference (rvalue reference to cv-unqualified type template parameter).
+* Accepts both: lvalues and rvalues.
+* Even if the value was originally an rvalue, a function argument is always considered lvalue in the function body.
+* `std::forward` is used to preserve the original reference category.
+```cpp
+template<class T>
+int f(T&& x) {                    // x is a forwarding reference.
+								  // x is considered lvalue if std::forward is not used.
+	return g(std::forward<T>(x)); // and so can be forwarded as lvalue or rvalue
+}
+```
+
+Forwarding reference when deduced by `auto`:
+* Works in a similar way.
+* Only when not deduced from a brace-enclosed initializer list.
+```cpp
+// forwarding reference for temporary
+auto&& vec = foo();                  // foo() may be lvalue or rvalue
+g(std::forward<decltype(vec)>(vec)); // forwards, preserving value category
+
+// forwarding reference in for loop
+// this is the safest way to use range for loops
+for (auto&& x: f()) {
+}
+
+// Not a forwarding reference
+auto&& z = {1, 2, 3};
+```
+
+The compiler will generate all possible overloads for the function template. This is even more useful when multiple arguments are used.
+
+It is often used with variadic templates to wrap calls to functions with an arbitrary number of arguments. For example, `std::make_unique` and `std::make_shared` both use perfect forwarding to forward their arguments to the constructor of the wrapped type.
+
+See also:
+* https://stackoverflow.com/questions/6829241/perfect-forwarding-whats-it-all-about
+* https://cpppatterns.com/patterns/perfect-forwarding.html
+* https://www.modernescpp.com/index.php/perfect-forwarding
+
+
 #### T: Assert
 
 Performs dynamic assertion checking in debug build modes. [cpp:assert](https://en.cppreference.com/w/cpp/error/assert)
@@ -1743,27 +1789,6 @@ f(2, 1.0); // OK: args contains two arguments: int and double
 ```
 
 
-### PERFECT FORWARDING (C++11)
-https://en.cppreference.com/w/cpp/utility/forward     (GOOD EXAMPLE!)
-https://cpppatterns.com/patterns/perfect-forwarding.html
-https://www.modernescpp.com/index.php/perfect-forwarding
-
-	• Intent: Forward arguments of one function to another as though the wrapped function had been called directly.
-	• Perfect forwarding allows us to preserve an argument’s value category (lvalue/rvalue) and const/volatile modifiers. Perfect forwarding is performed in two steps:
-		◦ receive a forwarding reference (also known as universal reference),
-		◦ then forward it using std::forward.
-	• It is often used with variadic templates to wrap calls to functions with an arbitrary number of arguments. For example, std::make_unique and std::make_shared both use perfect forwarding to forward their arguments to the constructor of the wrapped type.
-
-```cpp
-#include <utility>
-template<typename T, typename U>
-std::pair<T, U> make_pair_wrapper(T&& t, U&& u)
-{
-  return std::make_pair(std::forward<T>(t), std::forward<U>(u));
-}
-```
-  • the arguments t and u are forwarding references because they are declared in the form X&& where X is a template parameter
-  • std::forward forwards these arguments to std::make_pair, allowing them to be moved into the pair when the original argument was an rvalue expression.
 
 
 ### NOEXCEPT OPERATOR (C++11)
