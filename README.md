@@ -1279,6 +1279,37 @@ Performs dynamic assertion checking in debug build modes. [cpp:assert](https://e
 ### STL: Concepts
 ### STL: Diagnostics
 ### STL: Strings
+
+#### STL: String View
+
+Provides a cheap read-only accessor to a `std::string`, which avoids unwanted memory allocations [cpp:string-view](https://en.cppreference.com/w/cpp/header/string_view).
+
+Motivation: Many uses of `std::string` don't really require owning the string, but the old C string require the null terminator to be part of the string, forcing a mutation whenever a substring is needed.
+
+Implementation: Wrapper over a pointer to he first character and a size.
+
+Benefits:
+* The `std::string_view` is cheap and can be passed by value.
+* Substring operations are cheap and dont require mutation (just adjust pointer an size).
+
+```cpp
+std::string str = "...";                  // A really long and expensive to copy string
+std::cout << str.substr(15, 10) << '\n';  // BAD!
+std::string_view view = str;              // BETTER: no copies.
+std::cout << view.substr(15, 10) << '\n'; // returns new string_view
+
+// These are old ways to "try" avoiding copies
+void foo(std::string const& s);                      // This can result in allocation
+void foo(const char* s, size_t len);                 // Mess
+void foo(const char* s);                             // Must call strlen()
+template <class StringT> void foo(StringT const& s); // forces header and template
+
+// GOOD
+void foo(std::string_view s);                        // Zero copies!
+```
+
+TODO: C++20 adds the `std::span` abstraction, which works similar, but for lists of any type. https://en.cppreference.com/w/cpp/container/span, https://stackoverflow.com/questions/45723819/what-is-a-span-and-when-should-i-use-one
+
 ### STL: Containers
 ### STL: Iterators
 ### STL: Ranges
