@@ -95,7 +95,7 @@ The following categorization is used:
 * C++ Language:
   - Basics: loops, conditions, [reading type declarations](#c-reading-type-declarations), [semantics and syntax](#c-semantics-and-syntax).
   - Declaration: [pointers and references](#c-pointers-and-references), [static_assert](#c-static-assert-c11), [enum class](#c-enum-class).
-  - Expression: [nullptr](#c-nullptr), [operator overloading](#c-operator-overloading).
+  - Expressions: [nullptr](#c-nullptr), [operator overloading](#c-operator-overloading).
   - Functions: [function overloading](#c-function-overloading).
   - Classes: [struct and class](#c-struct-and-class), [POD Type](#c-pod-type), [class size](#c-class-size), [object lifetime](#c-object-lifetime), [class initialization order](#c-class-initialization-order), [derived classes](#c-derived-classes), [public inheritance](#c-public-inheritance), [abstract class](#c-abstract-class), [dynamic polymorphism](#c-dynamic-polymorphism), [overriding non-virtual functions](#c-overriding-non-virtual-functions).
 * STL:
@@ -108,13 +108,13 @@ The following categorization is used:
   - Functions: [functors](#c-functors), [lambda expressions](#c-lambda-expressions), [deleted and defaulted functions](#c-deleted-and-defaulted-functions).
   - Classes: [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem), [constructor delegation](#c-constructor-delegation), [explicit](#c-explicit).
   - Declarations: [auto](#c-auto), [decltype](#c-decltype).
+  - Expressions: [user-defined literals](#c-user-defined-literals).
   - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization).
 
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
   - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization
   - return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
   - copy elision: https://en.cppreference.com/w/cpp/language/copy_elision
-  - user-defined literals: https://en.cppreference.com/w/cpp/language/user_literal
   - dynamic memory management with new and delete: https://en.cppreference.com/w/cpp/language/delete https://en.cppreference.com/w/cpp/language/new  https://en.cppreference.com/w/cpp/memory
   - exception handling (basics): https://en.cppreference.com/w/cpp/language/exceptions, https://isocpp.org/wiki/faq/exceptions,
   - `this` pointer and functions.
@@ -272,6 +272,28 @@ Operators `::`, `.`, `.*`, and `?:` cannot be overloaded. Some restrictions appl
 
 See also:
 * https://stackoverflow.com/questions/4421706/what-are-the-basic-rules-and-idioms-for-operator-overloading#4421719
+
+#### C++: User-Defined Literals
+
+Allows producing objects of user-defined type based on a basic type and user-defined suffix: [cpp:user-literal](https://en.cppreference.com/w/cpp/language/user_literal).
+
+Considerations:
+* There is no reason not to use `constexpr`.
+* Suffix must start with `_`.
+
+```cpp
+struct MyReal {};
+
+// user-defined captures
+constexpr MyReal operator""_mr(long double x);                // 9.0_mr, .9_mr, 1.6e-19_mr
+constexpr MyReal operator""_mr(long long x);                  // 9_mr, 0x6_mr, 0b1010_mr, 076_mr
+constexpr MyReal operator""_mr(char x);                       // 'a'_mr
+constexpr MyReal operator""_mr(const char* x, std::size_t n); // "hello"_mr // tag dispatch: add argument for different signature
+constexpr MyReal operator""_mr(const char* x);                // 90'123'456'789_mr (useful for big numbers)
+
+// usage
+constexpr auto x = 9.0_mr; // captures: long double
+```
 
 ### C++: Declaration
 
