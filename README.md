@@ -821,6 +821,10 @@ Non-Mandatory elision of copy/move operations:
 1. NRVO
 4. In throw expressions and catch clauses.
 
+Common limitations:
+* multiple return points.
+* conditional initialization.
+
 See also:
 * https://en.wikipedia.org/wiki/Copy_elision#Return_value_optimization
 * https://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization
