@@ -115,12 +115,11 @@ The following categorization is used:
   - Classes: [copy constructor](#c-copy-constructor), [copy assignment](#c-copy-assignment-operator), [private inheritance](#c-private-inheritance), [multiple inheritance](#c-multiple-inheritance), [diamond problem](#c-diamond-problem), [constructor delegation](#c-constructor-delegation), [explicit](#c-explicit).
   - Declarations: [auto](#c-auto), [decltype](#c-decltype).
   - Expressions: [user-defined literals](#c-user-defined-literals), [string literals](#c-string-literals).
-  - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization).
-
+  - Initialization: [list initialization](#c-list-initialization), [uniform initialization](#c-uniform-initialization), [copy elision](#c-copy-elision).
+  -
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
   - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization
   - IMPORTANT return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
-  - IMPORTANT copy elision: https://en.cppreference.com/w/cpp/language/copy_elision, https://en.wikipedia.org/wiki/Copy_elision#Return_value_optimization elision: the omission of a sound or syllable
   - dynamic memory management with new and delete: https://en.cppreference.com/w/cpp/language/delete https://en.cppreference.com/w/cpp/language/new  https://en.cppreference.com/w/cpp/memory
   - exception handling (basics): https://en.cppreference.com/w/cpp/language/exceptions, https://isocpp.org/wiki/faq/exceptions,
   - `this` pointer and functions.
@@ -381,10 +380,10 @@ References:
 
 #### C++: Casts
 
-Old style C casts are hard to predict and understand, they may result in static, dynamic, reinterpret, const. C++ defines explicit cast operations for those. 
+Old style C casts are hard to predict and understand, they may result in static, dynamic, reinterpret, const. C++ defines explicit cast operations for those.
 
 Considerations:
-* Both `static_cast` and `dynamic_cast` are generally safe, as long as we take some precautions. 
+* Both `static_cast` and `dynamic_cast` are generally safe, as long as we take some precautions.
 * Both `const_cast` and `reinterpret_cast` are generally dangerous, as they tell the compiler not to trust the type system.
 * An "up-cast" (cast to the base class) is always valid with both `static_cast` and `dynamic_cast`, and also without any cast, as an "up-cast" is an implicit conversion.
 
@@ -392,15 +391,15 @@ The cast operator enables implicit or explisit conversions from a class type to 
 * The conversion function is declared like a non-static member function (or funtion template) with no parameters, no return type, and with(out) the `explicit` specifier.
 ```cpp
 struct X {
-	         operator int () const { return 7;       } // implicit conversion
-    explicit operator int*() const { return nullptr; } // explicit conversion	
+			 operator int () const { return 7;       } // implicit conversion
+	explicit operator int*() const { return nullptr; } // explicit conversion
 };
 ```
 
 `static_cast` [cpp:static-cast](https://en.cppreference.com/w/cpp/language/static_cast) converts between types using a combination of implicit and user-defined conversions.
 * Cannot cast away cv-qualifiers.
 * Type conversion if possible is equivalent to `new_type tmp(expression);`.
-* Can be used to downcast from a non-virtual base to a derived class. 
+* Can be used to downcast from a non-virtual base to a derived class.
 * There are no runtime checks, that must be ensured through other means!!.
 
 `dynamic_cast` [cpp:dynamic-cast](https://en.cppreference.com/w/cpp/language/dynamic_cast)
@@ -421,10 +420,10 @@ const_cast<int&>(ref) = 3;   // this is ok
 *const_cast<int*>(ptr) = 3;  // this is ok
 
 struct type {
-    int i; 
-    void f(int d) const {
-        const_cast<type*>(this)->i = d; // OK as long as the actual object is not really const.
-    }
+	int i;
+	void f(int d) const {
+		const_cast<type*>(this)->i = d; // OK as long as the actual object is not really const.
+	}
 };
 ```
 
@@ -681,6 +680,9 @@ The *initialization* of an object provides its initial value at the time of cons
 
 It happens through the following expressions: `(expression-list)`, `= expression`, and `{ initializer-list}`.
 
+Index:
+* [copy elision](#c-copy-elision)
+
 #### C++: List Initialization
 
 Allows initialization of an object from a *braced-init-list*: `{initializer-list}` [cpp:list-initialization](https://en.cppreference.com/w/cpp/language/list_initialization).
@@ -759,6 +761,69 @@ std::vector<int> aDozenOfFives(12, 5); // explicit call solves the issue.
 ```
 
 See: https://arne-mertz.de/2015/07/new-c-features-uniform-initialization-and-initializer_list/
+
+#### C++: Copy Elision
+
+> Elision - The omission of a sound or syllable
+
+Omits copy and move constructors, resulting in zero-copy pass-by-value semantics [cpp:copy-elision](https://en.cppreference.com/w/cpp/language/copy_elision). Copy elision is an optimization implemented by most compilers to prevent extra (potentially expensive) copies in certain situations. It makes returning by value or pass-by-value feasible in practice (restrictions apply).
+
+In some cases the compilers are required to do elision, or just permitted to do so.
+* Elision will happen even if the copy/move constructor and the destructor have observable side-effects.
+* The objects are constructed directly into the storage where they would otherwise be copied/moved to.
+* Multiple copy elisions may be chained to eliminate multiple copies.
+* You shouldn't have critical logic inside copy/move-constructors or destructors, as you can't rely on them being called.
+* All elisions ignore cv-qualifications.
+
+(Named) Return Value Optimization - (N)RVO:
+* When an object returned by-value from a method has its copy elided.
+* The object must have the same class type as the return type.
+* Its called RVO when the operand is a prvalue of the same class type as the function return type.
+* Its called NRVO when the returned object is the name of an object which is non-volatile, has automatic storage, is not a function parameter.
+* Guaranteed in constant expressions and constant initialization.
+* RVO is mandatory since C++17.
+
+```cpp
+struct C {
+  C() {}
+  C(const C&) { std::cout << "A copy was made.\n"; }
+};
+
+C f() {
+  return C(); // RVO
+}
+
+C g() {
+	C c;
+	return c; // NRVO
+}
+
+int main() {
+  std::cout << "Hello World!\n";
+  C obj = f(); // Copy constructor isn't called
+}
+```
+
+Elision on initialization:
+* In the initialization of an object, when the initializer expression is a prvalue of the same class type as the variable type.
+```cpp
+// only one call to default constructor of T, to initialize x
+T x = T(T(f()));
+```
+
+Mandatory elision of copy/move operations (since C++17):
+* The copy/move constructors need not be present or accessible.
+1. RVO.
+2. Elision on initialization.
+
+Non-Mandatory elision of copy/move operations:
+* The copy/move constructors must be present and accessible (as if no optimization happened at all).
+1. NRVO
+4. In throw expressions and catch clauses.
+
+See also:
+* https://en.wikipedia.org/wiki/Copy_elision#Return_value_optimization
+* https://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization
 
 ### C++: Functions
 
@@ -1520,15 +1585,15 @@ Provide information with regards to the state of the program after an error cond
 
 The exception safety levels are:
 1. *Nothrow/Nofail exception guarantee*:
-   - Nothrow: The function never throws exceptions.
+   * Nothrow: The function never throws exceptions.
 	 - Errors are reported by other means or concealed.
 	 - It is expected for destructors and other functions that may be called during stack unwinding.
-     - Destructors are declared `noexcept` by default.
-   - Nofail: The function always succeeds.
+	 - Destructors are declared `noexcept` by default.
+   * Nofail: The function always succeeds.
 	 - It is expected of swaps, move constructors, and other functions used by lower safety levels.
 2. *Strong exception guarantee*: If the function throws an exception, the state of the program is rolled back to the state just before the function call.
 3. *Basic exception guarantee*: If the function throws an exception, the program is in a valid state. No resources are leaked, and all objects' invariants are intact.
-4. *No exception guarantee*: If the function throws an exception, the program may not be in a valid state: resource leaks, memory corruption, or other invariant-destroying errors may have occurred. 
+4. *No exception guarantee*: If the function throws an exception, the program may not be in a valid state: resource leaks, memory corruption, or other invariant-destroying errors may have occurred.
 
 In short:
 1. *Nothrow*: Don't throw even on failures.
@@ -1538,7 +1603,7 @@ In short:
 
 Exception safety for move enabled types may be difficult, as there is no way to rollback. Try making the move constructor nothrow in order to provide fast and strong guarantees.
 
-There is a special *exception-neutral guarantee* for templates: If an exception is thrown from a template parameter, it is propagated, unchanged, to the caller. 
+There is a special *exception-neutral guarantee* for templates: If an exception is thrown from a template parameter, it is propagated, unchanged, to the caller.
 
 #### C++: noexcept
 
@@ -1563,7 +1628,7 @@ This operator is best suited when used in templates:
 // noexcept declaration depends on if the expression T() will throw
 template <class T>
 void foo() noexcept(noexcept(T())) {}
- 
+
 foo<int>();  // noexcept(noexcept(int())) => noexcept(true), so this is fine
 ```
 
