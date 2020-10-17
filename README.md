@@ -119,7 +119,6 @@ The following categorization is used:
   -
   - templates (basics): https://en.cppreference.com/w/cpp/language/templates
   - template specialization: https://en.cppreference.com/w/cpp/language/template_specialization, https://en.cppreference.com/w/cpp/language/partial_specialization
-  - IMPORTANT return value optimization: https://en.cppreference.com/w/cpp/language/copy_elision
   - dynamic memory management with new and delete: https://en.cppreference.com/w/cpp/language/delete https://en.cppreference.com/w/cpp/language/new  https://en.cppreference.com/w/cpp/memory
   - exception handling (basics): https://en.cppreference.com/w/cpp/language/exceptions, https://isocpp.org/wiki/faq/exceptions,
   - `this` pointer and functions.
@@ -195,6 +194,23 @@ The following categorization is used:
 * Problem with vector of bools
 * function ref-qualifiers: https://en.cppreference.com/w/cpp/language/function, https://stackoverflow.com/questions/23011532/const-reference-qualifier-on-a-member-function, https://docs.microsoft.com/en-us/cpp/cpp/function-overloading?view=vs-2019#ref-qualifiers
 * std::expected
+* important: multithreading, how vector is implemented, iterators.
+* Class Layout: memory, typetraits, ppadding, optimizations, safety, baremetal https://www.youtube.com/watch?v=SShSV_iV1Ko
+* vtable in depth.
+* Arquitecture independence and safeties: avoid pragma, use static_assert.
+* Memory initialization: heap and stack start to zero? always?, this may cause checks to pass with undefined data!.
+* CppCon - The structure of a program https://www.youtube.com/watch?v=3KoXeegncrs : translation unit, phases, decl, def, link, Odr, duration, abi, names.
+* CppCon - The hidden secrests of move semantics: https://www.youtube.com/watch?v=TFMKjL38xAI
+* CppCon - SOLID: https://www.youtube.com/watch?v=Ntraj80qN2k
+* CppCon - Design Patterns https://www.youtube.com/watch?v=2UUqX2eIdSM
+* CppCon - MoveSemantics https://www.youtube.com/watch?v=ZG59Bqo7qX4
+* CppCon - Exceptions https://www.youtube.com/watch?v=0ojB8c0xUd8
+* CppCon - Concurrency https://www.youtube.com/watch?v=F6Ipn7gCOsY
+* CppCon - Performance https://www.youtube.com/watch?v=koTf7u0v41o
+* CppCon - Generic Algorithms https://www.youtube.com/channel/UCMlGfpWw-RUdWX_JbLCukXg
+* CppCon - Dynamic Polymorphism with metaclasses and code injection https://www.youtube.com/channel/UCMlGfpWw-RUdWX_JbLCukXg
+* CppCon - Sanitizers: https://www.youtube.com/watch?v=xEzfnbTabyE&t=217s
+
 
 ## C++ Language
 
