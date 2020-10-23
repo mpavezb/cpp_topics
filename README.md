@@ -210,7 +210,13 @@ The following categorization is used:
 * CppCon - Generic Algorithms https://www.youtube.com/channel/UCMlGfpWw-RUdWX_JbLCukXg
 * CppCon - Dynamic Polymorphism with metaclasses and code injection https://www.youtube.com/channel/UCMlGfpWw-RUdWX_JbLCukXg
 * CppCon - Sanitizers: https://www.youtube.com/watch?v=xEzfnbTabyE&t=217s
-
+* https://stackoverflow.com/questions/44320465/whats-the-proper-way-to-enable-addresssanitizer-in-cmake-that-works-in-xcode
+* https://en.cppreference.com/w/cpp/language/storage_duration
+* https://stackoverflow.com/questions/461203/when-to-use-virtual-destructors
+* https://en.cppreference.com/w/cpp/language/friend
+* http://gafter.blogspot.com/2007/07/internal-versus-external-iterators.html
+* https://stackoverflow.com/questions/3318410/pragma-pack-effect
+* https://stackoverflow.com/questions/130794/what-is-dependency-injection
 
 ## C++ Language
 
