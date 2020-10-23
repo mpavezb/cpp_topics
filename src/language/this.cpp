@@ -25,7 +25,7 @@ void suicideWithPlacementNewInChar() {
 void suicideWithPlacementNewMalloc() {
   // requires definition of operator new
   void *place = std::malloc(sizeof(Suicide));
-  Suicide *s = new (place) Suicide;
+  // Suicide *s = new (place) Suicide;
   // s->commit();
 }
 
