@@ -189,6 +189,7 @@ The following categorization is used:
   - calling conventions: https://stackoverflow.com/questions/949862/what-are-the-different-calling-conventions-in-c-c-and-what-do-each-mean
 
 **Unassigned:**
+* Erase-Remove Idiom: https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
 * Associative Containers
 * What would happen if you insert a user defined class into a map that only has operator == defined?
 * Problem with vector of bools
