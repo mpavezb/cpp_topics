@@ -86,6 +86,8 @@ The following categorization is used:
 
 * [Idioms and Best Practices](#idioms-and-best-practices)
 
+* [General](#general): [Application Binary Interface](#g-application-binary-interface).
+
 * Language Agnostic Topics:
   - GRASP (OOD).
   - SOLID: theory and code reviews.
@@ -170,6 +172,7 @@ The following categorization is used:
   - https://en.cppreference.com/w/cpp/language/crtp
 
 **Expert:**
+* General: [ABI](#g-application-binary-interface).
 * C++ Language:
   - Declarations: [reference collapsing rules](#c-reference-collapsing-rules).
 * STL:
@@ -183,7 +186,7 @@ The following categorization is used:
   - Tag-Dispatch : https://arne-mertz.de/2016/10/tag-dispatch/,  https://stackoverflow.com/questions/32522279/tag-dispatching-example-in-c, https://www.fluentcpp.com/2018/04/27/tag-dispatching/
   - Iterator Categories: Forward, Bidirectional, Input, Output, Random Access.https://en.cppreference.com/w/cpp/iterator
   - Overload Resolution https://en.cppreference.com/w/cpp/language/overload_resolution
-  - Application Binary Interface : https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi ,
+ ,
   - Universal References. https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers, https://en.cppreference.com/w/cpp/language/reference
   - https://en.cppreference.com/w/cpp/language/Zero-overhead_principle
   - calling conventions: https://stackoverflow.com/questions/949862/what-are-the-different-calling-conventions-in-c-c-and-what-do-each-mean
@@ -1862,6 +1865,33 @@ TODO: C++20 adds the `std::span` abstraction, which works similar, but for lists
 ### STL: Regular Expressions
 ### STL: Atomic Operations
 ### STL: Threading
+
+## General
+
+### G: The Structure of a Program
+
+### G: Application Binary Interface
+
+The ABI (Application Binary Interface) is equivalent to an API but at the machine language level. 
+- It defines structs and methods at a lower level.
+- It defines how data/args are stored and passed around (registers, stack, heap).
+- It defines how the code is stored in the library file, so that other binaries can locate specific components.
+
+ABIs are important when using external libraries. Programs use the ABI too look for library elements.
+- **If the ABI changes, then any program using it must be recompiled**.
+- If the ABI changes but the API does not, the old and new library are called "source compatible".
+
+Keeping an **stable ABI** means:
+- Not changing function interfaces (return type and number, types, order of arguments).
+- Not changing data type definitions or constants.
+- New funcitons and data types can be added.
+
+See also: https://stackoverflow.com/questions/2171177/what-is-an-application-binary-interface-abi
+
+### G: Compilers TODO
+### G: Linkers TODO
+### G: Debuggers TODO
+### G: Sanitizers TODO
 
 ## Idioms and Best Practices
 
