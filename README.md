@@ -16,6 +16,7 @@ cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
 ## Contents
 
 - [Resources](#resources)
+- [Acronyms](#acronyms)
 - [Categories](#categories)
 - [Topics by Level](#topics-by-level)
 
@@ -24,6 +25,7 @@ cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
 **Official Resources:**
 - cppreference.com: https://en.cppreference.com/w/
 - C++ Language: https://en.cppreference.com/w/cpp/language
+- C++ Compiler Support: https://en.cppreference.com/w/cpp/compiler_support
 - ISO C++ (FAQ, Core Guidelines, Standard): https://isocpp.org/faq
 - New Language Features:
   - C++11: https://en.cppreference.com/w/cpp/11
@@ -74,6 +76,25 @@ cmake ../src -DCMAKE_INSTALL_PREFIX=../bin && make && make install
 - Gregory Consulting, http://gregcons.com/
 - Andrei Alexandrescu, https://www.qa-systems.com/qa-academy/dr-andrei-alexandrescu/
 
+## Acronyms
+
+- ABI: [Application Binary Interface](#g-application-binary-interface).
+- EBO: [Empty Base Optimization](#c-empty-base-optimization).
+- STL: C++ Standard Library.
+- POD: [Plain Old Data](#c-pod-type).
+- PIMPL: [Pointer to Implementation](#i-pimpl).
+- RAII: [Resource Acquisition is Initialization](#i-raii).
+- SFINAE: Substitution Failure Is Not An Error.
+- CRTP: Curiously Recurring Template Pattern.
+
+TODO: Remove design concepts.
+Design:
+- GRASP: General Responsibility Assignment Software Patterns.
+- SOLID: Single-reponsibility, Open-closed, Liskov-substitution, Interface-segregation, Dependency-inversion.
+- TDD: Test Driven Development.
+- DRY: Don't Repeat Yourself.
+- YAGNI: You Aren't Gonna Need It.
+
 ## Categories
 
 Categorization comes directly from the official categorization: [cpp:cpp](https://en.cppreference.com/w/cpp).
@@ -88,13 +109,6 @@ The following categorization is used:
 
 * [General](#general): [Application Binary Interface](#g-application-binary-interface).
 
-* Language Agnostic Topics:
-  - GRASP (OOD).
-  - SOLID: theory and code reviews.
-  - Design Patterns: Creational, Structural, Behavioralm and **Concurrency**.
-  - Working with Legacy Code
-  - CLEAN Arquitecture
-  - TDD
 
 ## Topics by Level
 
